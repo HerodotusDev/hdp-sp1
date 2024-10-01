@@ -1,12 +1,4 @@
-# SP1 Project Template
-
-This is a template for creating an end-to-end [SP1](https://github.com/succinctlabs/sp1) project
-that can generate a proof of any RISC-V program.
-
-## Requirements
-
-- [Rust](https://rustup.rs/)
-- [SP1](https://docs.succinct.xyz/getting-started/install.html)
+# SP1 Bootloader Host
 
 ## Running the Project
 
@@ -40,35 +32,6 @@ To generate a core proof for your program:
 ```sh
 cd script
 cargo run --release -- --prove
-```
-
-### Generate an EVM-Compatible Proof
-
-> [!WARNING]
-> You will need at least 128GB RAM to generate a Groth16 or PLONK proof.
-
-To generate a proof that is small enough to be verified on-chain and verifiable by the EVM:
-
-```sh
-cd script
-cargo run --release --bin evm -- --system groth16
-```
-
-this will generate a Groth16 proof. If you want to generate a PLONK proof, run the following command:
-
-```sh
-cargo run --release --bin evm -- --system plonk
-```
-
-These commands will also generate fixtures that can be used to test the verification of SP1 zkVM proofs
-inside Solidity.
-
-### Retrieve the Verification Key
-
-To retrieve your `programVKey` for your on-chain contract, run the following command:
-
-```sh
-cargo prove vkey --elf elf/riscv32im-succinct-zkvm-elf
 ```
 
 ## Using the Prover Network
