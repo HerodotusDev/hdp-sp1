@@ -10,8 +10,6 @@
 //! RUST_LOG=info cargo run --release -- --prove
 //! ```
 
-use alloy_sol_types::SolType;
-use bootloader_lib::PublicValuesStruct;
 use clap::Parser;
 use sp1_sdk::{ProverClient, SP1Stdin};
 
@@ -58,17 +56,7 @@ fn main() {
         let (output, report) = client.execute(ELF, stdin).run().unwrap();
         println!("Program executed successfully.");
 
-        // Read the output.
-        let decoded = PublicValuesStruct::abi_decode(output.as_slice(), true).unwrap();
-        let PublicValuesStruct { n, a, b } = decoded;
-        println!("n: {}", n);
-        println!("a: {}", a);
-        println!("b: {}", b);
-
-        let (expected_a, expected_b) = bootloader_lib::fibonacci(n);
-        assert_eq!(a, expected_a);
-        assert_eq!(b, expected_b);
-        println!("Values are correct!");
+        println!("{:?}", output);
 
         // Record the number of cycles executed.
         println!("Number of cycles: {}", report.total_instruction_count());
