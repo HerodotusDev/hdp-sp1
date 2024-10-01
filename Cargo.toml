@@ -1,10 +1,11 @@
 [workspace]
 members = [
     "lib",
-    "program",
+    "bootloader",
+    "module",
     "script",
 ]
 resolver = "2"
 
 [workspace.dependencies]
-alloy-sol-types = "0.7.7"
+alloy-sol-types = "0.8.5"

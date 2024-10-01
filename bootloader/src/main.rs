@@ -9,7 +9,7 @@
 sp1_zkvm::entrypoint!(main);
 
 use alloy_sol_types::SolType;
-use fibonacci_lib::{fibonacci, PublicValuesStruct};
+use bootloader_lib::{fibonacci, PublicValuesStruct};
 
 pub fn main() {
     // Read an input to the program.

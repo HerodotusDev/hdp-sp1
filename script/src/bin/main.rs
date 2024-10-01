@@ -11,12 +11,12 @@
 //! ```
 
 use alloy_sol_types::SolType;
+use bootloader_lib::PublicValuesStruct;
 use clap::Parser;
-use fibonacci_lib::PublicValuesStruct;
 use sp1_sdk::{ProverClient, SP1Stdin};
 
 /// The ELF (executable and linkable format) file for the Succinct RISC-V zkVM.
-pub const FIBONACCI_ELF: &[u8] = include_bytes!("../../../elf/riscv32im-succinct-zkvm-elf");
+pub const ELF: &[u8] = include_bytes!("../../../elf/riscv32im-succinct-zkvm-elf");
 
 /// The arguments for the command.
 #[derive(Parser, Debug)]
@@ -55,7 +55,7 @@ fn main() {
 
     if args.execute {
         // Execute the program
-        let (output, report) = client.execute(FIBONACCI_ELF, stdin).run().unwrap();
+        let (output, report) = client.execute(ELF, stdin).run().unwrap();
         println!("Program executed successfully.");
 
         // Read the output.
@@ -65,7 +65,7 @@ fn main() {
         println!("a: {}", a);
         println!("b: {}", b);
 
-        let (expected_a, expected_b) = fibonacci_lib::fibonacci(n);
+        let (expected_a, expected_b) = bootloader_lib::fibonacci(n);
         assert_eq!(a, expected_a);
         assert_eq!(b, expected_b);
         println!("Values are correct!");
@@ -74,7 +74,7 @@ fn main() {
         println!("Number of cycles: {}", report.total_instruction_count());
     } else {
         // Setup the program for proving.
-        let (pk, vk) = client.setup(FIBONACCI_ELF);
+        let (pk, vk) = client.setup(ELF);
 
         // Generate the proof
         let proof = client
