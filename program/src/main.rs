@@ -6,6 +6,8 @@
 // Under the hood, we wrap your main function with some extra code so that it behaves properly
 // inside the zkVM.
 #![no_main]
+
+use bootloader_lib::memorizer::Memorizer;
 sp1_zkvm::entrypoint!(main);
 
 pub fn main() {
@@ -13,9 +15,9 @@ pub fn main() {
     //
     // Behind the scenes, this compiles down to a custom system call which handles reading inputs
     // from the prover.
-    let _n = sp1_zkvm::io::read::<u32>();
+    let _memorizer = sp1_zkvm::io::read::<Memorizer>();
 
     // Commit to the public values of the program. The final proof will have a commitment to all the
     // bytes that were committed to.
-    sp1_zkvm::io::commit_slice(&[0]);
+    sp1_zkvm::io::commit_slice(&[10]);
 }
