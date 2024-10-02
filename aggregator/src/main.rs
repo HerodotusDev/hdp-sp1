@@ -7,9 +7,6 @@
 // inside the zkVM.
 #![no_main]
 
-use sha2::Digest;
-use sha2::Sha256;
-
 use bootloader_lib::memorizer::Memorizer;
 sp1_zkvm::entrypoint!(main);
 
@@ -18,7 +15,6 @@ pub fn main() {
     //
     // Behind the scenes, this compiles down to a custom system call which handles reading inputs
     // from the prover.
-    let _memorizer = sp1_zkvm::io::read::<Memorizer>();
 
     // Commit to the public values of the program. The final proof will have a commitment to all the
     // bytes that were committed to.

@@ -1,10 +1,9 @@
 [package]
 version = "0.1.0"
-name = "bootloader-program"
+name = "aggregator-program"
 edition = "2021"
 
 [dependencies]
 alloy-sol-types = { workspace = true }
-sp1-zkvm = { version = "2.0.0", features = [ "verify" ] }
-sha2 = { workspace = true }
+sp1-zkvm = "2.0.0"
 bootloader-lib = { path = "../lib" }
