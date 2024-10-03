@@ -10,13 +10,17 @@
 pub mod memorizer;
 
 use cfg_if::cfg_if;
-use memorizer::{header::HeaderMemorizer, keys::HeaderKey, Memorizer};
+use memorizer::{
+    account::AccountMemorizer,
+    header::HeaderMemorizer,
+    keys::{AccountKey, HeaderKey, StorageKey},
+    storage::StorageMemorizer,
+    Memorizer,
+};
 
 cfg_if! {
     if #[cfg(target_os = "zkvm")] {
         sp1_zkvm::entrypoint!(main);
-    } else {
-        // PLACEHOLDER
     }
 }
 
@@ -29,6 +33,8 @@ pub fn main() {
 
     let memorizer = Memorizer::default();
     memorizer.get_header(HeaderKey::default());
+    memorizer.get_account(AccountKey::default());
+    memorizer.get_storage(StorageKey::default());
 
     // Commit to the public values of the program. The final proof will have a commitment to all the
     // bytes that were committed to.

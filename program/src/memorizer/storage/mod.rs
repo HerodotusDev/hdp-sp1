@@ -1,0 +1,15 @@
+use super::keys::StorageKey;
+use alloy_primitives::U256;
+use cfg_if::cfg_if;
+
+pub trait StorageMemorizer {
+    fn get_storage(&self, key: StorageKey) -> U256;
+}
+
+cfg_if! {
+    if #[cfg(target_os = "zkvm")] {
+        mod zkvm;
+    } else {
+        mod online;
+    }
+}

@@ -1,17 +1,14 @@
+pub mod account;
 pub mod header;
 pub mod keys;
+pub mod storage;
 
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, ops::Deref};
 
 #[derive(Debug, Default, Serialize, Deserialize)]
-pub struct Memorizer(pub HashMap<MemorizerKey, Proof>);
-
-impl Deref for Memorizer {
-    type Target = HashMap<MemorizerKey, Proof>;
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
+pub struct Memorizer {
+    pub map: HashMap<MemorizerKey, Proof>,
 }
 
 #[derive(Debug, Default, Serialize, Deserialize, PartialEq, Eq, Hash)]
