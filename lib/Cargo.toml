@@ -9,3 +9,4 @@ alloy-primitives = { workspace = true }
 sha3 = { workspace = true }
 bincode = { workspace = true }
 serde = { workspace = true }
+cfg-if = { workspace = true }

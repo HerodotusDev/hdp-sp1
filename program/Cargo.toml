@@ -8,3 +8,8 @@ alloy-sol-types = { workspace = true }
 sp1-zkvm = { version = "2.0.0", features = [ "verify" ] }
 sha2 = { workspace = true }
 bootloader-lib = { path = "../lib" }
+cfg-if = { workspace = true }
+reqwest = { workspace = true, optional = true }
+
+[features]
+online = ["reqwest"]

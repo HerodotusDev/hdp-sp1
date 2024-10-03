@@ -777,6 +777,7 @@ dependencies = [
  "alloy-primitives 0.8.5",
  "alloy-sol-types 0.8.5",
  "bincode",
+ "cfg-if",
  "serde",
  "sha3 0.10.8 (git+https://github.com/sp1-patches/RustCrypto-hashes?branch=patch-sha3-v0.10.8)",
 ]
@@ -787,6 +788,8 @@ version = "0.1.0"
 dependencies = [
  "alloy-sol-types 0.8.5",
  "bootloader-lib",
+ "cfg-if",
+ "reqwest 0.12.5",
  "sha2 0.10.8 (git+https://github.com/sp1-patches/RustCrypto-hashes?branch=patch-sha2-v0.10.8)",
  "sp1-zkvm",
 ]
@@ -2870,15 +2873,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "module-program"
-version = "0.1.0"
-dependencies = [
- "alloy-sol-types 0.8.5",
- "bootloader-lib",
- "sp1-zkvm",
-]
-
-[[package]]
 name = "native-tls"
 version = "0.2.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4102,6 +4096,7 @@ dependencies = [
  "base64 0.22.1",
  "bytes",
  "encoding_rs",
+ "futures-channel",
  "futures-core",
  "futures-util",
  "h2 0.4.5",

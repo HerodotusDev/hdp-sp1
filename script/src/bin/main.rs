@@ -46,8 +46,7 @@ fn main() {
     let client = ProverClient::new();
 
     // Setup the inputs.
-    let mut stdin = SP1Stdin::new();
-    stdin.write(&args.n);
+    let stdin = SP1Stdin::new();
 
     println!("n: {}", args.n);
 

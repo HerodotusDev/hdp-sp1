@@ -3,20 +3,20 @@ use alloy_primitives::{keccak256, U256};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
-struct HeaderKey {
+pub struct HeaderKey {
     chain_id: u32,
     block_number: u32,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct AccountKey {
+pub struct AccountKey {
     chain_id: u32,
     block_number: u32,
     address: U256,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct StorageKey {
+pub struct StorageKey {
     chain_id: u32,
     block_number: u32,
     address: U256,
