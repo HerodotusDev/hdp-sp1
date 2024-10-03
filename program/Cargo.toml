@@ -16,3 +16,4 @@ url = { workspace = true }
 [target.'cfg(not(target_os = "zkvm"))'.dependencies]
 program-lib = { path = "../lib" }
 alloy-rpc-client = { version = "0.4.2" }
+tokio = { version = "1.40.0", features = [ "full" ] }

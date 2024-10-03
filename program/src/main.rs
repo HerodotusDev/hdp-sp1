@@ -38,9 +38,9 @@ pub fn main() {
 
     cfg_if! {
         if #[cfg(target_os = "zkvm")] {
-            let memorizer = Memorizer::new(None);
+            let mut memorizer = Memorizer::new(None);
         } else {
-            let memorizer = Memorizer::new(Some(Url::from_str(env::var("RPC_URL").expect("RPC_URL not set").as_ref()).unwrap()));
+            let mut memorizer = Memorizer::new(Some(Url::from_str(env::var("RPC_URL").expect("RPC_URL not set").as_ref()).unwrap()));
         }
     }
 

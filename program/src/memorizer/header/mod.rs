@@ -3,7 +3,7 @@ use alloy_primitives::U256;
 use cfg_if::cfg_if;
 
 pub trait HeaderMemorizer {
-    fn get_header(&self, key: HeaderKey) -> U256;
+    fn get_header(&mut self, key: HeaderKey) -> U256;
 }
 
 cfg_if! {

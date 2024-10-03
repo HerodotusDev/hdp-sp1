@@ -4,23 +4,23 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct HeaderKey {
-    chain_id: u32,
-    block_number: u32,
+    pub chain_id: u32,
+    pub block_number: u32,
 }
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct AccountKey {
-    chain_id: u32,
-    block_number: u32,
-    address: U256,
+    pub chain_id: u32,
+    pub block_number: u32,
+    pub address: U256,
 }
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct StorageKey {
-    chain_id: u32,
-    block_number: u32,
-    address: U256,
-    storage_slot: U256,
+    pub chain_id: u32,
+    pub block_number: u32,
+    pub address: U256,
+    pub storage_slot: U256,
 }
 
 impl From<HeaderKey> for MemorizerKey {

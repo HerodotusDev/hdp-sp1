@@ -3,7 +3,7 @@ use alloy_primitives::U256;
 use cfg_if::cfg_if;
 
 pub trait StorageMemorizer {
-    fn get_storage(&self, key: StorageKey) -> U256;
+    fn get_storage(&mut self, key: StorageKey) -> U256;
 }
 
 cfg_if! {

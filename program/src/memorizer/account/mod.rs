@@ -3,7 +3,7 @@ use alloy_primitives::U256;
 use cfg_if::cfg_if;
 
 pub trait AccountMemorizer {
-    fn get_account(&self, key: AccountKey) -> U256;
+    fn get_account(&mut self, key: AccountKey) -> U256;
 }
 
 cfg_if! {
