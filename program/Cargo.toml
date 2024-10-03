@@ -4,12 +4,15 @@ name = "bootloader-program"
 edition = "2021"
 
 [dependencies]
+alloy-primitives = { workspace = true }
+bincode = { workspace = true }
+serde = { workspace = true }
 alloy-sol-types = { workspace = true }
 sp1-zkvm = { version = "2.0.0", features = [ "verify" ] }
 sha2 = { workspace = true }
-bootloader-lib = { path = "../lib" }
+program-lib = { path = "../lib", optional = true }
 cfg-if = { workspace = true }
 reqwest = { workspace = true, optional = true }
 
 [features]
-online = ["reqwest"]
+online = ["reqwest", "program-lib"]

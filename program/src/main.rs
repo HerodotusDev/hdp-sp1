@@ -6,13 +6,17 @@
 // Under the hood, we wrap your main function with some extra code so that it behaves properly
 // inside the zkVM.
 #![cfg_attr(target_os = "zkvm", no_main)]
+
+pub mod memorizer;
+
 use cfg_if::cfg_if;
+use memorizer::{header::HeaderMemorizer, keys::HeaderKey, Memorizer};
 
 cfg_if! {
     if #[cfg(target_os = "zkvm")] {
         sp1_zkvm::entrypoint!(main);
     } else {
-        use reqwest::blocking;
+        // PLACEHOLDER
     }
 }
 
@@ -23,27 +27,8 @@ pub fn main() {
     // from the prover.
     // let _memorizer = sp1_zkvm::io::read::<Memorizer>();
 
-    cfg_if! {
-        if #[cfg(target_os = "zkvm")] {
-            println!("zkvm run");
-        } else {
-            println!("online run");
-             // Define the URL you want to request
-            let url = "https://jsonplaceholder.typicode.com/posts/1";
-
-            // Make a GET request
-            let response = blocking::get(url).unwrap();
-
-            // Check if the request was successful
-            if response.status().is_success() {
-                // Parse and print the response body
-                let body = response.text().unwrap();
-                println!("Response: {}", body);
-            } else {
-                println!("Request failed with status: {}", response.status());
-            }
-        }
-    }
+    let memorizer = Memorizer::default();
+    memorizer.get_header(HeaderKey::default());
 
     // Commit to the public values of the program. The final proof will have a commitment to all the
     // bytes that were committed to.

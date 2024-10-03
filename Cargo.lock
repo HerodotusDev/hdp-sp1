@@ -133,7 +133,7 @@ dependencies = [
  "ruint",
  "rustc-hash 2.0.0",
  "serde",
- "sha3 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha3",
  "tiny-keccak",
 ]
 
@@ -771,25 +771,16 @@ dependencies = [
 ]
 
 [[package]]
-name = "bootloader-lib"
+name = "bootloader-program"
 version = "0.1.0"
 dependencies = [
  "alloy-primitives 0.8.5",
  "alloy-sol-types 0.8.5",
  "bincode",
  "cfg-if",
- "serde",
- "sha3 0.10.8 (git+https://github.com/sp1-patches/RustCrypto-hashes?branch=patch-sha3-v0.10.8)",
-]
-
-[[package]]
-name = "bootloader-program"
-version = "0.1.0"
-dependencies = [
- "alloy-sol-types 0.8.5",
- "bootloader-lib",
- "cfg-if",
+ "program-lib",
  "reqwest 0.12.5",
+ "serde",
  "sha2 0.10.8 (git+https://github.com/sp1-patches/RustCrypto-hashes?branch=patch-sha2-v0.10.8)",
  "sp1-zkvm",
 ]
@@ -799,9 +790,9 @@ name = "bootloader-script"
 version = "0.1.0"
 dependencies = [
  "alloy-sol-types 0.8.5",
- "bootloader-lib",
  "clap",
  "hex",
+ "program-lib",
  "serde",
  "serde_json",
  "sp1-helper",
@@ -1037,7 +1028,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "sha2 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
- "sha3 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha3",
  "thiserror",
 ]
 
@@ -1516,7 +1507,7 @@ dependencies = [
  "rand",
  "rlp",
  "serde",
- "sha3 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha3",
  "zeroize",
 ]
 
@@ -1574,7 +1565,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
- "sha3 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha3",
  "thiserror",
  "uuid",
 ]
@@ -1591,7 +1582,7 @@ dependencies = [
  "regex",
  "serde",
  "serde_json",
- "sha3 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha3",
  "thiserror",
  "uint",
 ]
@@ -3798,6 +3789,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "program-lib"
+version = "0.1.0"
+dependencies = [
+ "reqwest 0.12.5",
+]
+
+[[package]]
 name = "proptest"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4689,15 +4687,6 @@ name = "sha3"
 version = "0.10.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "75872d278a8f37ef87fa0ddbda7802605cb18344497949862c0d4dcb291eba60"
-dependencies = [
- "digest 0.10.7",
- "keccak",
-]
-
-[[package]]
-name = "sha3"
-version = "0.10.8"
-source = "git+https://github.com/sp1-patches/RustCrypto-hashes?branch=patch-sha3-v0.10.8#8f6d303c0861ba7e5adcc36207c0f41fe5edaabc"
 dependencies = [
  "digest 0.10.7",
  "keccak",
@@ -6499,6 +6488,6 @@ dependencies = [
  "rand",
  "serde",
  "sha2 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
- "sha3 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha3",
  "subtle",
 ]

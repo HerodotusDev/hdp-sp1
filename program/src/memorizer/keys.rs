@@ -2,20 +2,20 @@ use super::MemorizerKey;
 use alloy_primitives::{keccak256, U256};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub struct HeaderKey {
     chain_id: u32,
     block_number: u32,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub struct AccountKey {
     chain_id: u32,
     block_number: u32,
     address: U256,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub struct StorageKey {
     chain_id: u32,
     block_number: u32,
