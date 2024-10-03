@@ -38,8 +38,10 @@ pub fn main() {
 
     cfg_if! {
         if #[cfg(target_os = "zkvm")] {
+            println!("Hello, world! from zkvm");
             let mut memorizer = Memorizer::new(None);
         } else {
+            println!("Hello, world! from non zkvm");
             let mut memorizer = Memorizer::new(Some(Url::from_str(env::var("RPC_URL").expect("RPC_URL not set").as_ref()).unwrap()));
         }
     }

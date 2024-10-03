@@ -5,6 +5,15 @@
 There are four main ways to run this project: build a program, execute a program, generate a core proof, and
 generate an EVM-compatible proof.
 
+### Run online mode
+
+target os is not `zkvm`.
+
+```sh
+cd program
+cargo run --release
+```
+
 ### Build the Program
 
 To build the program, run the following command:

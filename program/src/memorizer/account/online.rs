@@ -14,7 +14,7 @@ impl AccountMemorizer for Memorizer {
 
             // TODO: Check and correct the parameters in these calls if necessary
             let block_header_fut = batch
-                .add_call("eth_blockHeader", &key.block_number)
+                .add_call("eth_getBlockByNumber", &key.block_number)
                 .unwrap();
             let proof_fut = batch.add_call("eth_getProof", &key.block_number).unwrap();
 
