@@ -5,10 +5,21 @@ pub mod storage;
 
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, ops::Deref};
+use url::Url;
 
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Memorizer {
+    pub rpc_url: Option<Url>,
     pub map: HashMap<MemorizerKey, Proof>,
+}
+
+impl Memorizer {
+    pub fn new(rpc_url: Option<Url>) -> Self {
+        Self {
+            rpc_url,
+            map: Default::default(),
+        }
+    }
 }
 
 #[derive(Debug, Default, Serialize, Deserialize, PartialEq, Eq, Hash)]

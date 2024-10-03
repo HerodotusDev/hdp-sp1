@@ -11,8 +11,8 @@ alloy-sol-types = { workspace = true }
 sp1-zkvm = { version = "2.0.0", features = [ "verify" ] }
 sha2 = { workspace = true }
 cfg-if = { workspace = true }
-program-lib = { path = "../lib", optional = true }
-reqwest = { workspace = true, optional = true }
+url = { workspace = true }
 
-[features]
-online = ["reqwest", "program-lib"]
+[target.'cfg(not(target_os = "zkvm"))'.dependencies]
+program-lib = { path = "../lib" }
+alloy-rpc-client = { version = "0.4.2" }

@@ -9,6 +9,8 @@
 
 pub mod memorizer;
 
+use std::str::FromStr;
+
 use cfg_if::cfg_if;
 use memorizer::{
     account::AccountMemorizer,
@@ -17,10 +19,13 @@ use memorizer::{
     storage::StorageMemorizer,
     Memorizer,
 };
+use url::Url;
 
 cfg_if! {
     if #[cfg(target_os = "zkvm")] {
         sp1_zkvm::entrypoint!(main);
+    } else {
+        use std::env;
     }
 }
 
@@ -31,7 +36,14 @@ pub fn main() {
     // from the prover.
     // let _memorizer = sp1_zkvm::io::read::<Memorizer>();
 
-    let memorizer = Memorizer::default();
+    cfg_if! {
+        if #[cfg(target_os = "zkvm")] {
+            let memorizer = Memorizer::new(None);
+        } else {
+            let memorizer = Memorizer::new(Some(Url::from_str(env::var("RPC_URL").expect("RPC_URL not set").as_ref()).unwrap()));
+        }
+    }
+
     memorizer.get_header(HeaderKey::default());
     memorizer.get_account(AccountKey::default());
     memorizer.get_storage(StorageKey::default());
