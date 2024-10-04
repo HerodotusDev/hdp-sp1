@@ -1,11 +1,11 @@
 use super::AccountMemorizer;
 use crate::memorizer::{keys::AccountKey, Memorizer};
-use alloy_primitives::U256;
+use alloy_consensus::Account;
 
 impl AccountMemorizer for Memorizer {
-    fn get_account(&mut self, key: AccountKey) -> U256 {
+    fn get_account(&mut self, key: AccountKey) -> Account {
         println!("zkvm run");
 
-        U256::from(0)
+        Account::default()
     }
 }

@@ -4,9 +4,11 @@ name = "bootloader-program"
 edition = "2021"
 
 [dependencies]
+alloy-consensus = { version = "0.4.2", features = ["serde"] }
+alloy-primitives = { workspace = true }
 bincode = { workspace = true }
 serde = { workspace = true }
-alloy = { workspace = true }
+alloy-sol-types = { workspace = true }
 sp1-zkvm = { version = "2.0.0", features = ["verify"] }
 sha2 = { workspace = true }
 cfg-if = { workspace = true }
@@ -14,5 +16,9 @@ url = { workspace = true }
 
 [target.'cfg(not(target_os = "zkvm"))'.dependencies]
 program-lib = { path = "../lib" }
-alloy = { workspace = true }
+alloy-primitives = { workspace = true }
+alloy-consensus = { version = "0.4.2", features = ["serde"] }
+alloy-rpc-client = "0.4.2"
+alloy-eips = "0.4.2"
+alloy-rpc-types = "0.4.2"
 tokio = { version = "1.40.0", features = ["full"] }

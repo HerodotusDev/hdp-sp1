@@ -1,5 +1,5 @@
 use super::keys::HeaderKey;
-use alloy::primitives::U256;
+use alloy_primitives::U256;
 use cfg_if::cfg_if;
 
 pub trait HeaderMemorizer {

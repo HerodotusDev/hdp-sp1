@@ -1,5 +1,5 @@
 use super::MemorizerKey;
-use alloy::primitives::{keccak256, Address, B256};
+use alloy_primitives::{keccak256, Address, B256};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Default, Serialize, Deserialize)]

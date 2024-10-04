@@ -9,7 +9,7 @@ name = "bootloader"
 path = "src/bin/main.rs"
 
 [dependencies]
-alloy = { workspace = true }
+alloy = { version = "0.4.2", features = ["full"] }
 sp1-sdk = "2.0.0"
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 serde = { version = "1.0", default-features = false, features = ["derive"] }

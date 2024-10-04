@@ -1,10 +1,10 @@
 use super::StorageMemorizer;
 use crate::memorizer::values::StorageMemorizerValue;
 use crate::memorizer::{keys::StorageKey, Memorizer};
-use alloy::eips::BlockNumberOrTag;
-use alloy::primitives::{B256, U256};
-use alloy::rpc::client::{ClientBuilder, ReqwestClient};
-use alloy::rpc::types::EIP1186AccountProofResponse;
+use alloy_eips::BlockNumberOrTag;
+use alloy_primitives::{B256, U256};
+use alloy_rpc_client::{ClientBuilder, ReqwestClient};
+use alloy_rpc_types::EIP1186AccountProofResponse;
 use tokio::runtime::Runtime;
 
 impl StorageMemorizer for Memorizer {
@@ -15,7 +15,7 @@ impl StorageMemorizer for Memorizer {
                 ClientBuilder::default().http(self.rpc_url.clone().unwrap());
             let mut batch = client.new_batch();
 
-            let block_header_fut: alloy::rpc::client::Waiter<EIP1186AccountProofResponse> = batch
+            let block_header_fut: alloy_rpc_client::Waiter<EIP1186AccountProofResponse> = batch
                 .add_call(
                     "eth_getProof",
                     &(

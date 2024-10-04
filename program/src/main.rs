@@ -9,7 +9,7 @@
 
 pub mod memorizer;
 
-use alloy::{hex::FromHex, primitives::B256};
+use alloy_primitives::{hex::FromHex, B256};
 use cfg_if::cfg_if;
 use memorizer::{
     account::AccountMemorizer,
@@ -57,7 +57,7 @@ pub fn main() {
 
     let account_key = AccountKey {
         block_number,
-        address: alloy::primitives::Address::from_hex("0x0").unwrap(),
+        address: alloy_primitives::Address::from_hex("0x0").unwrap(),
         ..Default::default()
     };
 
@@ -66,7 +66,7 @@ pub fn main() {
 
     let storage_key = StorageKey {
         block_number,
-        address: alloy::primitives::Address::from_hex("0x0").unwrap(),
+        address: alloy_primitives::Address::from_hex("0x0").unwrap(),
         storage_slot: B256::from_hex("0x0").unwrap(),
         ..Default::default()
     };

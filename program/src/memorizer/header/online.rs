@@ -1,8 +1,8 @@
 use super::HeaderMemorizer;
 use crate::memorizer::{keys::HeaderKey, Memorizer};
-use alloy::eips::BlockNumberOrTag;
-use alloy::primitives::U256;
-use alloy::rpc::client::{ClientBuilder, ReqwestClient};
+use alloy_eips::BlockNumberOrTag;
+use alloy_primitives::U256;
+use alloy_rpc_client::{ClientBuilder, ReqwestClient};
 use tokio::runtime::Runtime;
 
 impl HeaderMemorizer for Memorizer {

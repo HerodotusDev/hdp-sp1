@@ -1,7 +1,5 @@
-use alloy::{
-    consensus::Account,
-    primitives::{Bytes, B256, U256},
-};
+use alloy_consensus::Account;
+use alloy_primitives::{Bytes, B256, U256};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Default, Serialize, Deserialize)]

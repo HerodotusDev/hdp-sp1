@@ -1,5 +1,5 @@
 use super::keys::AccountKey;
-use alloy::consensus::Account;
+use alloy_consensus::Account;
 use cfg_if::cfg_if;
 
 pub trait AccountMemorizer {
