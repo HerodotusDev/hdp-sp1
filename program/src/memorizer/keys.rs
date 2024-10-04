@@ -1,5 +1,5 @@
 use super::MemorizerKey;
-use alloy::primitives::{keccak256, Address, U256};
+use alloy::primitives::{keccak256, Address, B256};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Default, Serialize, Deserialize)]
@@ -20,7 +20,7 @@ pub struct StorageKey {
     pub chain_id: u64,
     pub block_number: u64,
     pub address: Address,
-    pub storage_slot: U256,
+    pub storage_slot: B256,
 }
 
 impl From<HeaderKey> for MemorizerKey {

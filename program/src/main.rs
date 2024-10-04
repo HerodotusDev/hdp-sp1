@@ -9,8 +9,7 @@
 
 pub mod memorizer;
 
-use std::str::FromStr;
-
+use alloy::{hex::FromHex, primitives::B256};
 use cfg_if::cfg_if;
 use memorizer::{
     account::AccountMemorizer,
@@ -19,6 +18,7 @@ use memorizer::{
     storage::StorageMemorizer,
     Memorizer,
 };
+use std::str::FromStr;
 use url::Url;
 
 cfg_if! {
@@ -46,11 +46,35 @@ pub fn main() {
         }
     }
 
-    memorizer.get_header(HeaderKey::default());
-    let my_account = memorizer.get_account(AccountKey::default());
-    println!("my account is {:?}", my_account);
+    let block_number = 100;
+
+    let header_key = HeaderKey {
+        block_number,
+        ..Default::default()
+    };
+
+    memorizer.get_header(header_key);
+
+    let account_key = AccountKey {
+        block_number,
+        address: alloy::primitives::Address::from_hex("0x0").unwrap(),
+        ..Default::default()
+    };
+
+    let account = memorizer.get_account(account_key);
+    println!("account {:?}", account);
+
+    let storage_key = StorageKey {
+        block_number,
+        address: alloy::primitives::Address::from_hex("0x0").unwrap(),
+        storage_slot: B256::from_hex("0x0").unwrap(),
+        ..Default::default()
+    };
+
+    let slot = memorizer.get_storage(storage_key);
+    println!("slot {:?}", slot);
+
     println!("memoizer is {:?}", memorizer.map);
-    memorizer.get_storage(StorageKey::default());
 
     // Commit to the public values of the program. The final proof will have a commitment to all the
     // bytes that were committed to.
