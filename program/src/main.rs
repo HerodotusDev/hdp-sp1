@@ -47,7 +47,9 @@ pub fn main() {
     }
 
     memorizer.get_header(HeaderKey::default());
-    memorizer.get_account(AccountKey::default());
+    let my_account = memorizer.get_account(AccountKey::default());
+    println!("my account is {:?}", my_account);
+    println!("memoizer is {:?}", memorizer.map);
     memorizer.get_storage(StorageKey::default());
 
     // Commit to the public values of the program. The final proof will have a commitment to all the

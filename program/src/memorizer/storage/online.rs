@@ -1,28 +1,44 @@
 use super::StorageMemorizer;
-use crate::memorizer::{keys::StorageKey, Memorizer, Proof};
-use alloy_primitives::U256;
-use alloy_rpc_client::{ClientBuilder, ReqwestClient};
+use crate::memorizer::values::StorageMemorizerValue;
+use crate::memorizer::{keys::StorageKey, Memorizer};
+use alloy::eips::BlockNumberOrTag;
+use alloy::primitives::{B256, U256};
+use alloy::rpc::client::{ClientBuilder, ReqwestClient};
+use alloy::rpc::types::EIP1186AccountProofResponse;
 use tokio::runtime::Runtime;
 
 impl StorageMemorizer for Memorizer {
     fn get_storage(&mut self, key: StorageKey) -> U256 {
         let rt = Runtime::new().unwrap();
-        let (value, proof): (U256, Vec<u8>) = rt.block_on(async {
+        let value: StorageMemorizerValue = rt.block_on(async {
             let client: ReqwestClient =
                 ClientBuilder::default().http(self.rpc_url.clone().unwrap());
             let mut batch = client.new_batch();
 
-            // TODO: Check and correct the parameters in these calls if necessary
-            let block_header_fut = batch
-                .add_call("eth_getBlockByNumber", &key.block_number)
+            let block_header_fut: alloy::rpc::client::Waiter<EIP1186AccountProofResponse> = batch
+                .add_call(
+                    "eth_getProof",
+                    &(
+                        key.address,
+                        Vec::<B256>::new(),
+                        BlockNumberOrTag::from(key.block_number),
+                    ),
+                )
                 .unwrap();
-            let proof_fut = batch.add_call("eth_getProof", &key.block_number).unwrap();
 
             batch.send().await.unwrap();
+            let response: EIP1186AccountProofResponse = block_header_fut.await.unwrap();
 
-            (block_header_fut.await.unwrap(), proof_fut.await.unwrap())
+            StorageMemorizerValue {
+                key: response.storage_proof[0].key.0,
+                value: response.storage_proof[0].value,
+                proof: response.storage_proof[0].proof.clone(),
+            }
         });
-        self.map.insert(key.into(), Proof(proof));
-        value
+        self.map.insert(
+            key.into(),
+            crate::memorizer::values::MemorizerValue::Storage(value.clone()),
+        );
+        value.value
     }
 }

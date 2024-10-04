@@ -1,9 +1,9 @@
 use super::keys::AccountKey;
-use alloy_primitives::U256;
+use alloy::consensus::Account;
 use cfg_if::cfg_if;
 
 pub trait AccountMemorizer {
-    fn get_account(&mut self, key: AccountKey) -> U256;
+    fn get_account(&mut self, key: AccountKey) -> Account;
 }
 
 cfg_if! {

@@ -1,5 +1,5 @@
 use super::keys::StorageKey;
-use alloy_primitives::U256;
+use alloy::primitives::U256;
 use cfg_if::cfg_if;
 
 pub trait StorageMemorizer {
