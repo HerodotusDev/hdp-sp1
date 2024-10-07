@@ -9,7 +9,10 @@ pub struct AccountMemorizerValue {
 }
 
 #[derive(Debug, Default, Serialize, Deserialize)]
-pub struct HeaderMemorizerValue {}
+pub struct HeaderMemorizerValue {
+    pub header: U256,
+    pub proof: Vec<Bytes>,
+}
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct StorageMemorizerValue {

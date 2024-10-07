@@ -10,11 +10,13 @@
 //! RUST_LOG=info cargo run --release -- --prove
 //! ```
 
+use bootloader_program::memorizer::Memorizer;
 use clap::Parser;
 use sp1_sdk::{ProverClient, SP1Stdin};
+use std::{env, fs, path::Path};
 
 /// The ELF (executable and linkable format) file for the Succinct RISC-V zkVM.
-pub const ELF: &[u8] = include_bytes!("../../../elf/riscv32im-succinct-zkvm-elf");
+pub const ELF: &[u8] = include_bytes!("../../elf/riscv32im-succinct-zkvm-elf");
 
 /// The arguments for the command.
 #[derive(Parser, Debug)]
@@ -46,9 +48,11 @@ fn main() {
     let client = ProverClient::new();
 
     // Setup the inputs.
-    let stdin = SP1Stdin::new();
+    let mut stdin = SP1Stdin::new();
 
-    println!("n: {}", args.n);
+    let manifest_dir: String = env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR not set");
+    let path = Path::new(&manifest_dir).join("../program/memorizer.bin");
+    stdin.write(&Memorizer::from_bytes(&fs::read(path).unwrap()).unwrap());
 
     if args.execute {
         // Execute the program

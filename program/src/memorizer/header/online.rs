@@ -1,14 +1,19 @@
 use super::HeaderMemorizer;
-use crate::memorizer::{keys::HeaderKey, Memorizer};
+use crate::memorizer::{
+    keys::HeaderKey,
+    values::{HeaderMemorizerValue, MemorizerValue},
+    Memorizer,
+};
 use alloy_eips::BlockNumberOrTag;
 use alloy_primitives::U256;
 use alloy_rpc_client::{ClientBuilder, ReqwestClient};
+use alloy_rpc_types::Block;
 use tokio::runtime::Runtime;
 
 impl HeaderMemorizer for Memorizer {
     fn get_header(&mut self, key: HeaderKey) -> U256 {
         let rt = Runtime::new().unwrap();
-        let (_, _): (Vec<u8>, Vec<u8>) = rt.block_on(async {
+        let block: Block = rt.block_on(async {
             let client: ReqwestClient =
                 ClientBuilder::default().http(self.rpc_url.clone().unwrap());
             let mut batch = client.new_batch();
@@ -20,18 +25,20 @@ impl HeaderMemorizer for Memorizer {
                     &(BlockNumberOrTag::from(key.block_number), false),
                 )
                 .unwrap();
-            let proof_fut = batch
-                .add_call(
-                    "eth_getBlockByNumber",
-                    &(BlockNumberOrTag::from(key.block_number), false),
-                )
-                .unwrap();
 
             batch.send().await.unwrap();
 
-            (block_header_fut.await.unwrap(), proof_fut.await.unwrap())
+            block_header_fut.await.unwrap()
         });
-        //self.map.insert(key.into(), Proof(proof));
-        U256::ZERO
+        let header: U256 = block.header.hash.into();
+
+        self.map.insert(
+            key.into(),
+            MemorizerValue::Header(HeaderMemorizerValue {
+                header,
+                proof: vec![],
+            }),
+        );
+        header
     }
 }
