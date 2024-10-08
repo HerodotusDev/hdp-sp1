@@ -8,7 +8,6 @@ use alloy_eips::BlockNumberOrTag;
 use alloy_primitives::U256;
 use alloy_rpc_client::{ClientBuilder, ReqwestClient};
 use alloy_rpc_types::Block;
-use serde::Serialize;
 use tokio::runtime::Runtime;
 
 impl HeaderMemorizer for Memorizer {

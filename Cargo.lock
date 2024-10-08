@@ -336,7 +336,7 @@ dependencies = [
  "ruint",
  "rustc-hash 2.0.0",
  "serde",
- "sha3",
+ "sha3 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "tiny-keccak",
 ]
 
@@ -1286,7 +1286,10 @@ dependencies = [
  "reqwest 0.12.8",
  "serde",
  "sha2 0.10.8 (git+https://github.com/sp1-patches/RustCrypto-hashes?branch=patch-sha2-v0.10.8)",
+ "sha3 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha3 0.10.8 (git+https://github.com/sp1-patches/RustCrypto-hashes?branch=patch-sha3-v0.10.8)",
  "sp1-zkvm",
+ "thiserror-no-std",
  "tokio",
  "url",
 ]
@@ -1550,7 +1553,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "sha2 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
- "sha3",
+ "sha3 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "thiserror",
 ]
 
@@ -2061,7 +2064,7 @@ dependencies = [
  "rand",
  "rlp",
  "serde",
- "sha3",
+ "sha3 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "zeroize",
 ]
 
@@ -2119,7 +2122,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
- "sha3",
+ "sha3 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "thiserror",
  "uuid",
 ]
@@ -2136,7 +2139,7 @@ dependencies = [
  "regex",
  "serde",
  "serde_json",
- "sha3",
+ "sha3 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "thiserror",
  "uint",
 ]
@@ -5336,6 +5339,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "sha3"
+version = "0.10.8"
+source = "git+https://github.com/sp1-patches/RustCrypto-hashes?branch=patch-sha3-v0.10.8#8f6d303c0861ba7e5adcc36207c0f41fe5edaabc"
+dependencies = [
+ "digest 0.10.7",
+ "keccak",
+]
+
+[[package]]
 name = "sha3-asm"
 version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6201,6 +6213,26 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.79",
+]
+
+[[package]]
+name = "thiserror-impl-no-std"
+version = "2.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "58e6318948b519ba6dc2b442a6d0b904ebfb8d411a3ad3e07843615a72249758"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 1.0.109",
+]
+
+[[package]]
+name = "thiserror-no-std"
+version = "2.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a3ad459d94dd517257cc96add8a43190ee620011bb6e6cdc82dafd97dfafafea"
+dependencies = [
+ "thiserror-impl-no-std",
 ]
 
 [[package]]
@@ -7245,6 +7277,6 @@ dependencies = [
  "rand",
  "serde",
  "sha2 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
- "sha3",
+ "sha3 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "subtle",
 ]

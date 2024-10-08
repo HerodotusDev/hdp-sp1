@@ -9,13 +9,13 @@
 
 pub mod memorizer;
 
-use alloy_primitives::{hex::FromHex, Bytes, U256};
+use alloy_primitives::hex::FromHex;
 use cfg_if::cfg_if;
 use memorizer::{
     account::AccountMemorizer,
     header::HeaderMemorizer,
     keys::{AccountKey, HeaderKey},
-    Memorizer, MemorizerKey,
+    Memorizer,
 };
 use url::Url;
 
