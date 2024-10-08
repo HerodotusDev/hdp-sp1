@@ -1,11 +1,10 @@
 pub mod account;
 pub mod header;
 pub mod keys;
-pub mod mmr;
 pub mod storage;
 pub mod values;
 
-use mmr::MmrMeta;
+use program_lib::mmr::MmrMeta;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, ops::Deref};
 use url::Url;

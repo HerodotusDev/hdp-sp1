@@ -16,4 +16,5 @@ sha3 = { git = "https://github.com/sp1-patches/RustCrypto-hashes", package = "sh
 sha2 = { git = "https://github.com/sp1-patches/RustCrypto-hashes", package = "sha2", branch = "patch-sha2-v0.10.8" }
 url = { version = "2.5.2", features = ["serde"] }
 bootloader-program = { path = "./program" }
+program-lib = { path = "./lib" }
 thiserror-no-std = "2.0.2"
