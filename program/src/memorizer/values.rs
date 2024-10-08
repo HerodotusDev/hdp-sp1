@@ -1,3 +1,4 @@
+use crate::memorizer::cl_header::BeaconHeader;
 use alloy_consensus::Account;
 use alloy_primitives::{Bytes, B256, U256};
 use serde::{Deserialize, Serialize};
@@ -14,6 +15,12 @@ pub struct HeaderMemorizerValue {
     pub proof: Vec<Bytes>,
 }
 
+#[derive(Debug, Default, Serialize, Deserialize)]
+pub struct BeaconHeaderMemorizerValue {
+    pub header: BeaconHeader,
+    pub proof: Vec<Bytes>,
+}
+
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct StorageMemorizerValue {
     pub key: B256,
@@ -26,4 +33,5 @@ pub enum MemorizerValue {
     Account(AccountMemorizerValue),
     Header(HeaderMemorizerValue),
     Storage(StorageMemorizerValue),
+    BeaconHeader(BeaconHeaderMemorizerValue),
 }

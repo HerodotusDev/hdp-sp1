@@ -18,8 +18,10 @@ use memorizer::{
     keys::{AccountKey, HeaderKey},
     Memorizer,
 };
-use ssz_rs::HashTreeRoot;
+use ssz_rs::*;
 use url::Url;
+
+use crate::memorizer::{cl_header::ClHeaderMemorizer, keys::BeaconHeaderKey};
 
 cfg_if! {
     if #[cfg(target_os = "zkvm")] {
@@ -70,28 +72,20 @@ pub fn main() {
     // println!("memoizer is {:?}", memorizer.map);
 
     // SSZ shit
-    let beacon_header = BeaconHeader {
-        slot: alloy_primitives::U256::from(6050964),
-        proposer_index: 35,
-        parent_root: alloy_primitives::U256::from_be_bytes([
-            0xa0, 0x62, 0xd3, 0x88, 0xca, 0x08, 0xf0, 0x99, 0xf4, 0x9e, 0x9c, 0xad, 0x64, 0xcb,
-            0x62, 0xc1, 0x21, 0xe1, 0x00, 0x4b, 0x7b, 0xc0, 0x11, 0xc8, 0xe2, 0xca, 0x8c, 0x2e,
-            0xed, 0x4e, 0x74, 0xdd,
-        ]),
-        state_root: alloy_primitives::U256::from_be_bytes([
-            0x29, 0x63, 0xc1, 0x9c, 0xbd, 0x4b, 0x14, 0x82, 0x76, 0x5f, 0x90, 0xf7, 0x15, 0x48,
-            0xf2, 0xf5, 0xd6, 0x82, 0x81, 0x2f, 0x94, 0xeb, 0xc0, 0xd8, 0x14, 0x4a, 0x58, 0xa1,
-            0xab, 0x0e, 0xe7, 0x44,
-        ]),
-        body_root: alloy_primitives::U256::from_be_bytes([
-            0xac, 0x4d, 0xc6, 0x37, 0x18, 0x65, 0xa1, 0xe7, 0x0a, 0x07, 0x7d, 0xdf, 0xfe, 0x51,
-            0xd7, 0x22, 0xc2, 0xcd, 0x7f, 0xd2, 0x1f, 0x1b, 0x88, 0x85, 0x77, 0xfd, 0x6d, 0x0c,
-            0xb5, 0x05, 0xfe, 0x88,
-        ]),
-    };
+    let beacon_header_key = BeaconHeaderKey { slot: 6050964 };
+    let beacon_header = memorizer.get_cl_header(beacon_header_key);
     let ssz_root = beacon_header.hash_tree_root().unwrap();
-
     println!("ssz_root {:?}", ssz_root);
+
+    let body_root_proof_path = &["body_root".into()];
+    let (proof, witness) = beacon_header.prove(body_root_proof_path).unwrap();
+
+    // Print out the proof
+    println!("proof {:?}", proof);
+
+    let result = proof.verify(witness);
+
+    println!("result {:?}", result);
 
     cfg_if! {
         if #[cfg(target_os = "zkvm")] {

@@ -23,6 +23,12 @@ pub struct StorageKey {
     pub storage_slot: B256,
 }
 
+#[derive(Debug, Default, Serialize, Deserialize)]
+
+pub struct BeaconHeaderKey {
+    pub slot: u64,
+}
+
 impl From<HeaderKey> for MemorizerKey {
     fn from(value: HeaderKey) -> Self {
         Self(*keccak256(bincode::serialize(&value).unwrap()))
@@ -37,6 +43,12 @@ impl From<AccountKey> for MemorizerKey {
 
 impl From<StorageKey> for MemorizerKey {
     fn from(value: StorageKey) -> Self {
+        Self(*keccak256(bincode::serialize(&value).unwrap()))
+    }
+}
+
+impl From<BeaconHeaderKey> for MemorizerKey {
+    fn from(value: BeaconHeaderKey) -> Self {
         Self(*keccak256(bincode::serialize(&value).unwrap()))
     }
 }
