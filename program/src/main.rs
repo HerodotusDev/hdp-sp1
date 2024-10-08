@@ -9,13 +9,13 @@
 
 pub mod memorizer;
 
-use alloy_primitives::hex::FromHex;
+use alloy_primitives::{hex::FromHex, Bytes, U256};
 use cfg_if::cfg_if;
 use memorizer::{
     account::AccountMemorizer,
     header::HeaderMemorizer,
     keys::{AccountKey, HeaderKey},
-    Memorizer,
+    Memorizer, MemorizerKey,
 };
 use url::Url;
 
@@ -42,7 +42,7 @@ pub fn main() {
         } else {
             println!("Hello, world! from non zkvm");
             let rpc_url: String = env::var("RPC_URL").expect("RPC_URL not set");
-            let mut memorizer = Memorizer::new(Some(Url::from_str(&rpc_url).unwrap()));
+            let mut memorizer = Memorizer::new(Some(Url::from_str(&rpc_url).unwrap()), None);
         }
     }
 
@@ -65,7 +65,7 @@ pub fn main() {
     let account = memorizer.get_account(account_key);
     println!("account {:?}", account.balance);
 
-    // println!("memoizer is {:?}", memorizer.map);
+    println!("memoizer is {:?}", memorizer.map);
 
     cfg_if! {
         if #[cfg(target_os = "zkvm")] {

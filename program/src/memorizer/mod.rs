@@ -1,9 +1,11 @@
 pub mod account;
 pub mod header;
 pub mod keys;
+pub mod mmr;
 pub mod storage;
 pub mod values;
 
+use mmr::MmrMeta;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, ops::Deref};
 use url::Url;
@@ -12,13 +14,15 @@ use values::MemorizerValue;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Memorizer {
     pub rpc_url: Option<Url>,
+    pub mmr_meta: Option<MmrMeta>,
     pub map: HashMap<MemorizerKey, MemorizerValue>,
 }
 
 impl Memorizer {
-    pub fn new(rpc_url: Option<Url>) -> Self {
+    pub fn new(rpc_url: Option<Url>, mmr_meta: Option<MmrMeta>) -> Self {
         Self {
             rpc_url,
+            mmr_meta,
             map: Default::default(),
         }
     }

@@ -12,7 +12,7 @@ alloy-sol-types = { workspace = true }
 sp1-zkvm = { version = "2.0.0", features = ["verify"] }
 sha2 = { workspace = true }
 cfg-if = { workspace = true }
-url = { workspace = true }
+url = { workspace = true, features = ["serde"]}
 
 [target.'cfg(not(target_os = "zkvm"))'.dependencies]
 alloy-primitives = { workspace = true }
