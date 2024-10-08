@@ -51,7 +51,7 @@ fn main() {
     let mut stdin = SP1Stdin::new();
 
     let manifest_dir: String = env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR not set");
-    let path = Path::new(&manifest_dir).join("../program/memorizer.bin");
+    let path = Path::new(&manifest_dir).join("../memorizer.bin");
     stdin.write(&Memorizer::from_bytes(&fs::read(path).unwrap()).unwrap());
 
     if args.execute {

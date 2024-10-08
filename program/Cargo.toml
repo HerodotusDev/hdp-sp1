@@ -13,6 +13,7 @@ sp1-zkvm = { version = "2.0.0", features = ["verify"] }
 sha2 = { workspace = true }
 cfg-if = { workspace = true }
 url = { workspace = true }
+ssz_rs = { git = "https://github.com/ralexstokes/ssz-rs.git", features = ["serde"] }
 
 [target.'cfg(not(target_os = "zkvm"))'.dependencies]
 alloy-primitives = { workspace = true }
