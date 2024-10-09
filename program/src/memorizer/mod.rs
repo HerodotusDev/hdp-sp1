@@ -4,7 +4,7 @@ pub mod keys;
 pub mod storage;
 pub mod values;
 
-use program_lib::mmr::MmrMeta;
+use hdp_lib::mmr::MmrMeta;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, ops::Deref};
 use url::Url;

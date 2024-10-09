@@ -9,13 +9,13 @@ alloy-primitives = { workspace = true }
 alloy-sol-types = { workspace = true }
 bincode = { workspace = true }
 cfg-if = { workspace = true }
-program-lib = { workspace = true }
+hdp-lib = { workspace = true }
 serde = { workspace = true }
 sha2 = { workspace = true }
 sha3 = "0.10.8"
 sp1-zkvm = { version = "2.0.0", features = ["verify"] }
 thiserror-no-std = { workspace = true }
-url = { workspace = true, features = ["serde"]}
+url = { workspace = true, features = ["serde"] }
 
 [target.'cfg(not(target_os = "zkvm"))'.dependencies]
 alloy-consensus = { version = "0.4.2", features = ["serde"] }

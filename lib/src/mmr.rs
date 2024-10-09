@@ -3,7 +3,7 @@ use alloy_primitives::keccak256;
 use alloy_primitives::{B256, U256};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub struct MmrMeta {
     pub root_hash: B256,
     pub mmr_size: u128,

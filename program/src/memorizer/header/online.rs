@@ -4,39 +4,26 @@ use crate::memorizer::{
     values::{HeaderMemorizerValue, MemorizerValue},
     Memorizer,
 };
-use alloy_eips::BlockNumberOrTag;
-use alloy_primitives::U256;
-use alloy_rpc_client::{ClientBuilder, ReqwestClient};
-use alloy_rpc_types::Block;
+use alloy_consensus::Header;
+use hdp_lib::{header::IndexerRpc, mmr::MmrMeta, provider::header::IndexerClient};
 use tokio::runtime::Runtime;
 
 impl HeaderMemorizer for Memorizer {
-    fn get_header(&mut self, key: HeaderKey) -> U256 {
+    fn get_header(&mut self, key: HeaderKey) -> Header {
         let rt = Runtime::new().unwrap();
-        let block: Block = rt.block_on(async {
-            let client: ReqwestClient =
-                ClientBuilder::default().http(self.rpc_url.clone().unwrap());
-            let mut batch = client.new_batch();
-
-            // TODO: Check and correct the parameters in these calls if necessary
-            let block_header_fut = batch
-                .add_call(
-                    "eth_getBlockByNumber",
-                    &(BlockNumberOrTag::from(key.block_number), false),
-                )
-                .unwrap();
-
-            batch.send().await.unwrap();
-
-            block_header_fut.await.unwrap()
+        let block: IndexerRpc = rt.block_on(async {
+            let client = IndexerClient::default();
+            client.get_header(key.block_number).await.unwrap()
         });
-        let header: U256 = block.header.hash.into();
+        let mmr: MmrMeta = block.meta.into();
+        let header: Header = block.proofs[0].rlp_block_header.clone().into();
 
         self.map.insert(
             key.into(),
             MemorizerValue::Header(HeaderMemorizerValue {
-                header,
-                proof: vec![],
+                mmr,
+                header: header.clone(),
+                proof: block.proofs[0].siblings_hashes.clone(),
             }),
         );
         header

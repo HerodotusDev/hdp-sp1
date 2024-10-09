@@ -1,16 +1,18 @@
-use alloy_consensus::Account;
+use alloy_consensus::{Account, Header};
 use alloy_primitives::{Bytes, B256, U256};
+use hdp_lib::mmr::MmrMeta;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Default, Serialize, Deserialize)]
-pub struct AccountMemorizerValue {
-    pub account: Account,
+pub struct HeaderMemorizerValue {
+    pub header: Header,
+    pub mmr: MmrMeta,
     pub proof: Vec<Bytes>,
 }
 
 #[derive(Debug, Default, Serialize, Deserialize)]
-pub struct HeaderMemorizerValue {
-    pub header: U256,
+pub struct AccountMemorizerValue {
+    pub account: Account,
     pub proof: Vec<Bytes>,
 }
 
@@ -23,7 +25,7 @@ pub struct StorageMemorizerValue {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum MemorizerValue {
-    Account(AccountMemorizerValue),
     Header(HeaderMemorizerValue),
+    Account(AccountMemorizerValue),
     Storage(StorageMemorizerValue),
 }
