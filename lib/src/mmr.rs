@@ -100,7 +100,7 @@ impl MmrMeta {
 
     #[cfg(test)]
     fn final_top_peak(&self) -> B256 {
-        let mut peaks_hashes: Vec<B256> = self.peaks.clone().into();
+        let mut peaks_hashes: Vec<B256> = self.peaks.clone();
 
         match peaks_hashes.len() {
             0 => panic!("Error"),
