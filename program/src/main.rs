@@ -31,7 +31,6 @@ pub fn main() {
             // from the prover.
 
             let mut memorizer = sp1_zkvm::io::read::<Memorizer>();
-            println!("{memorizer:?}");
         } else {
             println!("Hello, world! from non zkvm");
             // let rpc_url: String = env::var("RPC_URL").expect("RPC_URL not set");
@@ -46,8 +45,7 @@ pub fn main() {
         ..Default::default()
     };
 
-    memorizer.get_header(header_key).unwrap();
-
+    let _ = memorizer.get_header(header_key).unwrap();
     let account_key = AccountKey {
         block_number,
         address: alloy_primitives::Address::from_hex("0x7f2c6f930306d3aa736b3a6c6a98f512f74036d4")
@@ -55,8 +53,8 @@ pub fn main() {
         ..Default::default()
     };
 
-    let account = memorizer.get_account(account_key);
-    println!("account {:?}", account.balance);
+    let _ = memorizer.get_account(account_key);
+    //  println!("account {:?}", account.balance);
 
     println!("memoizer is {:?}", memorizer);
 
@@ -64,7 +62,7 @@ pub fn main() {
         if #[cfg(target_os = "zkvm")] {
             // Commit to the public values of the program. The final proof will have a commitment to all the
             // bytes that were committed to.
-
+            // TODO: need to properly commit arbitrary data from program
             println!("Done!");
         } else {
             let manifest_dir: String = env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR not set");
