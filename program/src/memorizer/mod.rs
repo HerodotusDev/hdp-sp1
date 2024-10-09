@@ -13,15 +13,15 @@ use values::MemorizerValue;
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct Memorizer {
     pub rpc_url: Option<Url>,
-    pub mmr_meta: Option<MmrMeta>,
+    pub mmr_meta: Vec<MmrMeta>,
     pub map: HashMap<MemorizerKey, MemorizerValue>,
 }
 
 impl Memorizer {
-    pub fn new(rpc_url: Option<Url>, mmr_meta: Option<MmrMeta>) -> Self {
+    pub fn new(rpc_url: Option<Url>) -> Self {
         Self {
             rpc_url,
-            mmr_meta,
+            mmr_meta: Vec::new(),
             map: Default::default(),
         }
     }
@@ -30,7 +30,7 @@ impl Memorizer {
         bincode::deserialize(bytes)
     }
 
-    pub fn as_bytes(&self) -> Result<Vec<u8>, Box<bincode::ErrorKind>> {
+    pub fn as_bytes(&mut self) -> Result<Vec<u8>, Box<bincode::ErrorKind>> {
         bincode::serialize(self)
     }
 }
@@ -57,7 +57,7 @@ mod tests {
         let binding = TempDir::new("test").unwrap();
         let path = binding.path().join("memorizer.bin");
 
-        let original_mem = Memorizer::new(None, None);
+        let mut original_mem = Memorizer::new(None);
         fs::write(&path, original_mem.as_bytes().unwrap()).unwrap();
 
         let bytes = fs::read(path).unwrap();

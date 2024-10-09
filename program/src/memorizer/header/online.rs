@@ -25,7 +25,7 @@ impl HeaderMemorizer for Memorizer {
                 proof: block.proofs[0].siblings_hashes.clone(),
             }),
         );
-        self.mmr_meta = Some(mmr);
+        self.mmr_meta = vec![mmr];
         header
     }
 }
