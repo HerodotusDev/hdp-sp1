@@ -2,6 +2,7 @@ pub mod account;
 pub mod header;
 pub mod keys;
 pub mod storage;
+pub mod transaction;
 pub mod values;
 
 use hdp_lib::mmr::MmrMeta;
