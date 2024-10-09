@@ -21,11 +21,11 @@ impl HeaderMemorizer for Memorizer {
         self.map.insert(
             key.into(),
             MemorizerValue::Header(HeaderMemorizerValue {
-                mmr,
                 header: header.clone(),
                 proof: block.proofs[0].siblings_hashes.clone(),
             }),
         );
+        self.mmr_meta = Some(mmr);
         header
     }
 }
