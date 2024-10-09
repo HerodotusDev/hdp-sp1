@@ -67,25 +67,18 @@ pub fn main() {
     };
 
     let account = memorizer.get_account(account_key);
-    println!("account {:?}", account.balance);
 
     // println!("memoizer is {:?}", memorizer.map);
 
     // SSZ shit
-    let beacon_header_key = BeaconHeaderKey { slot: 6050964 };
+    let beacon_header_key = BeaconHeaderKey { slot: 6057008 };
     let beacon_header = memorizer.get_cl_header(beacon_header_key);
     let ssz_root = beacon_header.hash_tree_root().unwrap();
-    println!("ssz_root {:?}", ssz_root);
-
     let body_root_proof_path = &["body_root".into()];
     let (proof, witness) = beacon_header.prove(body_root_proof_path).unwrap();
 
     // Print out the proof
-    println!("proof {:?}", proof);
-
     let result = proof.verify(witness);
-
-    println!("result {:?}", result);
 
     cfg_if! {
         if #[cfg(target_os = "zkvm")] {

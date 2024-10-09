@@ -7,11 +7,11 @@ use crate::memorizer::keys::BeaconHeaderKey;
     PartialEq, Eq, Debug, Default, SimpleSerialize, serde::Serialize, serde::Deserialize, Clone,
 )]
 pub struct BeaconHeader {
-    pub slot: U256,
+    pub slot: u64,
     pub proposer_index: u64,
-    pub parent_root: U256,
-    pub state_root: U256,
-    pub body_root: U256,
+    pub parent_root: Vector<u8, 32>,
+    pub state_root: Vector<u8, 32>,
+    pub body_root: Vector<u8, 32>,
 }
 
 pub trait ClHeaderMemorizer {
