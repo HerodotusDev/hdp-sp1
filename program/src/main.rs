@@ -1,82 +1,74 @@
-//! A simple program that takes a number `n` as input, and writes the `n-1`th and `n`th fibonacci
-//! number as an output.
-
-// These two lines are necessary for the program to properly compile.
-//
-// Under the hood, we wrap your main function with some extra code so that it behaves properly
-// inside the zkVM.
 #![cfg_attr(target_os = "zkvm", no_main)]
 
 pub mod memorizer;
 
-use alloy_primitives::{hex::FromHex, B256};
+use alloy_primitives::hex::FromHex;
 use cfg_if::cfg_if;
 use memorizer::{
     account::AccountMemorizer,
     header::HeaderMemorizer,
-    keys::{AccountKey, HeaderKey, StorageKey},
-    storage::StorageMemorizer,
+    keys::{AccountKey, HeaderKey},
     Memorizer,
 };
-use std::str::FromStr;
 use url::Url;
 
 cfg_if! {
     if #[cfg(target_os = "zkvm")] {
         sp1_zkvm::entrypoint!(main);
     } else {
-        use std::env;
+        use std::{env, fs, path::Path, str::FromStr};
     }
 }
 
 pub fn main() {
-    // Read an input to the program.
-    //
-    // Behind the scenes, this compiles down to a custom system call which handles reading inputs
-    // from the prover.
-    // let _memorizer = sp1_zkvm::io::read::<Memorizer>();
-
     cfg_if! {
         if #[cfg(target_os = "zkvm")] {
             println!("Hello, world! from zkvm");
-            let mut memorizer = Memorizer::new(None);
+
+            // Read an input to the program.
+            //
+            // Behind the scenes, this compiles down to a custom system call which handles reading inputs
+            // from the prover.
+
+            let mut memorizer = sp1_zkvm::io::read::<Memorizer>();
         } else {
             println!("Hello, world! from non zkvm");
-            let mut memorizer = Memorizer::new(Some(Url::from_str(env::var("RPC_URL").expect("RPC_URL not set").as_ref()).unwrap()));
+            let rpc_url: String = env::var("RPC_URL").expect("RPC_URL not set");
+            let mut memorizer = Memorizer::new(Some(Url::from_str(&rpc_url).unwrap()));
         }
     }
 
-    let block_number = 100;
+    let block_number = 5244652;
 
     let header_key = HeaderKey {
         block_number,
         ..Default::default()
     };
 
-    memorizer.get_header(header_key);
-
+    let _ = memorizer.get_header(header_key).unwrap();
     let account_key = AccountKey {
         block_number,
-        address: alloy_primitives::Address::from_hex("0x0").unwrap(),
+        address: alloy_primitives::Address::from_hex("0x7f2c6f930306d3aa736b3a6c6a98f512f74036d4")
+            .unwrap(),
         ..Default::default()
     };
 
-    let account = memorizer.get_account(account_key);
-    println!("account {:?}", account);
+    let _ = memorizer.get_account(account_key);
+    //  println!("account {:?}", account.balance);
 
-    let storage_key = StorageKey {
-        block_number,
-        address: alloy_primitives::Address::from_hex("0x0").unwrap(),
-        storage_slot: B256::from_hex("0x0").unwrap(),
-        ..Default::default()
-    };
+    println!("memoizer is {:?}", memorizer);
 
-    let slot = memorizer.get_storage(storage_key);
-    println!("slot {:?}", slot);
-
-    println!("memoizer is {:?}", memorizer.map);
-
-    // Commit to the public values of the program. The final proof will have a commitment to all the
-    // bytes that were committed to.
-    // sp1_zkvm::io::commit_slice(&[10]);
+    cfg_if! {
+        if #[cfg(target_os = "zkvm")] {
+            // Commit to the public values of the program. The final proof will have a commitment to all the
+            // bytes that were committed to.
+            // TODO: need to properly commit arbitrary data from program
+            println!("Done!");
+        } else {
+            let manifest_dir: String = env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR not set");
+            let path = Path::new(&manifest_dir).join("../memorizer.bin");
+            println!("Memorizer saved to {path:?}");
+            fs::write(path, memorizer.as_bytes().unwrap()).unwrap()
+        }
+    }
 }

@@ -1,37 +1,37 @@
+use std::error::Error;
+
 use super::HeaderMemorizer;
-use crate::memorizer::{keys::HeaderKey, Memorizer};
-use alloy_eips::BlockNumberOrTag;
-use alloy_primitives::U256;
-use alloy_rpc_client::{ClientBuilder, ReqwestClient};
+use crate::memorizer::{
+    keys::HeaderKey,
+    values::{HeaderMemorizerValue, MemorizerValue},
+    Memorizer,
+};
+use alloy_consensus::Header;
+use hdp_lib::{header::IndexerRpc, mmr::MmrMeta, provider::header::IndexerClient};
 use tokio::runtime::Runtime;
 
 impl HeaderMemorizer for Memorizer {
-    fn get_header(&mut self, key: HeaderKey) -> U256 {
+    fn get_header(&mut self, key: HeaderKey) -> Result<Header, Box<dyn Error>> {
         let rt = Runtime::new().unwrap();
-        let (_, _): (Vec<u8>, Vec<u8>) = rt.block_on(async {
-            let client: ReqwestClient =
-                ClientBuilder::default().http(self.rpc_url.clone().unwrap());
-            let mut batch = client.new_batch();
-
-            // TODO: Check and correct the parameters in these calls if necessary
-            let block_header_fut = batch
-                .add_call(
-                    "eth_getBlockByNumber",
-                    &(BlockNumberOrTag::from(key.block_number), false),
-                )
-                .unwrap();
-            let proof_fut = batch
-                .add_call(
-                    "eth_getBlockByNumber",
-                    &(BlockNumberOrTag::from(key.block_number), false),
-                )
-                .unwrap();
-
-            batch.send().await.unwrap();
-
-            (block_header_fut.await.unwrap(), proof_fut.await.unwrap())
+        let block: IndexerRpc = rt.block_on(async {
+            let client = IndexerClient::default();
+            client.get_header(key.block_number).await.unwrap()
         });
-        //self.map.insert(key.into(), Proof(proof));
-        U256::ZERO
+        let mmr: MmrMeta = block.meta.into();
+        let header: Header = block.proofs[0].rlp_block_header.clone().into();
+
+        self.map.insert(
+            key.into(),
+            MemorizerValue::Header(HeaderMemorizerValue {
+                header: header.clone(),
+                element_index: block.proofs[0].element_index,
+                element_hash: block.proofs[0].element_hash,
+                rlp: block.proofs[0].rlp_block_header.string.clone(),
+                proof: block.proofs[0].siblings_hashes.clone(),
+            }),
+        );
+        self.mmr_meta = vec![mmr];
+
+        Ok(header)
     }
 }

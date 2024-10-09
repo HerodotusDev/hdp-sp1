@@ -20,3 +20,6 @@ pgo-data.profdata
 
 # Built circuits
 elf
+
+# Binary files
+*.bin

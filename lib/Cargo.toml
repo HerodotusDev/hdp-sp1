@@ -1,7 +1,28 @@
 [package]
-name = "program-lib"
+name = "hdp-lib"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-reqwest = { version = "0.12", features = ["blocking"] }
+alloy-consensus = { version = "0.4.2", features = ["serde"] }
+alloy-primitives = { workspace = true }
+alloy-sol-types = { workspace = true }
+bincode = { workspace = true }
+cfg-if = { workspace = true }
+serde = { workspace = true }
+sha2 = { workspace = true }
+sha3 = "0.10.8"
+sp1-zkvm = { version = "2.0.0", features = ["verify"] }
+thiserror-no-std = { workspace = true }
+url = { workspace = true, features = ["serde"] }
+
+[target.'cfg(not(target_os = "zkvm"))'.dependencies]
+alloy-consensus = { version = "0.4.2", features = ["serde"] }
+alloy-eips = "0.4.2"
+alloy-primitives = { workspace = true }
+alloy-rlp = { version = "0.3.5", features = ["derive"] }
+alloy-rpc-client = "0.4.2"
+alloy-rpc-types = "0.4.2"
+reqwest = { version = "0.12", features = ["json"] }
+sha3-v0-10-8 = { git = "https://github.com/sp1-patches/RustCrypto-hashes", package = "sha3", branch = "patch-sha3-v0.10.8" }
+tokio = { version = "1.40.0", features = ["full"] }
