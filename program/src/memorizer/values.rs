@@ -9,7 +9,10 @@ use serde_with::serde_as;
 pub struct HeaderMemorizerValue {
     #[serde_as(as = "serde_bincode_compat::Header")]
     pub header: Header,
-    pub proof: Vec<Bytes>,
+    pub element_index: u128,
+    pub element_hash: B256,
+    pub rlp: String,
+    pub proof: Vec<B256>,
 }
 
 #[derive(Debug, Default, Serialize, Deserialize, PartialEq)]

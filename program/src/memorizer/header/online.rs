@@ -1,3 +1,5 @@
+use std::error::Error;
+
 use super::HeaderMemorizer;
 use crate::memorizer::{
     keys::HeaderKey,
@@ -9,7 +11,7 @@ use hdp_lib::{header::IndexerRpc, mmr::MmrMeta, provider::header::IndexerClient}
 use tokio::runtime::Runtime;
 
 impl HeaderMemorizer for Memorizer {
-    fn get_header(&mut self, key: HeaderKey) -> Header {
+    fn get_header(&mut self, key: HeaderKey) -> Result<Header, Box<dyn Error>> {
         let rt = Runtime::new().unwrap();
         let block: IndexerRpc = rt.block_on(async {
             let client = IndexerClient::default();
@@ -22,10 +24,14 @@ impl HeaderMemorizer for Memorizer {
             key.into(),
             MemorizerValue::Header(HeaderMemorizerValue {
                 header: header.clone(),
+                element_index: block.proofs[0].element_index,
+                element_hash: block.proofs[0].element_hash,
+                rlp: block.proofs[0].rlp_block_header.string.clone(),
                 proof: block.proofs[0].siblings_hashes.clone(),
             }),
         );
         self.mmr_meta = vec![mmr];
-        header
+
+        Ok(header)
     }
 }

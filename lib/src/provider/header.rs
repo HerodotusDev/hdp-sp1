@@ -1,7 +1,7 @@
 use alloy_consensus::Header;
 use alloy_primitives::{
     hex::{self, FromHex},
-    Bytes, B256,
+    B256,
 };
 use alloy_rlp::Decodable;
 use serde::{Deserialize, Serialize};
@@ -35,10 +35,10 @@ pub struct MmrRpc {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct HeaderRpc {
     pub element_index: u128,
-    pub element_hash: String,
+    pub element_hash: B256,
     pub block_number: u128,
     pub rlp_block_header: RlpBlockHeader,
-    pub siblings_hashes: Vec<Bytes>,
+    pub siblings_hashes: Vec<B256>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

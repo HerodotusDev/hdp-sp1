@@ -4,7 +4,10 @@ name = "bootloader-program"
 edition = "2021"
 
 [dependencies]
-alloy-consensus = { workspace = true, features = ["serde"] }
+alloy-consensus = { workspace = true, features = [
+    "serde",
+    "serde-bincode-compat",
+] }
 alloy-primitives = { workspace = true, features = ["serde"] }
 alloy-sol-types = { workspace = true }
 serde_with = "3.11.0"

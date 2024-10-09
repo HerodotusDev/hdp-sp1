@@ -4,8 +4,8 @@ pub mod keys;
 pub mod storage;
 pub mod values;
 
-use alloy_primitives::B256;
 use hdp_lib::mmr::MmrMeta;
+use keys::MemorizerKey;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use url::Url;
@@ -37,10 +37,9 @@ impl Memorizer {
     }
 }
 
-pub type MemorizerKey = B256;
-
 #[cfg(test)]
 mod tests {
+    use alloy_primitives::B256;
     use std::fs;
     use tempdir::TempDir;
     use values::HeaderMemorizerValue;

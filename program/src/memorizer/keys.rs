@@ -1,6 +1,7 @@
-use super::MemorizerKey;
 use alloy_primitives::{keccak256, Address, B256};
 use serde::{Deserialize, Serialize};
+
+pub type MemorizerKey = B256;
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct HeaderKey {

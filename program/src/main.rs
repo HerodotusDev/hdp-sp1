@@ -34,8 +34,8 @@ pub fn main() {
             println!("{memorizer:?}");
         } else {
             println!("Hello, world! from non zkvm");
-            let rpc_url: String = env::var("RPC_URL").expect("RPC_URL not set");
-            let mut memorizer = Memorizer::new(Some(Url::from_str(&rpc_url).unwrap()));
+            // let rpc_url: String = env::var("RPC_URL").expect("RPC_URL not set");
+            let mut memorizer = Memorizer::new(Some(Url::from_str("https://sepolia.ethereum.iosis.tech/").unwrap()));
         }
     }
 
@@ -46,7 +46,7 @@ pub fn main() {
         ..Default::default()
     };
 
-    memorizer.get_header(header_key);
+    memorizer.get_header(header_key).unwrap();
 
     let account_key = AccountKey {
         block_number,
