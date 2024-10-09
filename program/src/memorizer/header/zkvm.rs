@@ -1,11 +1,11 @@
 use super::HeaderMemorizer;
 use crate::memorizer::{keys::HeaderKey, Memorizer};
-use alloy_primitives::U256;
+use alloy_consensus::Header;
 
 impl HeaderMemorizer for Memorizer {
-    fn get_header(&mut self, key: HeaderKey) -> U256 {
+    fn get_header(&mut self, key: HeaderKey) -> Header {
         println!("zkvm run");
 
-        U256::from(0)
+        Header::default()
     }
 }
