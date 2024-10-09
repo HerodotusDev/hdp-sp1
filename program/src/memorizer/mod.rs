@@ -4,14 +4,16 @@ pub mod keys;
 pub mod storage;
 pub mod values;
 
+use alloy_primitives::B256;
 use hdp_lib::mmr::MmrMeta;
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, ops::Deref};
+use std::collections::HashMap;
 use url::Url;
 use values::MemorizerValue;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct Memorizer {
+    #[serde(skip)]
     pub rpc_url: Option<Url>,
     pub mmr_meta: Vec<MmrMeta>,
     pub map: HashMap<MemorizerKey, MemorizerValue>,
@@ -31,24 +33,17 @@ impl Memorizer {
     }
 
     pub fn as_bytes(&mut self) -> Result<Vec<u8>, Box<bincode::ErrorKind>> {
-        bincode::serialize(self)
+        bincode::serialize(&self)
     }
 }
 
-#[derive(Debug, Default, Serialize, Deserialize, PartialEq, Eq, Hash)]
-pub struct MemorizerKey(pub [u8; 32]);
-
-impl Deref for MemorizerKey {
-    type Target = [u8; 32];
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
+pub type MemorizerKey = B256;
 
 #[cfg(test)]
 mod tests {
     use std::fs;
     use tempdir::TempDir;
+    use values::HeaderMemorizerValue;
 
     use super::*;
 
@@ -58,6 +53,12 @@ mod tests {
         let path = binding.path().join("memorizer.bin");
 
         let mut original_mem = Memorizer::new(None);
+        original_mem.mmr_meta = vec![MmrMeta::default()];
+        original_mem.map.insert(
+            B256::ZERO,
+            MemorizerValue::Header(HeaderMemorizerValue::default()),
+        );
+
         fs::write(&path, original_mem.as_bytes().unwrap()).unwrap();
 
         let bytes = fs::read(path).unwrap();

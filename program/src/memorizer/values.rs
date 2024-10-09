@@ -1,9 +1,13 @@
+use alloy_consensus::serde_bincode_compat;
 use alloy_consensus::{Account, Header};
 use alloy_primitives::{Bytes, B256, U256};
 use serde::{Deserialize, Serialize};
+use serde_with::serde_as;
 
+#[serde_as]
 #[derive(Debug, Default, Serialize, Deserialize, PartialEq)]
 pub struct HeaderMemorizerValue {
+    #[serde_as(as = "serde_bincode_compat::Header")]
     pub header: Header,
     pub proof: Vec<Bytes>,
 }
