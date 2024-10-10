@@ -16,6 +16,7 @@ alloy-consensus = "0.4.2"
 alloy-rpc-client = "0.4.2"
 alloy-eips = "0.4.2"
 alloy-rpc-types = "0.4.2"
+alloy-trie = { version = "0.6.0" }
 reqwest = { version = "0.12", features = ["json"] }
 sha3 = { git = "https://github.com/sp1-patches/RustCrypto-hashes", package = "sha3", branch = "patch-sha3-v0.10.8" }
 sha2 = { git = "https://github.com/sp1-patches/RustCrypto-hashes", package = "sha2", branch = "patch-sha2-v0.10.8" }

@@ -1,8 +1,10 @@
+use alloy_primitives::B256;
 use eth_trie_proofs::{tx::ConsensusTx, tx_trie::TxsMptHandler};
 use url::Url;
 
 #[derive(Debug)]
 pub struct TransactionResponse {
+    pub mpt_root: B256,
     pub tx: ConsensusTx,
     pub proof: Vec<Vec<u8>>,
 }
@@ -24,13 +26,19 @@ impl TransactionClient {
 
         let proof = txs_mpt_handler.get_proof(tx_index).unwrap();
         let tx = txs_mpt_handler.get_tx(tx_index).unwrap();
-        let tx_res = TransactionResponse { tx, proof };
+        let tx_res = TransactionResponse {
+            mpt_root: txs_mpt_handler.get_root().unwrap(),
+            tx,
+            proof,
+        };
         Ok(tx_res)
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::mpt::Mpt;
+
     use super::*;
 
     #[tokio::test]
@@ -38,7 +46,12 @@ mod tests {
         let client = TransactionClient {};
         let url =
             Url::parse("https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161").unwrap();
-        let tx_res = client.get_transaction(url, 15537344, 0).await.unwrap();
-        println!("{:#?}", tx_res);
+        let tx_res = client.get_transaction(url, 12244000, 118).await.unwrap();
+
+        // Verify the transaction proof
+        let mpt = Mpt {
+            root: tx_res.mpt_root,
+        };
+        mpt.verify(118, tx_res.proof);
     }
 }
