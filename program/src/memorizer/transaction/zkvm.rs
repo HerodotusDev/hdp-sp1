@@ -1,15 +1,34 @@
 use super::TransactionMemorizer;
-use crate::memorizer::{keys::TransactionKey, Memorizer};
+use crate::memorizer::{
+    keys::HeaderKey, keys::MemorizerKey, keys::TransactionKey, values::MemorizerValue, Memorizer,
+};
 use alloy_consensus::TxEnvelope;
-use alloy_rlp::Decodable;
+use hdp_lib::mpt::Mpt;
 use std::error::Error;
 
 impl TransactionMemorizer for Memorizer {
     fn get_transaction(&mut self, key: TransactionKey) -> Result<TxEnvelope, Box<dyn Error>> {
-        println!("zkvm run");
+        let header_key: MemorizerKey = HeaderKey {
+            block_number: key.block_number,
+            chain_id: key.chain_id,
+        }
+        .into();
 
-        let raw_tx = alloy_primitives::hex::decode("02f86f0102843b9aca0085029e7822d68298f094d9e1459a7a482635700cbc20bbaf52d495ab9c9680841b55ba3ac080a0c199674fcb29f353693dd779c017823b954b3c69dffa3cd6b2a6ff7888798039a028ca912de909e7e6cdef9cdcaf24c54dd8c1032946dfa1d85c206b32a9064fe8").unwrap();
-        let res = TxEnvelope::decode(&mut raw_tx.as_slice()).unwrap();
-        Ok(res)
+        if let MemorizerValue::Header(header_value) = self.map.get(&header_key).unwrap() {
+            let tx_root = header_value.header.transactions_root;
+            let tx_key: MemorizerKey = key.into();
+
+            if let MemorizerValue::Transaction(tx_value) = self.map.get(&tx_key).unwrap() {
+                let mpt = Mpt { root: tx_root };
+                println!("cycle-tracker-start: mpt");
+                mpt.verify(tx_value.tx_index, tx_value.proof.clone());
+                println!("cycle-tracker-end: mpt");
+                Ok(tx_value.transaction.clone())
+            } else {
+                Err("Transaction not found".into())
+            }
+        } else {
+            Err("Header not found".into())
+        }
     }
 }
