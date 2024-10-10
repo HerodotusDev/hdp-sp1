@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 alloy-consensus = { version = "0.4.2", features = ["serde"] }
 alloy-primitives = { workspace = true }
+alloy-rlp = { workspace = true }
 alloy-sol-types = { workspace = true }
 alloy-trie = { workspace = true }
 bincode = { workspace = true }
@@ -21,7 +22,7 @@ url = { workspace = true, features = ["serde"] }
 alloy-consensus = { version = "0.4.2", features = ["serde"] }
 alloy-eips = "0.4.2"
 alloy-primitives = { workspace = true }
-alloy-rlp = { version = "0.3.5", features = ["derive"] }
+alloy-rlp = { workspace = true }
 alloy-rpc-client = "0.4.2"
 alloy-rpc-types = "0.4.2"
 alloy-trie = { workspace = true }
