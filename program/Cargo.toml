@@ -22,8 +22,11 @@ sha3 = "0.10.8"
 sp1-zkvm = { version = "2.0.0", features = ["verify"] }
 thiserror-no-std = { workspace = true }
 url = { workspace = true, features = ["serde"] }
+alloy-trie = { workspace = true }
 
 [target.'cfg(not(target_os = "zkvm"))'.dependencies]
+alloy-rlp = { workspace = true }
+alloy-trie = { workspace = true }
 alloy-consensus = { workspace = true, features = [
     "serde",
     "serde-bincode-compat",

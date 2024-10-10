@@ -1299,6 +1299,7 @@ dependencies = [
  "alloy-rpc-client",
  "alloy-rpc-types",
  "alloy-sol-types 0.8.6",
+ "alloy-trie",
  "bincode",
  "cfg-if",
  "hdp-lib",
@@ -1320,6 +1321,7 @@ name = "bootloader-script"
 version = "0.1.0"
 dependencies = [
  "alloy",
+ "bincode",
  "bootloader-program",
  "clap",
  "hex",

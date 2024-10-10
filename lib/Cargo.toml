@@ -19,6 +19,7 @@ thiserror-no-std = { workspace = true }
 url = { workspace = true, features = ["serde"] }
 
 [target.'cfg(not(target_os = "zkvm"))'.dependencies]
+thiserror-no-std = { workspace = true }
 alloy-consensus = { version = "0.4.2", features = ["serde"] }
 alloy-eips = "0.4.2"
 alloy-primitives = { workspace = true }

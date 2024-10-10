@@ -53,7 +53,7 @@ fn main() {
     let manifest_dir: String = env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR not set");
     let path = Path::new(&manifest_dir).join("../memorizer.bin");
     println!("Memorizer saved to {path:?}");
-    stdin.write(&Memorizer::from_bytes(&fs::read(path).unwrap()).unwrap());
+    stdin.write(&bincode::deserialize::<Memorizer>(&fs::read(path).unwrap()).unwrap());
 
     if args.execute {
         // Execute the program

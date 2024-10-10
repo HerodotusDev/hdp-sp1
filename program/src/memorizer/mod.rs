@@ -5,10 +5,12 @@ pub mod storage;
 pub mod transaction;
 pub mod values;
 
+use alloy_trie::proof::ProofVerificationError;
 use hdp_lib::mmr::MmrMeta;
 use keys::MemorizerKey;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use thiserror_no_std::Error;
 use url::Url;
 use values::MemorizerValue;
 
@@ -28,14 +30,27 @@ impl Memorizer {
             map: Default::default(),
         }
     }
+}
 
-    pub fn from_bytes(bytes: &[u8]) -> Result<Self, Box<bincode::ErrorKind>> {
-        bincode::deserialize(bytes)
-    }
+#[derive(Debug, Error)]
+pub enum MemorizerError {
+    #[error("Missing or invalid root hash in the header")]
+    HeaderMissing,
 
-    pub fn as_bytes(&mut self) -> Result<Vec<u8>, Box<bincode::ErrorKind>> {
-        bincode::serialize(&self)
-    }
+    #[error("Account proof is missing or invalid")]
+    AccountMissing,
+
+    #[error("Storage element index is invalid or not found")]
+    StorageMissing,
+
+    #[error("Transaction peak count is invalid or missing")]
+    TransactionMissing,
+
+    #[error("Mpt proof verification failed")]
+    MptProofVerificationError(#[from] ProofVerificationError),
+
+    #[error("Mpt proof verification failed")]
+    RlpDecodeError(#[from] alloy_rlp::Error),
 }
 
 #[cfg(test)]
@@ -69,10 +84,8 @@ mod tests {
             }),
         );
 
-        fs::write(&path, original_mem.as_bytes().unwrap()).unwrap();
-
-        let bytes = fs::read(path).unwrap();
-        let mem = Memorizer::from_bytes(&bytes).unwrap();
+        fs::write(&path, bincode::serialize(&original_mem).unwrap()).unwrap();
+        let mem = bincode::deserialize(&fs::read(path).unwrap()).unwrap();
 
         assert_eq!(original_mem, mem);
     }

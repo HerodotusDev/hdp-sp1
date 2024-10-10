@@ -65,6 +65,6 @@ mod tests {
         let mpt = Mpt {
             root: tx_res.mpt_root,
         };
-        mpt.verify(118, tx_res.proof);
+        mpt.verify(118, tx_res.proof).unwrap();
     }
 }

@@ -1,17 +1,15 @@
+use super::TransactionMemorizer;
+use crate::memorizer::{values::TransactionMemorizerValue, Memorizer, MemorizerError};
 use alloy_consensus::TxEnvelope;
 use alloy_rlp::Encodable;
 use hdp_lib::transaction::{TransactionClient, TransactionResponse};
 use tokio::runtime::Runtime;
 
-use crate::memorizer::{values::TransactionMemorizerValue, Memorizer};
-
-use super::TransactionMemorizer;
-
 impl TransactionMemorizer for Memorizer {
     fn get_transaction(
         &mut self,
         key: crate::memorizer::keys::TransactionKey,
-    ) -> Result<TxEnvelope, Box<dyn std::error::Error>> {
+    ) -> Result<TxEnvelope, MemorizerError> {
         let rpc_url = self.rpc_url.clone().unwrap();
         let rt = Runtime::new().unwrap();
         let transaction: TransactionResponse = rt.block_on(async {
