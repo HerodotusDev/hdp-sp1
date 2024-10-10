@@ -6,7 +6,7 @@ pub mod transaction;
 pub mod values;
 
 use alloy_trie::proof::ProofVerificationError;
-use hdp_lib::mmr::MmrMeta;
+use hdp_lib::mmr::{MmrError, MmrMeta};
 use keys::MemorizerKey;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -34,23 +34,26 @@ impl Memorizer {
 
 #[derive(Debug, Error)]
 pub enum MemorizerError {
-    #[error("Missing or invalid root hash in the header")]
-    HeaderMissing,
+    #[error("Header is missing or invalid")]
+    MissingHeader,
 
-    #[error("Account proof is missing or invalid")]
-    AccountMissing,
+    #[error("Account is missing or invalid")]
+    MissingAccount,
 
-    #[error("Storage element index is invalid or not found")]
-    StorageMissing,
+    #[error("Storage is missing or invalid")]
+    MissingStorage,
 
-    #[error("Transaction peak count is invalid or missing")]
-    TransactionMissing,
+    #[error("Transaction is missing or invalid")]
+    MissingTransaction,
 
-    #[error("Mpt proof verification failed")]
-    MptProofVerificationError(#[from] ProofVerificationError),
+    #[error("Failed to verify Merkle Patricia Tree (MPT) proof")]
+    MptProofFailed(#[from] ProofVerificationError),
 
-    #[error("Mpt proof verification failed")]
-    RlpDecodeError(#[from] alloy_rlp::Error),
+    #[error("Failed to verify Merkle Mountain Range (MMR) proof")]
+    MmrProofFailed(#[from] MmrError),
+
+    #[error("Failed to decode RLP (Recursive Length Prefix) data")]
+    RlpDecodeFailed(#[from] alloy_rlp::Error),
 }
 
 #[cfg(test)]

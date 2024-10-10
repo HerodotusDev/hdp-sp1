@@ -27,10 +27,10 @@ impl TransactionMemorizer for Memorizer {
                 let tx_encoded = tx_value.transaction_encoded.clone();
                 Ok(TxEnvelope::decode(&mut tx_encoded.as_ref())?)
             } else {
-                Err(MemorizerError::TransactionMissing)
+                Err(MemorizerError::MissingTransaction)
             }
         } else {
-            Err(MemorizerError::HeaderMissing)
+            Err(MemorizerError::MissingHeader)
         }
     }
 }
