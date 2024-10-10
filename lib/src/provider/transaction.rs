@@ -1,17 +1,28 @@
-use alloy_primitives::B256;
+use alloy_primitives::{Bytes, B256};
 use eth_trie_proofs::{tx::ConsensusTx, tx_trie::TxsMptHandler};
 use url::Url;
 
 #[derive(Debug)]
 pub struct TransactionResponse {
+    pub tx_index: u64,
     pub mpt_root: B256,
     pub tx: ConsensusTx,
-    pub proof: Vec<Vec<u8>>,
+    pub proof: Vec<Bytes>,
 }
 
 pub struct TransactionClient {}
 
+impl Default for TransactionClient {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl TransactionClient {
+    pub fn new() -> Self {
+        Self {}
+    }
+
     pub async fn get_transaction(
         &self,
         url: Url,
@@ -25,8 +36,10 @@ impl TransactionClient {
             .unwrap();
 
         let proof = txs_mpt_handler.get_proof(tx_index).unwrap();
+        let proof: Vec<Bytes> = proof.into_iter().map(Bytes::from).collect();
         let tx = txs_mpt_handler.get_tx(tx_index).unwrap();
         let tx_res = TransactionResponse {
+            tx_index,
             mpt_root: txs_mpt_handler.get_root().unwrap(),
             tx,
             proof,

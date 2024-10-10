@@ -1295,6 +1295,7 @@ dependencies = [
  "alloy-consensus",
  "alloy-eips",
  "alloy-primitives 0.8.6",
+ "alloy-rlp",
  "alloy-rpc-client",
  "alloy-rpc-types",
  "alloy-sol-types 0.8.6",

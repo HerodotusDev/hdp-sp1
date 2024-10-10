@@ -4,6 +4,7 @@ name = "bootloader-program"
 edition = "2021"
 
 [dependencies]
+alloy-rlp = { workspace = true }
 alloy-consensus = { workspace = true, features = [
     "serde",
     "serde-bincode-compat",

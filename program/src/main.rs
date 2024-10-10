@@ -7,7 +7,8 @@ use cfg_if::cfg_if;
 use memorizer::{
     account::AccountMemorizer,
     header::HeaderMemorizer,
-    keys::{AccountKey, HeaderKey},
+    keys::{AccountKey, HeaderKey, TransactionKey},
+    transaction::TransactionMemorizer,
     Memorizer,
 };
 use url::Url;
@@ -55,6 +56,14 @@ pub fn main() {
 
     let _ = memorizer.get_account(account_key);
     //  println!("account {:?}", account.balance);
+
+    let tx_key = TransactionKey {
+        block_number,
+        transaction_index: 0,
+        ..Default::default()
+    };
+
+    let _ = memorizer.get_transaction(tx_key);
 
     println!("memoizer is {:?}", memorizer);
 

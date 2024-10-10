@@ -1,7 +1,6 @@
-use alloy_consensus::serde_bincode_compat;
+use alloy_consensus::{serde_bincode_compat, TxEnvelope};
 use alloy_consensus::{Account, Header};
 use alloy_primitives::{Bytes, B256, U256};
-use alloy_rpc_types::Transaction;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
@@ -29,9 +28,10 @@ pub struct StorageMemorizerValue {
     pub proof: Vec<Bytes>,
 }
 
-#[derive(Debug, Default, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct TransactionMemorizerValue {
-    pub transaction: Transaction,
+    pub transaction: TxEnvelope,
+    pub tx_index: u64,
     pub proof: Vec<Bytes>,
 }
 
