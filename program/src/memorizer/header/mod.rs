@@ -1,11 +1,9 @@
-use std::error::Error;
-
-use super::keys::HeaderKey;
+use super::{keys::HeaderKey, MemorizerError};
 use alloy_consensus::Header;
 use cfg_if::cfg_if;
 
 pub trait HeaderMemorizer {
-    fn get_header(&mut self, key: HeaderKey) -> Result<Header, Box<dyn Error>>;
+    fn get_header(&mut self, key: HeaderKey) -> Result<Header, MemorizerError>;
 }
 
 cfg_if! {

@@ -1,17 +1,15 @@
-use std::error::Error;
-
 use super::HeaderMemorizer;
 use crate::memorizer::{
     keys::HeaderKey,
     values::{HeaderMemorizerValue, MemorizerValue},
-    Memorizer,
+    Memorizer, MemorizerError,
 };
 use alloy_consensus::Header;
 use hdp_lib::{header::IndexerRpc, mmr::MmrMeta, provider::header::IndexerClient};
 use tokio::runtime::Runtime;
 
 impl HeaderMemorizer for Memorizer {
-    fn get_header(&mut self, key: HeaderKey) -> Result<Header, Box<dyn Error>> {
+    fn get_header(&mut self, key: HeaderKey) -> Result<Header, MemorizerError> {
         let rt = Runtime::new().unwrap();
         let block: IndexerRpc = rt.block_on(async {
             let client = IndexerClient::default();

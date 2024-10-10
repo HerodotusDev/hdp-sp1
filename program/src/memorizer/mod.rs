@@ -1,13 +1,17 @@
 pub mod account;
+pub mod cl_header;
 pub mod header;
 pub mod keys;
 pub mod storage;
+pub mod transaction;
 pub mod values;
 
-use hdp_lib::mmr::MmrMeta;
+use alloy_trie::proof::ProofVerificationError;
+use hdp_lib::mmr::{MmrError, MmrMeta};
 use keys::MemorizerKey;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use thiserror_no_std::Error;
 use url::Url;
 use values::MemorizerValue;
 
@@ -27,22 +31,38 @@ impl Memorizer {
             map: Default::default(),
         }
     }
+}
 
-    pub fn from_bytes(bytes: &[u8]) -> Result<Self, Box<bincode::ErrorKind>> {
-        bincode::deserialize(bytes)
-    }
+#[derive(Debug, Error)]
+pub enum MemorizerError {
+    #[error("Header is missing or invalid")]
+    MissingHeader,
 
-    pub fn as_bytes(&mut self) -> Result<Vec<u8>, Box<bincode::ErrorKind>> {
-        bincode::serialize(&self)
-    }
+    #[error("Account is missing or invalid")]
+    MissingAccount,
+
+    #[error("Storage is missing or invalid")]
+    MissingStorage,
+
+    #[error("Transaction is missing or invalid")]
+    MissingTransaction,
+
+    #[error("Failed to verify Merkle Patricia Tree (MPT) proof")]
+    MptProofFailed(#[from] ProofVerificationError),
+
+    #[error("Failed to verify Merkle Mountain Range (MMR) proof")]
+    MmrProofFailed(#[from] MmrError),
+
+    #[error("Failed to decode RLP (Recursive Length Prefix) data")]
+    RlpDecodeFailed(#[from] alloy_rlp::Error),
 }
 
 #[cfg(test)]
 mod tests {
-    use alloy_primitives::B256;
+    use alloy_primitives::{Bytes, B256};
     use std::fs;
     use tempdir::TempDir;
-    use values::HeaderMemorizerValue;
+    use values::{HeaderMemorizerValue, TransactionMemorizerValue};
 
     use super::*;
 
@@ -57,11 +77,19 @@ mod tests {
             B256::ZERO,
             MemorizerValue::Header(HeaderMemorizerValue::default()),
         );
+        let raw_tx = alloy_primitives::hex::decode("02f86f0102843b9aca0085029e7822d68298f094d9e1459a7a482635700cbc20bbaf52d495ab9c9680841b55ba3ac080a0c199674fcb29f353693dd779c017823b954b3c69dffa3cd6b2a6ff7888798039a028ca912de909e7e6cdef9cdcaf24c54dd8c1032946dfa1d85c206b32a9064fe8").unwrap();
+        // let res = TxEnvelope::decode(&mut raw_tx.as_slice()).unwrap();
+        original_mem.map.insert(
+            B256::ZERO,
+            MemorizerValue::Transaction(TransactionMemorizerValue {
+                transaction_encoded: Bytes::from(raw_tx),
+                tx_index: 0,
+                proof: Default::default(),
+            }),
+        );
 
-        fs::write(&path, original_mem.as_bytes().unwrap()).unwrap();
-
-        let bytes = fs::read(path).unwrap();
-        let mem = Memorizer::from_bytes(&bytes).unwrap();
+        fs::write(&path, bincode::serialize(&original_mem).unwrap()).unwrap();
+        let mem = bincode::deserialize(&fs::read(path).unwrap()).unwrap();
 
         assert_eq!(original_mem, mem);
     }

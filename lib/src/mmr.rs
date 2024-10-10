@@ -2,6 +2,7 @@ use alloy_primitives::hex;
 use alloy_primitives::keccak256;
 use alloy_primitives::{B256, U256};
 use serde::{Deserialize, Serialize};
+use thiserror_no_std::Error;
 
 #[derive(Debug, Default, Serialize, Deserialize, PartialEq)]
 pub struct MmrMeta {
@@ -216,14 +217,27 @@ pub fn verify_headers_with_mmr_peaks(mmr: MmrMeta, headers: &[Header]) -> Result
     Ok(is_verified)
 }
 
-#[derive(Debug)]
+#[derive(Debug, Error)]
 pub enum MmrError {
+    #[error("Invalid root hash")]
     InvalidRootHash,
+
+    #[error("Invalid proof")]
     InvalidProof,
+
+    #[error("Invalid element index")]
     InvalidElementIndex,
+
+    #[error("Invalid peak count")]
     InvalidPeakCount,
+
+    #[error("Invalid size")]
     InvalidSize,
+
+    #[error("There are unprocessed elements")]
     UnprocessedElements,
+
+    #[error("Error decoding the data")]
     DecodingError,
 }
 

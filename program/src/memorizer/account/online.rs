@@ -1,5 +1,6 @@
 use super::AccountMemorizer;
 use crate::memorizer::values::{AccountMemorizerValue, MemorizerValue};
+use crate::memorizer::MemorizerError;
 use crate::memorizer::{keys::AccountKey, Memorizer};
 use alloy_consensus::Account;
 use alloy_eips::BlockNumberOrTag;
@@ -9,7 +10,7 @@ use alloy_rpc_types::EIP1186AccountProofResponse;
 use tokio::runtime::Runtime;
 
 impl AccountMemorizer for Memorizer {
-    fn get_account(&mut self, key: AccountKey) -> Account {
+    fn get_account(&mut self, key: AccountKey) -> Result<Account, MemorizerError> {
         let rt = Runtime::new().unwrap();
         let (account, proof): (Account, Vec<Bytes>) = rt.block_on(async {
             let client: ReqwestClient =
@@ -38,10 +39,12 @@ impl AccountMemorizer for Memorizer {
 
             (convert, response.account_proof)
         });
+
         self.map.insert(
             key.into(),
             MemorizerValue::Account(AccountMemorizerValue { account, proof }),
         );
-        account
+
+        Ok(account)
     }
 }

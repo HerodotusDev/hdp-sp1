@@ -4,12 +4,14 @@ name = "bootloader-program"
 edition = "2021"
 
 [dependencies]
+alloy-rlp = { workspace = true }
 alloy-consensus = { workspace = true, features = [
     "serde",
     "serde-bincode-compat",
 ] }
 alloy-primitives = { workspace = true, features = ["serde"] }
 alloy-sol-types = { workspace = true }
+alloy-rpc-types = { workspace = true }
 serde_with = "3.11.0"
 bincode = { workspace = true }
 cfg-if = { workspace = true }
@@ -20,8 +22,12 @@ sha3 = "0.10.8"
 sp1-zkvm = { version = "2.0.0", features = ["verify"] }
 thiserror-no-std = { workspace = true }
 url = { workspace = true, features = ["serde"] }
+alloy-trie = { workspace = true }
+ssz_rs = { git = "https://github.com/ralexstokes/ssz-rs.git", features = ["serde"] }
 
 [target.'cfg(not(target_os = "zkvm"))'.dependencies]
+alloy-rlp = { workspace = true }
+alloy-trie = { workspace = true }
 alloy-consensus = { workspace = true, features = [
     "serde",
     "serde-bincode-compat",

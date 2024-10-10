@@ -1,5 +1,6 @@
 use super::StorageMemorizer;
 use crate::memorizer::values::StorageMemorizerValue;
+use crate::memorizer::MemorizerError;
 use crate::memorizer::{keys::StorageKey, Memorizer};
 use alloy_eips::BlockNumberOrTag;
 use alloy_primitives::{B256, U256};
@@ -8,7 +9,7 @@ use alloy_rpc_types::EIP1186AccountProofResponse;
 use tokio::runtime::Runtime;
 
 impl StorageMemorizer for Memorizer {
-    fn get_storage(&mut self, key: StorageKey) -> U256 {
+    fn get_storage(&mut self, key: StorageKey) -> Result<U256, MemorizerError> {
         let rt = Runtime::new().unwrap();
         let value: StorageMemorizerValue = rt.block_on(async {
             let client: ReqwestClient =
@@ -35,10 +36,12 @@ impl StorageMemorizer for Memorizer {
                 proof: response.storage_proof[0].proof.clone(),
             }
         });
+
         self.map.insert(
             key.into(),
             crate::memorizer::values::MemorizerValue::Storage(value.clone()),
         );
-        value.value
+
+        Ok(value.value)
     }
 }

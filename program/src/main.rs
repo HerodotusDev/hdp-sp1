@@ -2,12 +2,13 @@
 
 pub mod memorizer;
 
-use alloy_primitives::hex::FromHex;
+use alloy_primitives::address;
 use cfg_if::cfg_if;
 use memorizer::{
     account::AccountMemorizer,
     header::HeaderMemorizer,
-    keys::{AccountKey, HeaderKey},
+    keys::{AccountKey, HeaderKey, TransactionKey},
+    transaction::TransactionMemorizer,
     Memorizer,
 };
 use url::Url;
@@ -39,6 +40,7 @@ pub fn main() {
     }
 
     let block_number = 5244652;
+    let address = address!("7f2c6f930306d3aa736b3a6c6a98f512f74036d4");
 
     let header_key = HeaderKey {
         block_number,
@@ -46,15 +48,22 @@ pub fn main() {
     };
 
     let _ = memorizer.get_header(header_key).unwrap();
+
     let account_key = AccountKey {
         block_number,
-        address: alloy_primitives::Address::from_hex("0x7f2c6f930306d3aa736b3a6c6a98f512f74036d4")
-            .unwrap(),
+        address,
         ..Default::default()
     };
 
     let _ = memorizer.get_account(account_key);
-    //  println!("account {:?}", account.balance);
+
+    let tx_key = TransactionKey {
+        block_number,
+        transaction_index: 0,
+        ..Default::default()
+    };
+
+    let _ = memorizer.get_transaction(tx_key);
 
     println!("memoizer is {:?}", memorizer);
 
@@ -68,7 +77,7 @@ pub fn main() {
             let manifest_dir: String = env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR not set");
             let path = Path::new(&manifest_dir).join("../memorizer.bin");
             println!("Memorizer saved to {path:?}");
-            fs::write(path, memorizer.as_bytes().unwrap()).unwrap()
+            fs::write(path, bincode::serialize(&memorizer).unwrap()).unwrap()
         }
     }
 }
