@@ -34,8 +34,8 @@ pub fn main() {
             let mut memorizer = sp1_zkvm::io::read::<Memorizer>();
         } else {
             println!("Hello, world! from non zkvm");
-            // let rpc_url: String = env::var("RPC_URL").expect("RPC_URL not set");
-            let mut memorizer = Memorizer::new(Some(Url::from_str("https://sepolia.ethereum.iosis.tech/").unwrap()));
+            let rpc_url: String = env::var("RPC_URL").expect("RPC_URL not set");
+            let mut memorizer = Memorizer::new(Some(Url::from_str(&rpc_url).unwrap()));
         }
     }
 
