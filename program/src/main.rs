@@ -13,6 +13,8 @@ use memorizer::{
 };
 use url::Url;
 
+use crate::memorizer::{cl_header::ClHeaderMemorizer, keys::BeaconHeaderKey};
+
 cfg_if! {
     if #[cfg(target_os = "zkvm")] {
         sp1_zkvm::entrypoint!(main);
@@ -44,10 +46,22 @@ pub fn main() {
 
     let header_key = HeaderKey {
         block_number,
-        ..Default::default()
+        chain_id: 11155111,
     };
 
     let _ = memorizer.get_header(header_key).unwrap();
+
+    let header_key_plus_one = HeaderKey {
+        block_number: block_number + 1,
+        chain_id: 11155111,
+    };
+    let _ = memorizer.get_header(header_key_plus_one).unwrap();
+
+    let cl_header_key = BeaconHeaderKey {
+        block_number,
+        chain_id: 11155111,
+    };
+    let _ = memorizer.get_cl_header(cl_header_key).unwrap();
 
     let account_key = AccountKey {
         block_number,

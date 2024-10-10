@@ -33,7 +33,8 @@ pub struct TransactionKey {
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct BeaconHeaderKey {
-    pub slot: u64,
+    pub chain_id: u64,
+    pub block_number: u64,
 }
 
 impl From<HeaderKey> for MemorizerKey {
@@ -62,6 +63,8 @@ impl From<TransactionKey> for MemorizerKey {
 
 impl From<BeaconHeaderKey> for MemorizerKey {
     fn from(value: BeaconHeaderKey) -> Self {
-        Self(*keccak256(bincode::serialize(&value).unwrap()))
+        let mut data = bincode::serialize(&value).unwrap();
+        data.extend("BeaconHeaderKey".as_bytes());
+        Self(*keccak256(data))
     }
 }

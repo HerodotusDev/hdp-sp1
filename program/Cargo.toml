@@ -24,6 +24,8 @@ thiserror-no-std = { workspace = true }
 url = { workspace = true, features = ["serde"] }
 alloy-trie = { workspace = true }
 ssz_rs = { git = "https://github.com/ralexstokes/ssz-rs.git", features = ["serde"] }
+scraper = "0.13"
+regex = "1"
 
 [target.'cfg(not(target_os = "zkvm"))'.dependencies]
 alloy-rlp = { workspace = true }
