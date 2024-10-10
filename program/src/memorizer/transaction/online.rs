@@ -1,4 +1,5 @@
 use alloy_consensus::TxEnvelope;
+use alloy_rlp::Encodable;
 use hdp_lib::transaction::{TransactionClient, TransactionResponse};
 use tokio::runtime::Runtime;
 
@@ -22,11 +23,13 @@ impl TransactionMemorizer for Memorizer {
         });
 
         let tx = transaction.tx.0;
+        let mut out = Vec::new();
+        tx.encode(&mut out);
 
         self.map.insert(
             key.into(),
             crate::memorizer::values::MemorizerValue::Transaction(TransactionMemorizerValue {
-                transaction: tx.clone(),
+                transaction_encoded: out.into(),
                 tx_index: transaction.tx_index,
                 proof: transaction.proof,
             }),

@@ -3,6 +3,7 @@ use crate::memorizer::{
     keys::HeaderKey, keys::MemorizerKey, keys::TransactionKey, values::MemorizerValue, Memorizer,
 };
 use alloy_consensus::TxEnvelope;
+use alloy_rlp::Decodable;
 use hdp_lib::mpt::Mpt;
 use std::error::Error;
 
@@ -23,7 +24,8 @@ impl TransactionMemorizer for Memorizer {
                 println!("cycle-tracker-start: mpt");
                 mpt.verify(tx_value.tx_index, tx_value.proof.clone());
                 println!("cycle-tracker-end: mpt");
-                Ok(tx_value.transaction.clone())
+                let tx_encoded = tx_value.transaction_encoded.clone();
+                Ok(TxEnvelope::decode(&mut tx_encoded.as_ref()).unwrap())
             } else {
                 Err("Transaction not found".into())
             }

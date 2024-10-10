@@ -1,4 +1,4 @@
-use alloy_consensus::{serde_bincode_compat, TxEnvelope};
+use alloy_consensus::serde_bincode_compat;
 use alloy_consensus::{Account, Header};
 use alloy_primitives::{Bytes, B256, U256};
 use serde::{Deserialize, Serialize};
@@ -30,7 +30,7 @@ pub struct StorageMemorizerValue {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct TransactionMemorizerValue {
-    pub transaction: TxEnvelope,
+    pub transaction_encoded: Bytes,
     pub tx_index: u64,
     pub proof: Vec<Bytes>,
 }
