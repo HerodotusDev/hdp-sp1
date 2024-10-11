@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 cfg-if = { workspace = true }
 hdp-lib = { workspace = true }
+hdp-macro = { workspace = true }
 sp1-zkvm = { workspace = true }
 
 [target.'cfg(not(target_os = "zkvm"))'.dependencies]

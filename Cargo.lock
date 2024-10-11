@@ -1190,6 +1190,7 @@ dependencies = [
  "bincode",
  "cfg-if",
  "hdp-lib",
+ "hdp-macro",
  "sp1-zkvm",
  "url",
 ]
@@ -2769,8 +2770,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "hdp-sdk"
+name = "hdp-macro"
 version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.79",
+]
 
 [[package]]
 name = "heck"
