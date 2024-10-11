@@ -9,7 +9,11 @@ pub struct Mpt {
 }
 
 impl Mpt {
-    pub fn verify(&self, tx_index: u64, proof: Vec<Bytes>) -> Result<(), ProofVerificationError> {
+    pub fn verify_transaction(
+        &self,
+        tx_index: u64,
+        proof: Vec<Bytes>,
+    ) -> Result<(), ProofVerificationError> {
         let tx_encoded = alloy_rlp::encode(U256::from(tx_index));
         let key = Bytes::from(tx_encoded);
         let nibbles = Nibbles::unpack(key);

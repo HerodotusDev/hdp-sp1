@@ -1,64 +1,63 @@
-# SP1 Bootloader Host
+# Herodotus Data Processor (HDP) with SP1 Backend
 
-## Running the Project
+> [!WARNING]
+> This codebase is experimental and not production-ready 🚧
 
-There are four main ways to run this project: build a program, execute a program, generate a core proof, and
-generate an EVM-compatible proof.
+The Herodotus Data Processor (HDP) allows you to access verified on-chain data by verifying MMR (Merkle Mountain Range) and MPT (Merkle Patricia Tree) proofs in a zkVM environment. More about HDP can be found [here](https://docs.herodotus.dev/herodotus-docs/developers/data-processor).
 
-### Run online mode
+## Architecture
 
-target os is not `zkvm`.
+- [`hdp-macro`](./hdp-macro/): A macro to simplify HDP programs for SP1's online and zkVM modes.
+- [`hdp-lib`](./lib/): The core library for HDP programs, including providers, memorizer, verifier, etc.
+- [`hdp-sdk`](./hdp-sdk/): `DataProcessorClient` to wrap the SP1 client and handle HDP's full flow.
 
-```sh
-cd program
-cargo run --release
+## Run Example
+
+This command will run the [simple example](./examples/simple/README.md). It will first run the HDP program in online mode to get proofs. Then it will run the HDP program in zkVM mode to generate an ELF file. This ELF file will then be used to generate a proof and verify it.
+
+```
+cargo run --package simple --bin simple --release +nightly
 ```
 
-### Build the Program
+## Example Program
 
-To build the program, run the following command:
+We provide the `#[hdp_main]` macro to simplify the process of writing HDP programs. This macro handles conditional compilation based on the target OS and also supports conditional commits.
 
-```sh
-cd program
-cargo prove build
+```rust
+#![cfg_attr(target_os = "zkvm", no_main)]
+
+use hdp_lib::memorizer::*;
+use hdp_macro::hdp_main;
+
+#[hdp_main]
+pub fn main() {
+    let block_number = 5_244_652;
+
+    // Access header, account, storage, or transaction via key type
+    let tx_key = TransactionKey {
+        block_number,
+        transaction_index: 0,
+        ..Default::default()
+    };
+    let v = memorizer.get_transaction(tx_key).unwrap();
+
+    // This function allows you to commit data to the zkVM.
+    // If online, this will do nothing.
+    // Note that you can only commit data that is serializable.
+    commit(&v.tx_hash());
+}
 ```
 
-### Execute the Program
+### hdp-sdk
 
-To run the program without generating a proof:
+We provide an SDK that wraps the SP1 client and abstracts away running SP1 programs in online mode (to get proofs) and zkVM mode (to verify proofs). You can use it like a normal SP1 client; however, in the program path, you provide an HDP program that uses the `#[hdp_main]` macro.
 
-```sh
-cd script
-cargo run --release -- --execute
-```
+```rust
+use hdp_sdk::DataProcessorClient;
 
-This will execute the program and display the output.
-
-### Generate a Core Proof
-
-To generate a core proof for your program:
-
-```sh
-cd script
-cargo run --release -- --prove
-```
-
-## Using the Prover Network
-
-We highly recommend using the Succinct prover network for any non-trivial programs or benchmarking purposes. For more information, see the [setup guide](https://docs.succinct.xyz/generating-proofs/prover-network.html).
-
-To get started, copy the example environment file:
-
-```sh
-cp .env.example .env
-```
-
-Then, set the `SP1_PROVER` environment variable to `network` and set the `SP1_PRIVATE_KEY`
-environment variable to your whitelisted private key.
-
-For example, to generate an EVM-compatible proof using the prover network, run the following
-command:
-
-```sh
-SP1_PROVER=network SP1_PRIVATE_KEY=... cargo run --release --bin evm
+fn main() {
+    let client = DataProcessorClient::new();
+    let (proof, vk) = client.prove("./program".into()).unwrap();
+    client.verify(&proof, &vk).expect("failed to verify proof");
+}
 ```

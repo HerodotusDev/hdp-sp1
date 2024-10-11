@@ -4,7 +4,6 @@ use alloy_consensus::Account;
 
 impl AccountMemorizer for Memorizer {
     fn get_account(&mut self, key: AccountKey) -> Result<Account, MemorizerError> {
-        println!("zkvm run");
-        Ok(Account::default())
+        todo!("zkvm implement");
     }
 }

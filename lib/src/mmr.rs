@@ -1,4 +1,3 @@
-use alloy_primitives::hex;
 use alloy_primitives::keccak256;
 use alloy_primitives::{B256, U256};
 use serde::{Deserialize, Serialize};
@@ -202,21 +201,6 @@ pub fn count_elements_to_leaf_count(element_count: usize) -> Result<usize, MmrEr
     }
 }
 
-#[cfg(test)]
-pub fn verify_headers_with_mmr_peaks(mmr: MmrMeta, headers: &[Header]) -> Result<bool, MmrError> {
-    let mut is_verified = true;
-    for header in headers {
-        let rlp_bytes = hex::decode(&header.rlp).unwrap();
-        let element_value = keccak256(rlp_bytes);
-        is_verified = mmr.verify_proof(
-            header.proof.leaf_index,
-            element_value,
-            header.proof.mmr_proof.clone(),
-        )?;
-    }
-    Ok(is_verified)
-}
-
 #[derive(Debug, Error)]
 pub enum MmrError {
     #[error("Invalid root hash")]
@@ -253,37 +237,55 @@ pub struct HeaderInclusionProof {
     pub mmr_proof: Vec<B256>,
 }
 
-pub fn verify_headers(mmr: &MmrMeta, headers: &[Header]) -> Result<bool, MmrError> {
-    for header in headers {
-        let rlp_bytes = hex::decode(&header.rlp).map_err(|_| MmrError::DecodingError)?;
-        let header_hash = keccak256(rlp_bytes);
+// pub fn verify_headers(mmr: &MmrMeta, headers: &[Header]) -> Result<bool, MmrError> {
+//     for header in headers {
+//         let rlp_bytes = hex::decode(&header.rlp).map_err(|_| MmrError::DecodingError)?;
+//         let header_hash = keccak256(rlp_bytes);
 
-        mmr.verify_proof(
-            header.proof.leaf_index,
-            header_hash,
-            header.proof.mmr_proof.clone(),
-        )?;
-    }
-    Ok(true)
-}
+//         mmr.verify_proof(
+//             header.proof.leaf_index,
+//             header_hash,
+//             header.proof.mmr_proof.clone(),
+//         )?;
+//     }
+//     Ok(true)
+// }
 
-pub fn validate_mmr(mmr: &MmrMeta) -> Result<(), MmrError> {
-    if !is_valid_mmr_size(mmr.mmr_size) {
-        return Err(MmrError::InvalidSize);
-    }
-    Ok(())
-}
+// pub fn validate_mmr(mmr: &MmrMeta) -> Result<(), MmrError> {
+//     if !is_valid_mmr_size(mmr.mmr_size) {
+//         return Err(MmrError::InvalidSize);
+//     }
+//     Ok(())
+// }
 
-fn is_valid_mmr_size(size: u128) -> bool {
-    size >= 1 && size <= 2_u128.pow(126)
-}
+// fn is_valid_mmr_size(size: u128) -> bool {
+//     size >= 1 && size <= 2_u128.pow(126)
+// }
 
 #[cfg(test)]
 mod tests {
     use alloy_primitives::b256;
+    use alloy_primitives::hex;
     use alloy_primitives::hex::FromHex;
 
     use super::*;
+
+    pub fn verify_headers_with_mmr_peaks(
+        mmr: MmrMeta,
+        headers: &[Header],
+    ) -> Result<bool, MmrError> {
+        let mut is_verified = true;
+        for header in headers {
+            let rlp_bytes = hex::decode(&header.rlp).unwrap();
+            let element_value = keccak256(rlp_bytes);
+            is_verified = mmr.verify_proof(
+                header.proof.leaf_index,
+                element_value,
+                header.proof.mmr_proof.clone(),
+            )?;
+        }
+        Ok(is_verified)
+    }
 
     #[test]
     fn test_bag_peaks() {
