@@ -12,12 +12,7 @@ pub fn hdp_main(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
     let expanded = quote! {
         use cfg_if::cfg_if;
-        use hdp_lib::memorizer::{
-            header::HeaderMemorizer,
-            keys::{HeaderKey, TransactionKey},
-            transaction::TransactionMemorizer,
-            Memorizer,
-        };
+        use hdp_lib::memorizer::Memorizer;
 
         cfg_if! {
             if #[cfg(target_os = "zkvm")] {

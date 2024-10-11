@@ -1,11 +1,12 @@
 #![cfg_attr(target_os = "zkvm", no_main)]
 
+use hdp_lib::memorizer::*;
 use hdp_macro::hdp_main;
 
 #[hdp_main]
 pub fn main() {
     // ===============================================
-    // Example program
+    // Example program start
     // ===============================================
 
     let block_number = 5244652;
@@ -28,6 +29,6 @@ pub fn main() {
     println!("memorizer is {:?}", memorizer);
 
     // ===============================================
-    // Example program
+    // Example program end
     // ===============================================
 }
