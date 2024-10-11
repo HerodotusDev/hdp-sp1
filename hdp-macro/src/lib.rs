@@ -59,9 +59,6 @@ pub fn hdp_main(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
             cfg_if! {
                 if #[cfg(target_os = "zkvm")] {
-                    // Commit to the public values of the program.
-                    // TODO:  Add a way to commit to the public values of the program.
-                    println!("Done!");
                 } else {
                     let workspace_root = find_workspace_root().expect("Workspace root not found");
                     let path = workspace_root.join("memorizer.bin");

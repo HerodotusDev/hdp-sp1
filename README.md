@@ -1,6 +1,7 @@
 # Herodotus Data Processor (HDP) with SP1 Backend
 
-> **Warning:** This codebase is experimental and not production-ready 🚧
+> [!WARNING]
+> This codebase is experimental and not production-ready 🚧
 
 The Herodotus Data Processor (HDP) allows you to access verified on-chain data by verifying MMR (Merkle Mountain Range) and MPT (Merkle Patricia Tree) proofs in a zkVM environment. More about HDP can be found [here](https://docs.herodotus.dev/herodotus-docs/developers/data-processor).
 
