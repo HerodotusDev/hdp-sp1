@@ -1,8 +1,22 @@
 # Herodotus Data Processor (HDP) with SP1 Backend
 
-> **Warning:** This codebase is experimental and not production ready 🚧
+> **Warning:** This codebase is experimental and not production-ready 🚧
 
 The Herodotus Data Processor (HDP) allows you to access verified on-chain data by verifying MMR (Merkle Mountain Range) and MPT (Merkle Patricia Tree) proofs in a zkVM environment. More about HDP can be found [here](https://docs.herodotus.dev/herodotus-docs/developers/data-processor).
+
+## Architecture
+
+- [`hdp-macro`](./hdp-macro/): A macro to simplify HDP programs for SP1's online and zkVM modes.
+- [`hdp-lib`](./lib/): The core library for HDP programs, including providers, memorizer, verifier, etc.
+- [`hdp-sdk`](./hdp-sdk/): `DataProcessorClient` to wrap the SP1 client and handle HDP's full flow.
+
+## Run Example
+
+This command will run the [simple example](./examples/simple/README.md). It will first run the HDP program in online mode to get proofs. Then it will run the HDP program in zkVM mode to generate an ELF file. This ELF file will then be used to generate a proof and verify it.
+
+```
+cargo run --package simple --bin simple --release +nightly
+```
 
 ## Example Program
 
@@ -46,7 +60,3 @@ fn main() {
     client.verify(&proof, &vk).expect("failed to verify proof");
 }
 ```
-
-## Demo
-
-![](.github/demo.gif)
