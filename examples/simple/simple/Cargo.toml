@@ -1,0 +1,10 @@
+[package]
+name = "simple"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+hdp-sdk = { path = "../../../hdp-sdk" }
+
+[lints]
+workspace = true

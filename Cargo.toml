@@ -1,11 +1,21 @@
 [workspace]
-members = ["lib", "program", "script", "hdp-macro", "hdp-sdk"]
+members = [
+    "lib",
+    "program",
+    "script",
+    "hdp-macro",
+    "hdp-sdk",
+    "examples/simple/simple",
+    "examples/simple/program",
+]
 resolver = "2"
+
 
 [workspace.dependencies]
 bootloader-program = { path = "./program" }
 hdp-lib = { path = "./lib" }
 hdp-macro = { path = "./hdp-macro" }
+hdp-sdk = { path = "./hdp-sdk" }
 
 cfg-if = "1.0.0"
 bincode = "1.3.3"
