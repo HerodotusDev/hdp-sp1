@@ -1,11 +1,20 @@
 [workspace]
-members = ["lib", "program", "script", "sdk"]
+members = [
+    "lib",
+    "hdp-macro",
+    "hdp-sdk",
+    "program",
+    "script",
+    "examples/simple/simple",
+    "examples/simple/program",
+]
 resolver = "2"
 
+
 [workspace.dependencies]
-bootloader-program = { path = "./program" }
 hdp-lib = { path = "./lib" }
-hdp-sdk = { path = "./sdk" }
+hdp-macro = { path = "./hdp-macro" }
+hdp-sdk = { path = "./hdp-sdk" }
 
 cfg-if = "1.0.0"
 bincode = "1.3.3"
@@ -18,8 +27,26 @@ alloy-eips = "0.4.2"
 alloy-rpc-types = "0.4.2"
 alloy-rlp = { version = "0.3.5", features = ["derive"] }
 alloy-trie = { version = "0.6.0" }
+eth-trie-proofs = { version = "0.1.2" }
 reqwest = { version = "0.12", features = ["json"] }
 sha3 = { git = "https://github.com/sp1-patches/RustCrypto-hashes", package = "sha3", branch = "patch-sha3-v0.10.8" }
 sha2 = { git = "https://github.com/sp1-patches/RustCrypto-hashes", package = "sha2", branch = "patch-sha2-v0.10.8" }
+ssz_rs = { git = "https://github.com/ralexstokes/ssz-rs.git", features = [
+    "serde",
+] }
+serde_with = "3.11.0"
 url = { version = "2.5.2", features = ["serde"] }
 thiserror-no-std = "2.0.2"
+tokio = { version = "1.40.0", features = ["full"] }
+sp1-zkvm = { version = "2.0.0", features = ["verify"] }
+sp1-sdk = "2.0.0"
+
+[patch.crates-io]
+sha3-v0-10-8 = { git = "https://github.com/sp1-patches/RustCrypto-hashes", package = "sha3", branch = "patch-sha3-v0.10.8" }
+
+[workspace.lints]
+rust.missing_debug_implementations = "warn"
+rust.unreachable_pub = "warn"
+rust.unused_must_use = "deny"
+rust.rust_2018_idioms = { level = "deny", priority = -1 }
+rustdoc.all = "warn"

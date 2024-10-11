@@ -1,12 +1,13 @@
 use cfg_if::cfg_if;
 
+pub mod memorizer;
+pub mod mmr;
+pub mod mpt;
+
 cfg_if! {
     if #[cfg(target_os = "zkvm")] {
-        pub mod mmr;
-        pub mod mpt;
     } else {
-        pub mod mmr;
-        pub mod mpt;
+        pub mod utils;
         pub mod provider;
 
         pub use provider::*;
