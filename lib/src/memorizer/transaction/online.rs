@@ -1,8 +1,8 @@
 use super::TransactionMemorizer;
 use crate::memorizer::{values::TransactionMemorizerValue, Memorizer, MemorizerError};
+use crate::transaction::{TransactionClient, TransactionResponse};
 use alloy_consensus::TxEnvelope;
 use alloy_rlp::Encodable;
-use hdp_lib::transaction::{TransactionClient, TransactionResponse};
 use tokio::runtime::Runtime;
 
 impl TransactionMemorizer for Memorizer {

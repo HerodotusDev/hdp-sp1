@@ -1,23 +1,19 @@
 #![cfg_attr(target_os = "zkvm", no_main)]
 
-pub mod memorizer;
-
-use alloy_primitives::address;
 use cfg_if::cfg_if;
-use memorizer::{
-    account::AccountMemorizer,
+use hdp_lib::memorizer::{
     header::HeaderMemorizer,
-    keys::{AccountKey, HeaderKey, TransactionKey},
+    keys::{HeaderKey, TransactionKey},
     transaction::TransactionMemorizer,
     Memorizer,
 };
-use url::Url;
 
 cfg_if! {
     if #[cfg(target_os = "zkvm")] {
         sp1_zkvm::entrypoint!(main);
     } else {
         use std::{env, fs, path::Path, str::FromStr};
+        use url::Url;
     }
 }
 
@@ -33,14 +29,13 @@ pub fn main() {
 
             let mut memorizer = sp1_zkvm::io::read::<Memorizer>();
         } else {
-            println!("Hello, world! from non zkvm");
+            println!("Hello, world! from online mode");
             let rpc_url: String = env::var("RPC_URL").expect("RPC_URL not set");
             let mut memorizer = Memorizer::new(Some(Url::from_str(&rpc_url).unwrap()));
         }
     }
 
     let block_number = 5244652;
-    let address = address!("7f2c6f930306d3aa736b3a6c6a98f512f74036d4");
 
     let header_key = HeaderKey {
         block_number,
@@ -48,14 +43,6 @@ pub fn main() {
     };
 
     let _ = memorizer.get_header(header_key).unwrap();
-
-    let account_key = AccountKey {
-        block_number,
-        address,
-        ..Default::default()
-    };
-
-    let _ = memorizer.get_account(account_key);
 
     let tx_key = TransactionKey {
         block_number,

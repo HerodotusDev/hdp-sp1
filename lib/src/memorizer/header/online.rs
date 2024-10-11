@@ -4,8 +4,8 @@ use crate::memorizer::{
     values::{HeaderMemorizerValue, MemorizerValue},
     Memorizer, MemorizerError,
 };
+use crate::{header::IndexerRpc, mmr::MmrMeta, provider::header::IndexerClient};
 use alloy_consensus::Header;
-use hdp_lib::{header::IndexerRpc, mmr::MmrMeta, provider::header::IndexerClient};
 use tokio::runtime::Runtime;
 
 impl HeaderMemorizer for Memorizer {

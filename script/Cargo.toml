@@ -9,6 +9,8 @@ name = "bootloader"
 path = "src/bin/main.rs"
 
 [dependencies]
+hdp-lib = { workspace = true }
+
 bincode = { workspace = true }
 alloy = { version = "0.4.2", features = ["full"] }
 sp1-sdk = "2.0.0"
@@ -17,7 +19,7 @@ serde = { version = "1.0", default-features = false, features = ["derive"] }
 clap = { version = "4.0", features = ["derive", "env"] }
 tracing = "0.1.40"
 hex = "0.4.3"
-bootloader-program = { workspace = true }
+
 
 [build-dependencies]
 sp1-helper = "2.0.0"

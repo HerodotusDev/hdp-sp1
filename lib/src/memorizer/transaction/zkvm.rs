@@ -3,9 +3,9 @@ use crate::memorizer::{
     keys::HeaderKey, keys::MemorizerKey, keys::TransactionKey, values::MemorizerValue, Memorizer,
     MemorizerError,
 };
+use crate::mpt::Mpt;
 use alloy_consensus::TxEnvelope;
 use alloy_rlp::Decodable;
-use hdp_lib::mpt::Mpt;
 
 impl TransactionMemorizer for Memorizer {
     fn get_transaction(&mut self, key: TransactionKey) -> Result<TxEnvelope, MemorizerError> {
