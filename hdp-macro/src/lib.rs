@@ -31,6 +31,7 @@ pub fn hdp_main(_attr: TokenStream, item: TokenStream) -> TokenStream {
             if #[cfg(target_os = "zkvm")] {
                 sp1_zkvm::entrypoint!(main);
             } else {
+                use hdp_lib::utils::find_workspace_root;
                 use std::{env, fs, path::Path, str::FromStr};
                 use url::Url;
             }
@@ -62,8 +63,8 @@ pub fn hdp_main(_attr: TokenStream, item: TokenStream) -> TokenStream {
                     // TODO:  Add a way to commit to the public values of the program.
                     println!("Done!");
                 } else {
-                    let manifest_dir: String = env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR not set");
-                    let path = Path::new(&manifest_dir).join("../memorizer.bin");
+                    let workspace_root = find_workspace_root().expect("Workspace root not found");
+                    let path = workspace_root.join("memorizer.bin");
                     println!("Memorizer saved to {path:?}");
                     fs::write(path, bincode::serialize(&memorizer).unwrap()).unwrap();
                 }

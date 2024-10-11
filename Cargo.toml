@@ -1,10 +1,10 @@
 [workspace]
 members = [
     "lib",
-    "program",
-    "script",
     "hdp-macro",
     "hdp-sdk",
+    "program",
+    "script",
     "examples/simple/simple",
     "examples/simple/program",
 ]
@@ -12,7 +12,6 @@ resolver = "2"
 
 
 [workspace.dependencies]
-bootloader-program = { path = "./program" }
 hdp-lib = { path = "./lib" }
 hdp-macro = { path = "./hdp-macro" }
 hdp-sdk = { path = "./hdp-sdk" }
