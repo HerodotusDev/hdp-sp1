@@ -1191,6 +1191,7 @@ dependencies = [
  "cfg-if",
  "hdp-lib",
  "hdp-macro",
+ "serde",
  "sp1-zkvm",
  "url",
 ]
@@ -2775,6 +2776,7 @@ version = "0.1.0"
 dependencies = [
  "proc-macro2",
  "quote",
+ "serde",
  "syn 2.0.79",
 ]
 

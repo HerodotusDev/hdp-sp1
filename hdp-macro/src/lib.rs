@@ -10,9 +10,22 @@ pub fn hdp_main(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let fn_sig = &input_fn.sig;
     let fn_block = &input_fn.block;
 
+    let commit_fn = quote! {
+        #[cfg(target_os = "zkvm")]
+        fn commit<T: serde::Serialize>(value: &T) {
+            sp1_zkvm::io::commit(value);
+        }
+
+        #[cfg(not(target_os = "zkvm"))]
+        fn commit<T>(_value: &T) {
+            // No-op in online mode
+        }
+    };
+
     let expanded = quote! {
         use cfg_if::cfg_if;
         use hdp_lib::memorizer::Memorizer;
+        use serde::Serialize;
 
         cfg_if! {
             if #[cfg(target_os = "zkvm")] {
@@ -36,6 +49,9 @@ pub fn hdp_main(_attr: TokenStream, item: TokenStream) -> TokenStream {
                     let mut memorizer = Memorizer::new(Some(Url::from_str(&rpc_url).unwrap()));
                 }
             }
+
+            // Conditional commit
+            #commit_fn
 
             // User's code block
             #fn_block

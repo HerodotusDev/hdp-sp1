@@ -24,7 +24,12 @@ pub fn main() {
         ..Default::default()
     };
 
-    let _ = memorizer.get_transaction(tx_key);
+    let v = memorizer.get_transaction(tx_key).unwrap();
+
+    // This function allow you to commit data to the zkvm.
+    // If online, this will do nothing.
+    // Note that you can only commit data that is serializable.
+    commit(&v.tx_hash());
 
     println!("memorizer is {:?}", memorizer);
 
