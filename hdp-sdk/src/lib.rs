@@ -20,6 +20,7 @@ impl DataProcessorClient {
         program_path: PathBuf,
     ) -> Result<(SP1PublicValues, ExecutionReport), Box<dyn Error>> {
         // Setup the logger.
+        env::set_var("RUST_LOG", "info");
         sp1_sdk::utils::setup_logger();
 
         // Step 1: Run online mode (execute `cargo run -r` in the program directory)
@@ -54,14 +55,16 @@ impl DataProcessorClient {
 
         // Setup the inputs.
         let mut stdin = SP1Stdin::new();
-
         let manifest_dir: String =
             env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR not set");
         let path = Path::new(&manifest_dir).join("../memorizer.bin");
         stdin.write(&bincode::deserialize::<Memorizer>(&fs::read(path).unwrap()).unwrap());
 
+        // ELF
+        let path = Path::new(&manifest_dir).join("../elf/riscv32im-succinct-zkvm-elf");
+        let elf_bytes = fs::read(path)?;
+
         // Execute the program
-        let elf_bytes = fs::read("../elf/riscv32im-succinct-zkvm-elf")?;
         let (output, report) = client.execute(&elf_bytes, stdin).run().unwrap();
         println!("Program executed successfully.");
         println!("Number of cycles: {}", report.total_instruction_count());
