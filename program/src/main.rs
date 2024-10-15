@@ -24,11 +24,11 @@ pub fn main() {
     };
     let _ = memorizer.get_header(header_key_plus_one).unwrap();
 
-    let cl_header_key = BeaconHeaderKey {
-        block_number,
-        chain_id: 11155111,
-    };
-    let _ = memorizer.get_cl_header(cl_header_key).unwrap();
+    // let cl_header_key = BeaconHeaderKey {
+    //     block_number,
+    //     chain_id: 11155111,
+    // };
+    // let _ = memorizer.get_cl_header(cl_header_key).unwrap();
 
     println!("memorizer is {:?}", memorizer);
 

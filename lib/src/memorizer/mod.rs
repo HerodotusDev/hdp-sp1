@@ -53,6 +53,12 @@ pub enum MemorizerError {
     #[error("Transaction is missing or invalid")]
     MissingTransaction,
 
+    #[error("Beacon header is missing")]
+    MissingBeaconRoot,
+
+    #[error("Beacon header is invalid")]
+    InvalidBeaconRoot,
+
     #[error("Failed to verify Merkle Patricia Tree (MPT) proof")]
     MptProofFailed(#[from] ProofVerificationError),
 

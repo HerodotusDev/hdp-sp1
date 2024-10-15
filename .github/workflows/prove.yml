@@ -33,7 +33,16 @@ jobs:
           ~/.sp1/bin/sp1up 
           ~/.sp1/bin/cargo-prove prove --version
 
-      - name: Build SP1 program
+      - name: Run online mode
         run: |
           cd program
+          cargo run -r
+
+      - name: Build SP1 program
+        run: |
           ~/.sp1/bin/cargo-prove prove build
+
+      - name: Run script
+        run: |
+          cd ../ && cd script
+          RUST_LOG=info cargo run -r -- --execute

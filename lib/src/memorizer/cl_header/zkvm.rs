@@ -20,22 +20,24 @@ impl ClHeaderMemorizer for Memorizer {
             if let Some(MemorizerValue::BeaconHeader(beacon_header_value)) =
                 self.map.get(&MemorizerKey::from(key))
             {
+                println!("cycle-tracker-start: beacon header hash");
                 let ssz_root = beacon_header_value.header.hash_tree_root().unwrap();
+                println!("cycle-tracker-end: beacon header hash");
                 if beacon_root == ssz_root {
-                    return Ok(beacon_header_value.header.clone());
+                    Ok(beacon_header_value.header.clone())
                 } else {
                     println!(
                         "Mismatched beacon root: beacon root: {:?}, ssz root: {:?}",
                         beacon_root, ssz_root
                     );
+                    Err(MemorizerError::InvalidBeaconRoot)
                 }
+            } else {
+                Err(MemorizerError::MissingBeaconRoot)
             }
         } else {
             println!("Missing header, {:?}", key.block_number);
-            return Err(MemorizerError::MissingHeader);
+            Err(MemorizerError::MissingHeader)
         }
-
-        println!("zkvm run");
-        Ok(BeaconHeader::default())
     }
 }
