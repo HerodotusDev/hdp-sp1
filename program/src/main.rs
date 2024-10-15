@@ -13,23 +13,23 @@ pub fn main() {
 
     let header_key = HeaderKey {
         block_number,
-        ..Default::default()
+        chain_id: 11155111,
     };
 
     let _ = memorizer.get_header(header_key).unwrap();
 
-    let tx_key = TransactionKey {
-        block_number,
-        transaction_index: 0,
-        ..Default::default()
+    let header_key_plus_one = HeaderKey {
+        block_number: block_number + 1,
+        chain_id: 11155111,
     };
+    let _ = memorizer.get_header(header_key_plus_one).unwrap();
 
-    let v = memorizer.get_transaction(tx_key).unwrap();
-
-    // This function allow you to commit data to the zkvm.
-    // If online, this will do nothing.
-    // Note that you can only commit data that is serializable.
-    commit(&v.tx_hash());
+    // TODO: to use CL header, provide RPC that support beacon header
+    // let cl_header_key = BeaconHeaderKey {
+    //     block_number,
+    //     chain_id: 11155111,
+    // };
+    // let _ = memorizer.get_cl_header(cl_header_key).unwrap();
 
     println!("memorizer is {:?}", memorizer);
 

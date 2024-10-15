@@ -30,6 +30,7 @@ impl TransactionMemorizer for Memorizer {
                 Err(MemorizerError::MissingTransaction)
             }
         } else {
+            println!("Missing header, {:?}", key.block_number);
             Err(MemorizerError::MissingHeader)
         }
     }

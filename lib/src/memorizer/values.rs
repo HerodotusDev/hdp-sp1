@@ -25,7 +25,6 @@ pub struct AccountMemorizerValue {
 #[derive(Debug, Default, Clone, Serialize, Deserialize, PartialEq)]
 pub struct BeaconHeaderMemorizerValue {
     pub header: BeaconHeader,
-    pub proof: Vec<Bytes>,
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize, PartialEq)]

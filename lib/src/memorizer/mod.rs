@@ -53,6 +53,12 @@ pub enum MemorizerError {
     #[error("Transaction is missing or invalid")]
     MissingTransaction,
 
+    #[error("Beacon header is missing")]
+    MissingBeaconRoot,
+
+    #[error("Beacon header is invalid")]
+    InvalidBeaconRoot,
+
     #[error("Failed to verify Merkle Patricia Tree (MPT) proof")]
     MptProofFailed(#[from] ProofVerificationError),
 
@@ -61,6 +67,12 @@ pub enum MemorizerError {
 
     #[error("Failed to decode RLP (Recursive Length Prefix) data")]
     RlpDecodeFailed(#[from] alloy_rlp::Error),
+
+    #[error("The given execution layer block number was produced before the PoS transition")]
+    InvalidPoSBlockNumber,
+
+    #[error("Unknown base chain chainId")]
+    UnknownBaseChainId,
 }
 
 #[cfg(test)]
