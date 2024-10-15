@@ -24,6 +24,7 @@ pub fn main() {
     };
     let _ = memorizer.get_header(header_key_plus_one).unwrap();
 
+    // TODO: to use CL header, provide RPC that support beacon header
     // let cl_header_key = BeaconHeaderKey {
     //     block_number,
     //     chain_id: 11155111,
