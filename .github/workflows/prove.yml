@@ -37,6 +37,7 @@ jobs:
         env:
           RPC_URL: ${{ secrets.RPC_URL }}
         run: |
+          echo $RPC_URL
           cd program
           cargo run -r
 
