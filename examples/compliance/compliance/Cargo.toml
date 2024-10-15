@@ -1,0 +1,18 @@
+[package]
+name = "compliance"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+hdp-sdk = { path = "../../../hdp-sdk" }
+
+futures = "0.3"
+reth-exex = { git = "https://github.com/paradigmxyz/reth", features = [
+    "serde",
+] }
+reth-node-api = { git = "https://github.com/paradigmxyz/reth" }
+reth-node-ethereum = { git = "https://github.com/paradigmxyz/reth" }
+reth-tracing = { git = "https://github.com/paradigmxyz/reth" }
+
+[lints]
+workspace = true
