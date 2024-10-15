@@ -24,8 +24,10 @@ async fn exex<Node: FullNodeComponents>(mut ctx: ExExContext<Node>) -> eyre::Res
         match &notification {
             ExExNotification::ChainCommitted { new } => {
                 info!(committed_chain = ?new.range(), "Received commit");
+                // TODO: get transaction from exex hook and send tranascation or block data to hdp program, HeaderKey and TransactionKey is needed.
+                let block = new.block(new.tip().block.hash());
                 let client = DataProcessorClient::new();
-                let (proof, vk) = client.prove("./program".into()).unwrap();
+                let (proof, vk) = client.prove("../program".into()).unwrap();
                 client.verify(&proof, &vk).expect("failed to verify proof");
             }
             ExExNotification::ChainReorged { old, new } => {
