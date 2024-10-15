@@ -13,6 +13,12 @@ reth-exex = { git = "https://github.com/paradigmxyz/reth", features = [
 reth-node-api = { git = "https://github.com/paradigmxyz/reth" }
 reth-node-ethereum = { git = "https://github.com/paradigmxyz/reth" }
 reth-tracing = { git = "https://github.com/paradigmxyz/reth" }
+reth = { git = "https://github.com/paradigmxyz/reth" }
+eyre = "0.6"
+reth-exex-test-utils = { git = "https://github.com/paradigmxyz/reth" }
+reth-testing-utils = { git = "https://github.com/paradigmxyz/reth" }
+reth-execution-types = { git = "https://github.com/paradigmxyz/reth" }
+tokio = { version = "1.0", features = ["full"] }
 
 [lints]
 workspace = true

@@ -1,4 +1,5 @@
 use futures::{Future, TryStreamExt};
+use hdp_sdk::DataProcessorClient;
 use reth_exex::{ExExContext, ExExEvent, ExExNotification};
 use reth_node_api::FullNodeComponents;
 use reth_node_ethereum::EthereumNode;
@@ -23,6 +24,9 @@ async fn exex<Node: FullNodeComponents>(mut ctx: ExExContext<Node>) -> eyre::Res
         match &notification {
             ExExNotification::ChainCommitted { new } => {
                 info!(committed_chain = ?new.range(), "Received commit");
+                let client = DataProcessorClient::new();
+                let (proof, vk) = client.prove("./program".into()).unwrap();
+                client.verify(&proof, &vk).expect("failed to verify proof");
             }
             ExExNotification::ChainReorged { old, new } => {
                 info!(from_chain = ?old.range(), to_chain = ?new.range(), "Received reorg");
@@ -33,7 +37,8 @@ async fn exex<Node: FullNodeComponents>(mut ctx: ExExContext<Node>) -> eyre::Res
         };
 
         if let Some(committed_chain) = notification.committed_chain() {
-            ctx.events.send(ExExEvent::FinishedHeight(committed_chain.tip().num_hash()))?;
+            ctx.events
+                .send(ExExEvent::FinishedHeight(committed_chain.tip().num_hash()))?;
         }
     }
 
