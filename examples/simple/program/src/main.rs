@@ -29,7 +29,7 @@ pub fn main() {
     // This function allow you to commit data to the zkvm.
     // If online, this will do nothing.
     // Note that you can only commit data that is serializable.
-    commit(&v.tx_hash());
+    hdp_commit(&v.tx_hash());
 
     println!("memorizer is {:?}", memorizer);
 
