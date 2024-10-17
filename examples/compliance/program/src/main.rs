@@ -15,14 +15,14 @@ pub fn main() {
     println!("Received transaction_length: {:?}", transaction_length);
 
     let header_key = HeaderKey {
-        block_number,
+        block_number: 5244652,
         ..Default::default()
     };
 
     let _ = memorizer.get_header(header_key).unwrap();
 
     let tx_key = TransactionKey {
-        block_number,
+        block_number: 5244652,
         transaction_index: 0,
         ..Default::default()
     };
