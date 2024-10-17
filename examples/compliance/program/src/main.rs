@@ -9,17 +9,20 @@ pub fn main() {
     // Example program start
     // ===============================================
 
-    let block_number = 5244652;
+    let block_number: u64 = hdp::read();
+    let transaction_length: u64 = hdp::read();
+    println!("Received block_number: {:?}", block_number);
+    println!("Received transaction_length: {:?}", transaction_length);
 
     let header_key = HeaderKey {
-        block_number,
+        block_number: 5244652,
         ..Default::default()
     };
 
     let _ = memorizer.get_header(header_key).unwrap();
 
     let tx_key = TransactionKey {
-        block_number,
+        block_number: 5244652,
         transaction_index: 0,
         ..Default::default()
     };
@@ -31,7 +34,7 @@ pub fn main() {
     // Note that you can only commit data that is serializable.
     hdp_commit(&v.tx_hash());
 
-    println!("memorizer is {:?}", memorizer);
+    // println!("memorizer is {:?}", memorizer);
 
     // ===============================================
     // Example program end

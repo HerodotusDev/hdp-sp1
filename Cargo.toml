@@ -6,7 +6,7 @@ members = [
     "program",
     "script",
     "examples/simple/simple",
-    "examples/simple/program",
+    "examples/simple/program", "examples/compliance/compliance", "examples/compliance/program",
 ]
 resolver = "2"
 

@@ -5,6 +5,7 @@ use sp1_sdk::{
     SP1VerifyingKey,
 };
 use std::fmt::Debug;
+use std::io::Write;
 use std::{env, fs};
 use std::{
     error::Error,
@@ -15,6 +16,7 @@ use std::{
 #[derive(Default)]
 pub struct DataProcessorClient {
     pub sp1_client: ProverClient,
+    pub inputs: Vec<Box<dyn erased_serde::Serialize>>,
 }
 
 impl Debug for DataProcessorClient {
@@ -27,11 +29,19 @@ impl DataProcessorClient {
     pub fn new() -> Self {
         Self {
             sp1_client: ProverClient::new(),
+            inputs: Vec::new(),
         }
     }
 
+    pub fn write<T>(&mut self, value: T)
+    where
+        T: serde::Serialize + 'static,
+    {
+        self.inputs.push(Box::new(value));
+    }
+
     pub fn execute(
-        &self,
+        &mut self,
         program_path: PathBuf,
     ) -> Result<(SP1PublicValues, ExecutionReport), Box<dyn Error>> {
         // Setup the logger.
@@ -39,14 +49,22 @@ impl DataProcessorClient {
         sp1_sdk::utils::setup_logger();
 
         // Step 1: Run online mode (execute `cargo run -r` in the program directory)
-        let status = Command::new("cargo")
+        let mut child = Command::new("cargo")
             .args(["run", "-r"])
             .current_dir(&program_path)
+            .stdin(Stdio::piped())
             .stdout(Stdio::inherit())
             .stderr(Stdio::inherit())
-            .status()?;
+            .spawn()?;
 
-        if !status.success() {
+        if let Some(mut stdin) = child.stdin.take() {
+            for input in &self.inputs {
+                let serialized_data = bincode::serialize(&input)?;
+                stdin.write_all(&serialized_data)?;
+            }
+        }
+
+        if !child.wait()?.success() {
             return Err(
                 format!("Failed to run 'cargo run -r' in {}", program_path.display()).into(),
             );
@@ -65,11 +83,15 @@ impl DataProcessorClient {
         }
 
         // Setup the inputs.
-        let mut stdin = SP1Stdin::new();
         let workspace_root = find_workspace_root().expect("Workspace root not found");
         let path = workspace_root.join("memorizer.bin");
         println!("Memorizer loaded from {path:?}");
+        let mut stdin = SP1Stdin::new();
         stdin.write(&bincode::deserialize::<Memorizer>(&fs::read(path).unwrap()).unwrap());
+        // write self.inputs
+        for input in &self.inputs {
+            stdin.write(&input);
+        }
 
         // ELF
         let path = workspace_root.join("elf/riscv32im-succinct-zkvm-elf");
@@ -92,19 +114,26 @@ impl DataProcessorClient {
         sp1_sdk::utils::setup_logger();
 
         // Step 1: Run online mode (execute `cargo run -r` in the program directory)
-        let status = Command::new("cargo")
+        let mut child = Command::new("cargo")
             .args(["run", "-r"])
             .current_dir(&program_path)
+            .stdin(Stdio::piped())
             .stdout(Stdio::inherit())
             .stderr(Stdio::inherit())
-            .status()?;
+            .spawn()?;
 
-        if !status.success() {
+        if let Some(mut stdin) = child.stdin.take() {
+            for input in &self.inputs {
+                let serialized_data = bincode::serialize(&input)?;
+                stdin.write_all(&serialized_data)?;
+            }
+        }
+
+        if !child.wait()?.success() {
             return Err(
                 format!("Failed to run 'cargo run -r' in {}", program_path.display()).into(),
             );
         };
-
         // 2. run zkvm mode -> ELF
         let status = Command::new("cargo")
             .args(["prove", "build"])
@@ -125,6 +154,9 @@ impl DataProcessorClient {
         let path = workspace_root.join("memorizer.bin");
         println!("Memorizer loaded from {path:?}");
         stdin.write(&bincode::deserialize::<Memorizer>(&fs::read(path).unwrap()).unwrap());
+        for input in &self.inputs {
+            stdin.write(&input);
+        }
 
         // ELF
         let path = workspace_root.join("elf/riscv32im-succinct-zkvm-elf");
@@ -167,13 +199,17 @@ mod tests {
 
     #[test]
     fn test_execute() {
-        let client = DataProcessorClient::new();
+        let mut client = DataProcessorClient::new();
+        client.write(5244652_u64);
+        client.write(11155111_u64);
         client.execute("../program".into()).unwrap();
     }
 
     #[test]
     fn test_verify() {
-        let client = DataProcessorClient::new();
+        let mut client = DataProcessorClient::new();
+        client.write(5244652_u64);
+        client.write(11155111_u64);
         let (proof, vk) = client.prove("../program".into()).unwrap();
         client.verify(&proof, &vk).expect("failed to verify proof");
         println!("Successfully verified proof!");
