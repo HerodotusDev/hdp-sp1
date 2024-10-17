@@ -4,7 +4,6 @@ use reth_exex::{ExExContext, ExExEvent, ExExNotification};
 use reth_node_api::FullNodeComponents;
 use reth_node_ethereum::EthereumNode;
 use reth_tracing::tracing::info;
-use sp1_sdk::SP1Stdin;
 
 /// The initialization logic of the ExEx is just an async function.
 ///
@@ -25,14 +24,12 @@ async fn exex<Node: FullNodeComponents>(mut ctx: ExExContext<Node>) -> eyre::Res
         match &notification {
             ExExNotification::ChainCommitted { new } => {
                 info!(committed_chain = ?new.range(), "Received commit");
-                // TODO: get transaction from exex hook and send tranascation or block data to hdp program, HeaderKey and TransactionKey is needed.
                 let block = new.block(new.tip().block.hash()).unwrap();
                 let block_number = block.number;
-                let transaction_length = block.body.transactions.len();
-                let mut stdin = SP1Stdin::new();
-                stdin.write(&block_number);
-                stdin.write(&transaction_length);
-                let client = DataProcessorClient::new();
+                let transaction_length = block.body.transactions.len() as u64;
+                let mut client = DataProcessorClient::new();
+                client.write(block_number);
+                client.write(transaction_length);
                 let (proof, vk) = client.prove("../program".into()).unwrap();
                 client.verify(&proof, &vk).expect("failed to verify proof");
             }
