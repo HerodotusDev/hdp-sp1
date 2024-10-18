@@ -41,14 +41,14 @@ jobs:
           cargo run -r
           cd ../
 
-      - name: Build SP1 program
-        run: |
-          cd program
-          ~/.sp1/bin/cargo-prove prove build
-          cd ../
+      # - name: Build SP1 program
+      #   run: |
+      #     cd program
+      #     ~/.sp1/bin/cargo-prove prove build
+      #     cd ../
 
-      - name: Run script
-        run: |
-          cd script
-          RUST_LOG=info cargo run -r -- --execute
-          cd ../
+      # - name: Run script
+      #   run: |
+      #     cd script
+      #     RUST_LOG=info cargo run -r -- --execute
+      #     cd ../

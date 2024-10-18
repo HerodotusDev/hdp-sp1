@@ -12,13 +12,35 @@ pub fn hdp_main(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
     let commit_fn = quote! {
         #[cfg(target_os = "zkvm")]
-        fn commit<T: serde::Serialize>(value: &T) {
+        fn hdp_commit<T: serde::Serialize>(value: &T) {
             sp1_zkvm::io::commit(value);
         }
 
         #[cfg(not(target_os = "zkvm"))]
-        fn commit<T>(_value: &T) {
+        fn hdp_commit<T>(_value: &T) {
             // No-op in online mode
+        }
+    };
+
+    let hdp_read_fn = quote! {
+        mod hdp {
+            use serde::{Serialize, de::DeserializeOwned};
+            cfg_if::cfg_if! {
+                if #[cfg(target_os = "zkvm")] {
+                    pub fn read<T: DeserializeOwned>() -> T {
+                        sp1_zkvm::io::read::<T>()
+                    }
+                } else {
+                    use std::io::{self, Read};
+                    use std::fmt::Debug;
+                    pub fn read<T: DeserializeOwned + Debug>() -> T {
+                        let stdin = io::stdin();
+                        let mut reader = stdin.lock();
+                        let deserialized_value: T = bincode::deserialize_from(&mut reader).expect("Failed to deserialize input");
+                        deserialized_value
+                    }
+                }
+            }
         }
     };
 
@@ -37,6 +59,8 @@ pub fn hdp_main(_attr: TokenStream, item: TokenStream) -> TokenStream {
             }
         }
 
+        #hdp_read_fn
+
         #fn_vis #fn_sig {
             cfg_if! {
                 if #[cfg(target_os = "zkvm")] {
@@ -46,8 +70,8 @@ pub fn hdp_main(_attr: TokenStream, item: TokenStream) -> TokenStream {
                     let mut memorizer = sp1_zkvm::io::read::<Memorizer>();
                 } else {
                     println!("Hello, world! from online mode");
-                    let rpc_url: String = env::var("RPC_URL").expect("RPC_URL not set");
-                    let mut memorizer = Memorizer::new(Some(Url::from_str(&rpc_url).unwrap()));
+                    //let rpc_url: String = env::var("RPC_URL").expect("RPC_URL not set");
+                    let mut memorizer = Memorizer::new(Some(Url::from_str("https://sepolia.ethereum.iosis.tech").unwrap()));
                 }
             }
 

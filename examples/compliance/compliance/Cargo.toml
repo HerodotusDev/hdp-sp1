@@ -1,0 +1,36 @@
+[package]
+name = "compliance"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+hdp-sdk = { path = "../../../hdp-sdk" }
+futures = "0.3"
+reth-exex = { git = "https://github.com/paradigmxyz/reth", features = [
+    "serde",
+] }
+reth-node-api = { git = "https://github.com/paradigmxyz/reth" }
+reth-node-ethereum = { git = "https://github.com/paradigmxyz/reth" }
+reth-tracing = { git = "https://github.com/paradigmxyz/reth" }
+reth = { git = "https://github.com/paradigmxyz/reth" }
+eyre = "0.6"
+reth-exex-test-utils = { git = "https://github.com/paradigmxyz/reth" }
+tokio = { version = "1.0", features = ["full"] }
+sp1-sdk = { workspace = true }
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+alloy-sol-types = "0.8.8"
+reth-testing-utils = { git = "https://github.com/paradigmxyz/reth" }
+reth-execution-types = { git = "https://github.com/paradigmxyz/reth" }
+reth-primitives = { git = "https://github.com/paradigmxyz/reth" }
+alloy-primitives = { workspace = true }
+alloy-consensus = { workspace = true, features = [
+    "serde",
+    "serde-bincode-compat",
+    "k256",
+] }
+rand = "0.8"
+secp256k1 = { version = "0.30.0", features = ["rand"] }
