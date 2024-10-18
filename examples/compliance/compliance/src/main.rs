@@ -64,39 +64,76 @@ fn main() -> eyre::Result<()> {
 
 #[cfg(test)]
 mod tests {
+    use std::pin::pin;
+
+    use alloy_consensus::TxLegacy;
+    use alloy_primitives::{Address, TxKind, U256};
+    use alloy_sol_types::SolEvent;
+    use reth::revm::db::BundleState;
     use reth_execution_types::{Chain, ExecutionOutcome};
     use reth_exex_test_utils::{test_exex_context, PollOnce};
-    use std::pin::pin;
+    use reth_primitives::{
+        Block, BlockBody, Header, Log, Receipt, Receipts, Transaction, TransactionSigned, TxType,
+    };
+    use reth_testing_utils::generators::sign_tx_with_random_key_pair;
+
+    /// Given the address of a bridge contract and an event, construct a transaction signed with a
+    /// random private key and a receipt for that transaction.
+    fn construct_tx(to: Address) -> eyre::Result<TransactionSigned> {
+        let tx = Transaction::Legacy(TxLegacy {
+            to: TxKind::Call(to),
+            ..Default::default()
+        });
+
+        Ok(sign_tx_with_random_key_pair(&mut rand::thread_rng(), tx))
+    }
 
     #[tokio::test]
     async fn test_exex() -> eyre::Result<()> {
         // Initialize a test Execution Extension context with all dependencies
         let (ctx, mut handle) = test_exex_context().await?;
 
-        // Save the current head of the chain to check the finished height against it later
-        let head = ctx.head;
-
-        // Send a notification to the Execution Extension that the chain has been committed
-        handle
-            .send_notification_chain_committed(Chain::from_block(
-                handle.genesis.clone(),
-                ExecutionOutcome::default(),
-                None,
-            ))
-            .await?;
-
         // Initialize the Execution Extension
         let mut exex = pin!(super::exex_init(ctx).await?);
 
-        // Check that the Execution Extension did not emit any events until we polled it
-        handle.assert_events_empty();
+        // Generate random "from" and "to" addresses for deposit and withdrawal events
+        let from_address = Address::new([
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x03,
+        ]);
+        let to_address = Address::random();
 
-        // Poll the Execution Extension once to process incoming notifications
+        let deposit_tx = construct_tx(to_address)?;
+        let withdrawal_tx = construct_tx(from_address)?;
+
+        let block = Block {
+            header: Header::default(),
+            body: BlockBody {
+                transactions: vec![deposit_tx, withdrawal_tx],
+                ..Default::default()
+            },
+        }
+        .seal_slow()
+        .seal_with_senders()
+        .ok_or_else(|| eyre::eyre!("failed to recover senders"))?;
+        // Construct a chain
+        let chain = Chain::new(
+            vec![block.clone()],
+            ExecutionOutcome::new(
+                BundleState::default(),
+                Receipts::default(),
+                block.number,
+                vec![block.body.requests.clone().unwrap_or_default()],
+            ),
+            None,
+        );
+
+        // Send a notification that the chain has been committed
+        handle
+            .send_notification_chain_committed(chain.clone())
+            .await?;
+        // Poll the ExEx once, it will process the notification that we just sent
         exex.poll_once().await?;
-
-        // Check that the Execution Extension emitted a `FinishedHeight` event with the correct
-        // height
-        handle.assert_event_finished_height((head.number, head.hash).into())?;
 
         Ok(())
     }

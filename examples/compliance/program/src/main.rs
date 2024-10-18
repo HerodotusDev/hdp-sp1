@@ -36,9 +36,13 @@ pub fn main() {
     // Initialize Bloom Filter
     // ================================================
 
+    println!("cycle-tracker-start: bloom default init");
     let mut my_bloom = Bloom::default();
+    println!("cycle-tracker-end: bloom default init");
     for i in SANCTIONED_ADDRESS {
+        println!("cycle-tracker-start: bloom accrue init");
         my_bloom.accrue(Input::Raw(&i));
+        println!("cycle-tracker-end:  bloom accrue init");
     }
 
     let header_key = HeaderKey {
@@ -55,13 +59,19 @@ pub fn main() {
             ..Default::default()
         };
         let tx = memorizer.get_transaction(tx_key).unwrap();
-        if my_bloom.contains_input(Input::Raw(tx.recover_signer().unwrap().as_ref())) {
+        println!("cycle-tracker-start: bloom check");
+        let might_be_sanctioned =
+            my_bloom.contains_input(Input::Raw(tx.recover_signer().unwrap().as_ref()));
+        println!("cycle-tracker-end: bloom check");
+        if might_be_sanctioned {
             if let Some(receiver) = tx.to().to() {
                 println!(
                     "Found a sanctioned address in transaction receiver: {:?}",
                     receiver
                 );
+                println!("cycle-tracker-start: bloom set");
                 my_bloom.accrue(Input::Raw(receiver.as_ref()));
+                println!("cycle-tracker-end:  bloom set");
             }
         }
     }
