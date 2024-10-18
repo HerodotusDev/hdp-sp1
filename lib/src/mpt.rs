@@ -1,3 +1,4 @@
+use alloy_consensus::Account;
 use alloy_primitives::{Bytes, B256, U256};
 use alloy_trie::{
     proof::{verify_proof, ProofVerificationError},
@@ -17,6 +18,19 @@ impl Mpt {
         let tx_encoded = alloy_rlp::encode(U256::from(tx_index));
         let key = Bytes::from(tx_encoded);
         let nibbles = Nibbles::unpack(key);
+
+        // TODO: last element of proof is the value of the key, not sure if it's ok to hardcode split prefix
+        let expected = &proof.last().unwrap()[5..];
+        verify_proof(self.root, nibbles, Some(expected.to_vec()), &proof)
+    }
+
+    pub fn verify_account(
+        &self,
+        proof: Vec<Bytes>,
+        account: Account,
+    ) -> Result<(), ProofVerificationError> {
+        println!("account proof: {:?}", proof);
+        let nibbles = Nibbles::unpack(account.trie_hash_slow());
 
         // TODO: last element of proof is the value of the key, not sure if it's ok to hardcode split prefix
         let expected = &proof.last().unwrap()[5..];
