@@ -64,50 +64,68 @@ fn main() -> eyre::Result<()> {
 
 #[cfg(test)]
 mod tests {
-    use std::pin::pin;
-
     use alloy_consensus::TxLegacy;
-    use alloy_primitives::{Address, TxKind, U256};
-    use alloy_sol_types::SolEvent;
+    use alloy_primitives::{Address, TxKind, B256, B64};
     use reth::revm::db::BundleState;
     use reth_execution_types::{Chain, ExecutionOutcome};
     use reth_exex_test_utils::{test_exex_context, PollOnce};
     use reth_primitives::{
-        Block, BlockBody, Header, Log, Receipt, Receipts, Transaction, TransactionSigned, TxType,
+        sign_message, Block, BlockBody, Header, Receipts, Transaction, TransactionSigned,
     };
-    use reth_testing_utils::generators::sign_tx_with_random_key_pair;
+    use secp256k1::Keypair;
+    use std::pin::pin;
 
-    /// Given the address of a bridge contract and an event, construct a transaction signed with a
-    /// random private key and a receipt for that transaction.
     fn construct_tx(to: Address) -> eyre::Result<TransactionSigned> {
-        let tx = Transaction::Legacy(TxLegacy {
+        let secp = secp256k1::Secp256k1::new();
+        let key_pair = Keypair::new(&secp, &mut rand::thread_rng());
+        let tx: Transaction = Transaction::Legacy(TxLegacy {
             to: TxKind::Call(to),
             ..Default::default()
         });
-
-        Ok(sign_tx_with_random_key_pair(&mut rand::thread_rng(), tx))
+        let hash = tx.signature_hash();
+        let signature = sign_message(B256::from_slice(&key_pair.secret_bytes()[..]), hash).unwrap();
+        let signed = TransactionSigned::from_transaction_and_signature(tx.clone(), signature);
+        Ok(signed)
     }
 
     #[tokio::test]
     async fn test_exex() -> eyre::Result<()> {
-        // Initialize a test Execution Extension context with all dependencies
-        let (ctx, mut handle) = test_exex_context().await?;
-
-        // Initialize the Execution Extension
+        let (ctx, handle) = test_exex_context().await?;
         let mut exex = pin!(super::exex_init(ctx).await?);
-
-        // Generate random "from" and "to" addresses for deposit and withdrawal events
         let from_address = Address::new([
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x03,
         ]);
         let to_address = Address::random();
-
         let deposit_tx = construct_tx(to_address)?;
         let withdrawal_tx = construct_tx(from_address)?;
 
+        let header = Header {
+            parent_hash: Default::default(),
+            ommers_hash: Default::default(),
+            beneficiary: Default::default(),
+            state_root: Default::default(),
+            transactions_root: Default::default(),
+            receipts_root: Default::default(),
+            logs_bloom: Default::default(),
+            difficulty: Default::default(),
+            number: 5244652,
+            gas_limit: 0,
+            gas_used: 0,
+            timestamp: 0,
+            extra_data: Default::default(),
+            mix_hash: Default::default(),
+            nonce: B64::ZERO,
+            base_fee_per_gas: None,
+            withdrawals_root: None,
+            blob_gas_used: None,
+            excess_blob_gas: None,
+            parent_beacon_block_root: None,
+            requests_root: None,
+        };
+
         let block = Block {
-            header: Header::default(),
+            header,
             body: BlockBody {
                 transactions: vec![deposit_tx, withdrawal_tx],
                 ..Default::default()
@@ -116,7 +134,7 @@ mod tests {
         .seal_slow()
         .seal_with_senders()
         .ok_or_else(|| eyre::eyre!("failed to recover senders"))?;
-        // Construct a chain
+
         let chain = Chain::new(
             vec![block.clone()],
             ExecutionOutcome::new(
@@ -128,11 +146,9 @@ mod tests {
             None,
         );
 
-        // Send a notification that the chain has been committed
         handle
             .send_notification_chain_committed(chain.clone())
             .await?;
-        // Poll the ExEx once, it will process the notification that we just sent
         exex.poll_once().await?;
 
         Ok(())

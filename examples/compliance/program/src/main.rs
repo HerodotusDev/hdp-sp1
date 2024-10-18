@@ -8,8 +8,8 @@ use hdp_macro::hdp_main;
 
 const SANCTIONED_ADDRESS: [[u8; 20]; 3] = [
     [
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x01,
+        0x63, 0x1e, 0x9b, 0x03, 0x1b, 0x16, 0xb1, 0x81, 0x72, 0xa2, 0xb9, 0xd6, 0x6c, 0x36, 0x68,
+        0xa6, 0x8a, 0x66, 0x8d, 0x20,
     ],
     [
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -60,8 +60,9 @@ pub fn main() {
         };
         let tx = memorizer.get_transaction(tx_key).unwrap();
         println!("cycle-tracker-start: bloom check");
-        let might_be_sanctioned =
-            my_bloom.contains_input(Input::Raw(tx.recover_signer().unwrap().as_ref()));
+        let signer = tx.recover_signer().unwrap();
+        println!("recover signer: {:?}", signer);
+        let might_be_sanctioned = my_bloom.contains_input(Input::Raw(signer.as_ref()));
         println!("cycle-tracker-end: bloom check");
         if might_be_sanctioned {
             if let Some(receiver) = tx.to().to() {
@@ -82,8 +83,6 @@ pub fn main() {
     // If online, this will do nothing.
     // Note that you can only commit data that is serializable.
     hdp_commit(&bloom_commit);
-
-    // println!("memorizer is {:?}", memorizer);
 
     // ===============================================
     // Example program end
