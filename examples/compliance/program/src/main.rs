@@ -59,9 +59,9 @@ pub fn main() {
             ..Default::default()
         };
         let tx = memorizer.get_transaction(tx_key).unwrap();
-        println!("cycle-tracker-start: bloom check");
         let signer = tx.recover_signer().unwrap();
         println!("recover signer: {:?}", signer);
+        println!("cycle-tracker-start: bloom check");
         let might_be_sanctioned = my_bloom.contains_input(Input::Raw(signer.as_ref()));
         println!("cycle-tracker-end: bloom check");
         if might_be_sanctioned {
