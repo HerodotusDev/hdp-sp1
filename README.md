@@ -48,7 +48,7 @@ pub fn main() {
 }
 ```
 
-### hdp-sdk
+## hdp-sdk
 
 We provide an SDK that wraps the SP1 client and abstracts away running SP1 programs in online mode (to get proofs) and zkVM mode (to verify proofs). You can use it like a normal SP1 client; however, in the program path, you provide an HDP program that uses the `#[hdp_main]` macro.
 
@@ -60,4 +60,30 @@ fn main() {
     let (proof, vk) = client.prove("./program".into()).unwrap();
     client.verify(&proof, &vk).expect("failed to verify proof");
 }
+```
+
+### Pass input to HDP program
+
+If you want to pass some input to the HDP program, you can use `write` method :
+
+```rust
+use hdp_sdk::DataProcessorClient;
+
+fn main() {
+    let mut client = DataProcessorClient::new();
+    client.write(5244652_u64);
+    let (proof, vk) = client.prove("./program".into()).unwrap();
+    client.verify(&proof, &vk).expect("failed to verify proof");
+}
+```
+
+Note that you need to read the input from the HDP program if you want to use it like this:
+
+```rust
+#[hdp_main]
+pub fn main() {
+   let block_number: u64 = hdp::read();
+   println!("Received block_number: {:?}", block_number);
+}
+
 ```
