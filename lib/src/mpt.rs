@@ -1,5 +1,5 @@
 use alloy_consensus::Account;
-use alloy_primitives::{Bytes, B256, U256};
+use alloy_primitives::{keccak256, Address, Bytes, B256, U256};
 use alloy_trie::{
     proof::{verify_proof, ProofVerificationError},
     Nibbles,
@@ -28,8 +28,9 @@ impl Mpt {
         &self,
         proof: Vec<Bytes>,
         account: Account,
+        address: Address,
     ) -> Result<(), ProofVerificationError> {
-        let nibbles = Nibbles::unpack(account.trie_hash_slow());
+        let nibbles = Nibbles::unpack(keccak256(address));
 
         // TODO: fix verification of account
         let expected = alloy_rlp::encode(account);

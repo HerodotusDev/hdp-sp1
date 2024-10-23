@@ -17,12 +17,16 @@ impl AccountMemorizer for Memorizer {
 
         if let Some(MemorizerValue::Header(header_value)) = self.map.get(&header_key) {
             let state_root = header_value.header.state_root;
-            let account_key: MemorizerKey = key.into();
+            let account_key: MemorizerKey = key.clone().into();
 
             if let Some(MemorizerValue::Account(account_value)) = self.map.get(&account_key) {
                 let mpt = Mpt { root: state_root };
                 println!("cycle-tracker-start: mpt");
-                mpt.verify_account(account_value.proof.clone(), account_value.account.clone())?;
+                mpt.verify_account(
+                    account_value.proof.clone(),
+                    account_value.account.clone(),
+                    key.address,
+                )?;
                 println!("cycle-tracker-end: mpt");
                 Ok(account_value.account)
             } else {
