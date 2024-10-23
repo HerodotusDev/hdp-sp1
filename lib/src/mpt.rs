@@ -31,8 +31,6 @@ impl Mpt {
         address: Address,
     ) -> Result<(), ProofVerificationError> {
         let nibbles = Nibbles::unpack(keccak256(address));
-
-        // TODO: fix verification of account
         let expected = alloy_rlp::encode(account);
         verify_proof(self.root, nibbles, Some(expected), &proof)
     }

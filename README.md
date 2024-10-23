@@ -22,12 +22,13 @@ The Herodotus Data Processor (HDP) allows you to access verified on-chain data b
 
 ## Performance
 
-| Operation                | Clock Cycle |
-| ------------------------ | ----------- |
-| **MMR Verification**     | 626,077     |
-| **MPT Verification**     | 78,851      |
-| **Bloom Filter (Set)**   | 17,656      |
-| **Bloom Filter (Check)** | 20,119      |
+| Operation                     | Clock Cycle |
+| ----------------------------- | ----------- |
+| **MMR Verification**          | 626,077     |
+| **MPT Verification(tx)**      | 78,851      |
+| **MPT Verification(account)** | 514,720     |
+| **Bloom Filter (Set)**        | 17,656      |
+| **Bloom Filter (Check)**      | 20,119      |
 
 ## Run Example
 
