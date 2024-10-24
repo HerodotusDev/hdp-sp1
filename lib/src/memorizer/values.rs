@@ -40,11 +40,19 @@ pub struct TransactionMemorizerValue {
     pub proof: Vec<Bytes>,
 }
 
+#[derive(Debug, Default, Clone, Serialize, Deserialize, PartialEq)]
+pub struct ReceiptMemorizerValue {
+    pub receipt_encoded: Bytes,
+    pub tx_index: u64,
+    pub proof: Vec<Bytes>,
+}
+
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub enum MemorizerValue {
     Header(HeaderMemorizerValue),
     Account(AccountMemorizerValue),
     Storage(StorageMemorizerValue),
     Transaction(TransactionMemorizerValue),
+    Receipt(ReceiptMemorizerValue),
     BeaconHeader(BeaconHeaderMemorizerValue),
 }

@@ -22,13 +22,6 @@ pub fn main() {
 
     let _ = memorizer.get_header(header_key).unwrap();
 
-    let tx_key = TransactionKey {
-        block_number: 5244634,
-        transaction_index: 2,
-        chain_id: 11155111_u64,
-    };
-    let _ = memorizer.get_transaction(tx_key).unwrap();
-
     let account_key = AccountKey {
         block_number: 5244634,
         address: address!("7f2c6f930306d3aa736b3a6c6a98f512f74036d4"),
@@ -43,6 +36,20 @@ pub fn main() {
         storage_slot: U256::from(1).into(),
     };
     let v = memorizer.get_storage(storage_key).unwrap();
+
+    // let tx_key = TransactionKey {
+    //     block_number: 5244634,
+    //     chain_id: 11155111_u64,
+    //     transaction_index: 2,
+    // };
+    // let _ = memorizer.get_transaction(tx_key).unwrap();
+
+    let receipt_key = ReceiptKey {
+        block_number: 5244634,
+        chain_id: 11155111_u64,
+        transaction_index: 2,
+    };
+    let _ = memorizer.get_receipt(receipt_key).unwrap();
     // TODO: to use CL header, provide RPC that support beacon header
     // let cl_header_key = BeaconHeaderKey {
     //     block_number,

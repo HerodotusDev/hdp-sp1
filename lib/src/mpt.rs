@@ -16,12 +16,20 @@ impl Mpt {
         tx_index: u64,
         proof: Vec<Bytes>,
     ) -> Result<(), ProofVerificationError> {
-        let tx_encoded = alloy_rlp::encode(U256::from(tx_index));
-        let key = Bytes::from(tx_encoded);
-        let nibbles = Nibbles::unpack(key);
-
+        let nibbles = Nibbles::unpack(Bytes::from(alloy_rlp::encode(U256::from(tx_index))));
         // TODO: last element of proof is the value of the key, not sure if it's ok to hardcode split prefix
         let expected = &proof.last().unwrap()[5..];
+        verify_proof(self.root, nibbles, Some(expected.to_vec()), &proof)
+    }
+
+    pub fn verify_receipt(
+        &self,
+        tx_index: u64,
+        proof: Vec<Bytes>,
+    ) -> Result<(), ProofVerificationError> {
+        let nibbles = Nibbles::unpack(Bytes::from(alloy_rlp::encode(U256::from(tx_index))));
+        // TODO: last element of proof is the value of the key, not sure if it's ok to hardcode split prefix
+        let expected = &proof.last().unwrap()[7..];
         verify_proof(self.root, nibbles, Some(expected.to_vec()), &proof)
     }
 

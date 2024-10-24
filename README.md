@@ -18,18 +18,19 @@ The Herodotus Data Processor (HDP) allows you to access verified on-chain data b
 - [x] Consensus Header
 - [x] Account
 - [x] Storage
-- [ ] Receipt
+- [x] Receipt
 
 ## Performance
 
-| Operation                     | Clock Cycle |
-| ----------------------------- | ----------- |
-| **MMR Verification**          | 625,471     |
-| **MPT Verification(tx)**      | 136,951     |
-| **MPT Verification(account)** | 514,710     |
-| **MPT Verification(storage)** | 18,790      |
-| **Bloom Filter (Set)**        | 17,656      |
-| **Bloom Filter (Check)**      | 20,119      |
+| Operation                     | Clock Cycle | Code                                              |
+| ----------------------------- | ----------- | ------------------------------------------------- |
+| **MMR Verification(header)**  | 625,471     | [code](./lib/src/memorizer/header/zkvm.rs)        |
+| **MPT Verification(tx)**      | 136,951     | [code](./lib/src/memorizer/transaction/zkvm.rs)   |
+| **MPT Verification(receipt)** | 172,726     | [code](./lib/src/memorizer/receipt/zkvm.rs)       |
+| **MPT Verification(account)** | 514,710     | [code](./lib/src/memorizer/account/zkvm.rs)       |
+| **MPT Verification(storage)** | 18,790      | [code](./lib/src/memorizer/storage/zkvm.rs)       |
+| **Bloom Filter (Set)**        | 17,656      | [code](./examples/compliance/program/src/main.rs) |
+| **Bloom Filter (Check)**      | 20,119      | [code](./examples/compliance/program/src/main.rs) |
 
 ## Run Example
 

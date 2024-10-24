@@ -2,6 +2,7 @@ pub mod account;
 pub mod cl_header;
 pub mod header;
 pub mod keys;
+pub mod receipt;
 pub mod storage;
 pub mod transaction;
 pub mod values;
@@ -10,6 +11,7 @@ pub use account::*;
 pub use cl_header::*;
 pub use header::*;
 pub use keys::*;
+pub use receipt::*;
 pub use storage::*;
 pub use transaction::*;
 pub use values::*;
@@ -52,6 +54,9 @@ pub enum MemorizerError {
 
     #[error("Transaction is missing or invalid")]
     MissingTransaction,
+
+    #[error("Receipt is missing or invalid")]
+    MissingReceipt,
 
     #[error("Beacon header is missing")]
     MissingBeaconRoot,

@@ -21,9 +21,9 @@ impl TransactionMemorizer for Memorizer {
 
             if let Some(MemorizerValue::Transaction(tx_value)) = self.map.get(&tx_key) {
                 let mpt = Mpt { root: tx_root };
-                println!("cycle-tracker-start: mpt");
+                println!("cycle-tracker-start: mpt (transaction)");
                 mpt.verify_transaction(tx_value.tx_index, tx_value.proof.clone())?;
-                println!("cycle-tracker-end: mpt");
+                println!("cycle-tracker-end: mpt (transaction)");
                 let tx_encoded = tx_value.transaction_encoded.clone();
                 Ok(TxEnvelope::decode(&mut tx_encoded.as_ref())?)
             } else {
