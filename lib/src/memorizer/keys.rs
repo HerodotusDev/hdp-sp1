@@ -9,7 +9,7 @@ pub struct HeaderKey {
     pub block_number: u64,
 }
 
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct AccountKey {
     pub chain_id: u64,
     pub block_number: u64,

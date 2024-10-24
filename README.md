@@ -11,6 +11,25 @@ The Herodotus Data Processor (HDP) allows you to access verified on-chain data b
 - [`hdp-lib`](./lib/): The core library for HDP programs, including providers, memorizer, verifier, etc.
 - [`hdp-sdk`](./hdp-sdk/): `DataProcessorClient` to wrap the SP1 client and handle HDP's full flow.
 
+## Supported Memorizers
+
+- [x] Header
+- [x] Transaction
+- [x] Consensus Header
+- [x] Account
+- [ ] Storage
+- [ ] Receipt
+
+## Performance
+
+| Operation                     | Clock Cycle |
+| ----------------------------- | ----------- |
+| **MMR Verification**          | 625,471     |
+| **MPT Verification(tx)**      | 136,951     |
+| **MPT Verification(account)** | 514,710     |
+| **Bloom Filter (Set)**        | 17,656      |
+| **Bloom Filter (Check)**      | 20,119      |
+
 ## Run Example
 
 This command will run the [simple example](./examples/simple/README.md). It will first run the HDP program in online mode to get proofs. Then it will run the HDP program in zkVM mode to generate an ELF file. This ELF file will then be used to generate a proof and verify it.

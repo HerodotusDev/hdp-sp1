@@ -106,7 +106,7 @@ mod tests {
     #[tokio::test]
     async fn test_get_header() {
         let client = IndexerClient::default();
-        let indexer_rpc = client.get_header(1).await.unwrap();
+        let indexer_rpc = client.get_header(665200).await.unwrap();
         let header: Header = indexer_rpc
             .proofs
             .first()

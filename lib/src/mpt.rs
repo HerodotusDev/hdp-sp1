@@ -1,4 +1,5 @@
-use alloy_primitives::{Bytes, B256, U256};
+use alloy_consensus::Account;
+use alloy_primitives::{keccak256, Address, Bytes, B256, U256};
 use alloy_trie::{
     proof::{verify_proof, ProofVerificationError},
     Nibbles,
@@ -21,5 +22,16 @@ impl Mpt {
         // TODO: last element of proof is the value of the key, not sure if it's ok to hardcode split prefix
         let expected = &proof.last().unwrap()[5..];
         verify_proof(self.root, nibbles, Some(expected.to_vec()), &proof)
+    }
+
+    pub fn verify_account(
+        &self,
+        proof: Vec<Bytes>,
+        account: Account,
+        address: Address,
+    ) -> Result<(), ProofVerificationError> {
+        let nibbles = Nibbles::unpack(keccak256(address));
+        let expected = alloy_rlp::encode(account);
+        verify_proof(self.root, nibbles, Some(expected), &proof)
     }
 }

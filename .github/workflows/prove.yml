@@ -5,6 +5,7 @@ on:
   push:
     branches: [main]
   pull_request:
+    branches: [main]
 
 env:
   FOUNDRY_PROFILE: ci
@@ -13,27 +14,53 @@ jobs:
   check:
     strategy:
       fail-fast: true
+      matrix:
+        rust-version: [stable]
+        os: [ubuntu-latest]
 
-    name: Build
-    runs-on: ubuntu-20.04
+    name: Build and Test
+    runs-on: ${{ matrix.os }}
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      - name: Install rust toolchain
+      - name: Cache Rust Dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target  # Cache both cargo registry, git, and build artifacts
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }} # Cache key based on Cargo.lock file
+          restore-keys: |
+            ${{ runner.os }}-cargo-  # Fallback cache key
+
+      - name: Install Rust Toolchain
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: 1.79.0
+          toolchain: stable
 
-      - name: Install SP1 toolchain
+      - name: Install SP1 Toolchain
         run: |
-          curl -L https://sp1.succinct.xyz | bash
-          ~/.sp1/bin/sp1up 
-          ~/.sp1/bin/cargo-prove prove --version
+          curl -L https://sp1.succinct.xyz | bash  # Downloads and installs SP1
+          ~/.sp1/bin/sp1up  # Update SP1 to ensure it's the latest version
+          ~/.sp1/bin/cargo-prove prove --version  # Confirm SP1 installation
 
-      - name: Run online mode
+      - uses: taiki-e/install-action@nextest
+
+      - name: Run Tests with Nextest
+        env:
+          RPC_URL: ${{ secrets.RPC_URL }}
+        run: |
+          cd lib
+          cargo nextest run 
+          cd ../
+
+      - name: Run Online Mode
         env:
           RPC_URL: ${{ secrets.RPC_URL }}
         run: |
@@ -41,14 +68,14 @@ jobs:
           cargo run -r
           cd ../
 
-      # - name: Build SP1 program
-      #   run: |
-      #     cd program
-      #     ~/.sp1/bin/cargo-prove prove build
-      #     cd ../
+      - name: Build SP1 Program
+        run: |
+          cd program
+          ~/.sp1/bin/cargo-prove prove build
+          cd ../
 
-      # - name: Run script
+      # - name: Run Custom Script
       #   run: |
       #     cd script
-      #     RUST_LOG=info cargo run -r -- --execute
+      #     RUST_LOG=info cargo run -r -- --execute  # Runs a custom script
       #     cd ../

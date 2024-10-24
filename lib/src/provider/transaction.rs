@@ -50,21 +50,20 @@ impl TransactionClient {
 
 #[cfg(test)]
 mod tests {
-    use crate::mpt::Mpt;
+    use crate::{mpt::Mpt, utils::get_rpc_url};
 
     use super::*;
 
     #[tokio::test]
     async fn test_get_transaction() {
         let client = TransactionClient {};
-        let url =
-            Url::parse("https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161").unwrap();
-        let tx_res = client.get_transaction(url, 12244000, 118).await.unwrap();
+        let url = get_rpc_url();
+        let tx_res = client.get_transaction(url, 5244634, 2).await.unwrap();
 
         // Verify the transaction proof
         let mpt = Mpt {
             root: tx_res.mpt_root,
         };
-        mpt.verify_transaction(118, tx_res.proof).unwrap();
+        mpt.verify_transaction(2, tx_res.proof).unwrap();
     }
 }
