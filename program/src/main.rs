@@ -22,6 +22,13 @@ pub fn main() {
 
     let _ = memorizer.get_header(header_key).unwrap();
 
+    let tx_key = TransactionKey {
+        block_number: 5244634,
+        transaction_index: 2,
+        chain_id: 11155111_u64,
+    };
+    let _ = memorizer.get_transaction(tx_key).unwrap();
+
     let account_key = AccountKey {
         block_number: 5244634,
         address: address!("7f2c6f930306d3aa736b3a6c6a98f512f74036d4"),

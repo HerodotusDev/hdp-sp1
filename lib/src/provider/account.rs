@@ -52,14 +52,13 @@ mod tests {
 
     use alloy_consensus::Header;
 
-    use crate::{header::IndexerClient, mpt::Mpt};
+    use crate::{header::IndexerClient, mpt::Mpt, utils::get_rpc_url};
 
     use super::*;
 
     #[tokio::test]
     async fn test_get_account() {
-        let url = Url::parse("https://sepolia.ethereum.iosis.tech").unwrap();
-
+        let url = get_rpc_url();
         let client = IndexerClient::default();
         let indexer_rpc = client.get_header(5641516).await.unwrap();
         let header: Header = indexer_rpc

@@ -19,3 +19,9 @@ pub fn find_workspace_root() -> Option<PathBuf> {
         }
     }
 }
+
+pub fn get_rpc_url() -> url::Url {
+    dotenv::dotenv().ok();
+    let url_str = env::var("RPC_URL").expect("RPC_URL must be set");
+    url::Url::parse(&url_str).unwrap()
+}

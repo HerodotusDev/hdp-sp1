@@ -30,8 +30,16 @@ jobs:
       - name: Install SP1 toolchain
         run: |
           curl -L https://sp1.succinct.xyz | bash
-          ~/.sp1/bin/sp1up 
+          ~/.sp1/bin/sp1up
           ~/.sp1/bin/cargo-prove prove --version
+
+      - name: Run test
+        env:
+          RPC_URL: ${{ secrets.RPC_URL }}
+        run: |
+          cd lib
+          cargo test
+          cd ../
 
       - name: Run online mode
         env:
@@ -41,14 +49,14 @@ jobs:
           cargo run -r
           cd ../
 
-      # - name: Build SP1 program
-      #   run: |
-      #     cd program
-      #     ~/.sp1/bin/cargo-prove prove build
-      #     cd ../
+      - name: Build SP1 program
+        run: |
+          cd program
+          ~/.sp1/bin/cargo-prove prove build
+          cd ../
 
-      # - name: Run script
-      #   run: |
-      #     cd script
-      #     RUST_LOG=info cargo run -r -- --execute
-      #     cd ../
+      - name: Run script
+        run: |
+          cd script
+          RUST_LOG=info cargo run -r -- --execute
+          cd ../

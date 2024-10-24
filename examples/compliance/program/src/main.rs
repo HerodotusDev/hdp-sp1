@@ -1,6 +1,5 @@
 #![cfg_attr(target_os = "zkvm", no_main)]
 
-use alloy_consensus::Transaction;
 use alloy_primitives::keccak256;
 use ethbloom::{Bloom, Input};
 use hdp_lib::memorizer::*;
