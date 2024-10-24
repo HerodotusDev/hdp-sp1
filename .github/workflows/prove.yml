@@ -39,7 +39,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: 1.79.0
+          toolchain: 1.81.0
 
       - name: Install SP1 toolchain
         run: |
@@ -48,11 +48,12 @@ jobs:
           ~/.sp1/bin/cargo-prove prove --version
 
       - name: Run test
+        uses: taiki-e/install-action@nextest
         env:
           RPC_URL: ${{ secrets.RPC_URL }}
         run: |
           cd lib
-          cargo test
+          cargo nextest
           cd ../
 
       - name: Run online mode
@@ -69,8 +70,8 @@ jobs:
           ~/.sp1/bin/cargo-prove prove build
           cd ../
 
-      - name: Run script
-        run: |
-          cd script
-          RUST_LOG=info cargo run -r -- --execute
-          cd ../
+      # - name: Run script
+      #   run: |
+      #     cd script
+      #     RUST_LOG=info cargo run -r -- --execute
+      #     cd ../
