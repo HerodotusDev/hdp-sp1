@@ -24,6 +24,7 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        uses: taiki-e/install-action@nextest
         with:
           submodules: recursive
 
@@ -51,7 +52,6 @@ jobs:
           ~/.sp1/bin/cargo-prove prove --version  # Confirm SP1 installation
 
       - name: Run Tests with Nextest
-        uses: taiki-e/install-action@nextest # Ensure nextest is installed
         env:
           RPC_URL: ${{ secrets.RPC_URL }}
         run: |
