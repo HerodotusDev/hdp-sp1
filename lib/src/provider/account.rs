@@ -2,7 +2,7 @@ use std::error::Error;
 
 use alloy_consensus::Account;
 use alloy_eips::BlockNumberOrTag;
-use alloy_primitives::{Address, Bytes, B256};
+use alloy_primitives::{Address, Bytes, B256, U256};
 use alloy_rpc_client::{ClientBuilder, ReqwestClient};
 use alloy_rpc_types::EIP1186AccountProofResponse;
 use url::Url;
@@ -44,15 +44,38 @@ impl AccountProvider {
         };
         Ok((convert, response.account_proof))
     }
+
+    pub async fn get_storage(
+        &self,
+        address: Address,
+        block_number: u64,
+        storage_slot: B256,
+    ) -> Result<(B256, Vec<Bytes>, U256), Box<dyn Error>> {
+        let mut batch = self.client.new_batch();
+        let block_header_fut: alloy_rpc_client::Waiter<EIP1186AccountProofResponse> = batch
+            .add_call(
+                "eth_getProof",
+                &(
+                    address,
+                    vec![storage_slot],
+                    BlockNumberOrTag::from(block_number),
+                ),
+            )
+            .unwrap();
+        batch.send().await.unwrap();
+        let response: EIP1186AccountProofResponse = block_header_fut.await.unwrap();
+        let storage_proof = response.storage_proof[0].proof.clone();
+        let storage_value = response.storage_proof[0].value;
+        Ok((response.storage_hash, storage_proof, storage_value))
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use std::str::FromStr;
-
-    use alloy_consensus::Header;
-
     use crate::{header::IndexerClient, mpt::Mpt, utils::get_rpc_url};
+    use alloy_consensus::Header;
+    use alloy_primitives::U256;
+    use std::str::FromStr;
 
     use super::*;
 
@@ -70,23 +93,34 @@ mod tests {
             .into();
 
         let provider = AccountProvider::new(url);
-        let (account, proof) = provider
-            .get_account(
-                Address::from_str("0x75cec1db9dceb703200eaa6595f66885c962b920").unwrap(),
-                5641516,
-            )
-            .await
-            .unwrap();
+        let target_account =
+            Address::from_str("0x75cec1db9dceb703200eaa6595f66885c962b920").unwrap();
+        let (account, proof) = provider.get_account(target_account, 5641516).await.unwrap();
 
         // Verify the transaction proof
         let mpt = Mpt {
             root: header.state_root,
         };
-        mpt.verify_account(
-            proof,
-            account,
-            Address::from_str("0x75cec1db9dceb703200eaa6595f66885c962b920").unwrap(),
-        )
-        .unwrap();
+        mpt.verify_account(proof, account, target_account).unwrap();
+    }
+
+    #[tokio::test]
+    async fn test_get_storage() {
+        let url = get_rpc_url();
+        let provider = AccountProvider::new(url);
+        let storage_key: B256 = U256::from(1).into();
+        let (storage_root, storage_proof, storage_value) = provider
+            .get_storage(
+                Address::from_str("0x75cec1db9dceb703200eaa6595f66885c962b920").unwrap(),
+                5641516,
+                storage_key,
+            )
+            .await
+            .unwrap();
+
+        // Verify the transaction proof
+        let mpt = Mpt { root: storage_root };
+        mpt.verify_storage(storage_proof, storage_key, storage_value)
+            .unwrap();
     }
 }

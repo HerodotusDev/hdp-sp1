@@ -29,7 +29,6 @@ pub struct BeaconHeaderMemorizerValue {
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize, PartialEq)]
 pub struct StorageMemorizerValue {
-    pub key: B256,
     pub value: U256,
     pub proof: Vec<Bytes>,
 }

@@ -1,5 +1,6 @@
 use alloy_consensus::Account;
 use alloy_primitives::{keccak256, Address, Bytes, B256, U256};
+use alloy_rlp::encode_fixed_size;
 use alloy_trie::{
     proof::{verify_proof, ProofVerificationError},
     Nibbles,
@@ -33,5 +34,20 @@ impl Mpt {
         let nibbles = Nibbles::unpack(keccak256(address));
         let expected = alloy_rlp::encode(account);
         verify_proof(self.root, nibbles, Some(expected), &proof)
+    }
+
+    pub fn verify_storage(
+        &self,
+        proof: Vec<Bytes>,
+        key: B256,
+        value: U256,
+    ) -> Result<(), ProofVerificationError> {
+        let nibbles = Nibbles::unpack(keccak256(key));
+        let expected = if value.is_zero() {
+            None
+        } else {
+            Some(encode_fixed_size(&value).to_vec())
+        };
+        verify_proof(self.root, nibbles, expected, &proof)
     }
 }
