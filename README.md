@@ -18,7 +18,7 @@ The Herodotus Data Processor (HDP) allows you to access verified on-chain data b
 - [x] Consensus Header
 - [x] Account
 - [x] Storage
-- [ ] Receipt
+- [x] Receipt
 
 ## Performance
 
