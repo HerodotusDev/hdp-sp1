@@ -1,24 +1,26 @@
 use alloy_primitives::{keccak256, Address, B256};
 use serde::{Deserialize, Serialize};
 
+use crate::chain::ChainId;
+
 pub type MemorizerKey = B256;
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct HeaderKey {
-    pub chain_id: u64,
+    pub chain_id: ChainId,
     pub block_number: u64,
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct AccountKey {
-    pub chain_id: u64,
+    pub chain_id: ChainId,
     pub block_number: u64,
     pub address: Address,
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct StorageKey {
-    pub chain_id: u64,
+    pub chain_id: ChainId,
     pub block_number: u64,
     pub address: Address,
     pub storage_slot: B256,
@@ -26,21 +28,21 @@ pub struct StorageKey {
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct TransactionKey {
-    pub chain_id: u64,
+    pub chain_id: ChainId,
     pub block_number: u64,
     pub transaction_index: u64,
 }
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct ReceiptKey {
-    pub chain_id: u64,
+    pub chain_id: ChainId,
     pub block_number: u64,
     pub transaction_index: u64,
 }
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct BeaconHeaderKey {
-    pub chain_id: u64,
+    pub chain_id: ChainId,
     pub block_number: u64,
 }
 

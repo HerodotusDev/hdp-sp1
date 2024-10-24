@@ -54,7 +54,7 @@ jobs:
 
       - name: Run Tests with Nextest
         env:
-          RPC_URL: ${{ secrets.RPC_URL }}
+          RPC_URL_ETHEREUM_SEPOLIA: ${{ secrets.RPC_URL }}
         run: |
           cd lib
           cargo nextest run 
@@ -62,7 +62,7 @@ jobs:
 
       - name: Run Online Mode
         env:
-          RPC_URL: ${{ secrets.RPC_URL }}
+          RPC_URL_ETHEREUM_SEPOLIA: ${{ secrets.RPC_URL }}
         run: |
           cd program
           cargo run -r

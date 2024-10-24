@@ -22,6 +22,8 @@ The Herodotus Data Processor (HDP) allows you to access verified on-chain data b
 
 ## Performance
 
+M2 MAX / 12 core
+
 | Operation                     | Clock Cycle | Code                                              |
 | ----------------------------- | ----------- | ------------------------------------------------- |
 | **MMR Verification(header)**  | 625,471     | [code](./lib/src/memorizer/header/zkvm.rs)        |

@@ -16,7 +16,10 @@ pub use storage::*;
 pub use transaction::*;
 pub use values::*;
 
-use crate::mmr::{MmrError, MmrMeta};
+use crate::{
+    chain::ChainId,
+    mmr::{MmrError, MmrMeta},
+};
 use alloy_trie::proof::ProofVerificationError;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -26,15 +29,15 @@ use url::Url;
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct Memorizer {
     #[serde(skip)]
-    pub rpc_url: Option<Url>,
+    pub chain_map: HashMap<ChainId, Url>,
     pub mmr_meta: Vec<MmrMeta>,
     pub map: HashMap<MemorizerKey, MemorizerValue>,
 }
 
 impl Memorizer {
-    pub fn new(rpc_url: Option<Url>) -> Self {
+    pub fn new(chain_map: HashMap<ChainId, Url>) -> Self {
         Self {
-            rpc_url,
+            chain_map,
             mmr_meta: Vec::new(),
             map: Default::default(),
         }
@@ -94,7 +97,7 @@ mod tests {
         let binding = TempDir::new("test").unwrap();
         let path = binding.path().join("memorizer.bin");
 
-        let mut original_mem = Memorizer::new(None);
+        let mut original_mem = Memorizer::new(HashMap::default());
         original_mem.mmr_meta = vec![MmrMeta::default()];
         original_mem.map.insert(
             B256::ZERO,

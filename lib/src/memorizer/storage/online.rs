@@ -9,8 +9,9 @@ use tokio::runtime::Runtime;
 impl StorageMemorizer for Memorizer {
     fn get_storage(&mut self, key: StorageKey) -> Result<U256, MemorizerError> {
         let rt = Runtime::new().unwrap();
+        let rpc_url = self.chain_map.get(&key.chain_id).unwrap().to_owned();
         let (_, storage_proof, storage_value) = rt.block_on(async {
-            let client: AccountProvider = AccountProvider::new(self.rpc_url.clone().unwrap());
+            let client: AccountProvider = AccountProvider::new(rpc_url);
             client
                 .get_storage(key.address, key.block_number, key.storage_slot)
                 .await
