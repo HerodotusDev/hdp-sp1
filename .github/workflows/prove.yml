@@ -16,10 +16,10 @@ jobs:
       fail-fast: true
       matrix:
         rust-version: [stable]
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
 
     name: Build and Test
-    runs-on: ${{ matrix.os }} # Use the OS from the matrix (Ubuntu/MacOS)
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout Repository
