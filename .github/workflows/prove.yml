@@ -24,7 +24,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        uses: taiki-e/install-action@nextest
         with:
           submodules: recursive
 
@@ -50,6 +49,8 @@ jobs:
           curl -L https://sp1.succinct.xyz | bash  # Downloads and installs SP1
           ~/.sp1/bin/sp1up  # Update SP1 to ensure it's the latest version
           ~/.sp1/bin/cargo-prove prove --version  # Confirm SP1 installation
+
+      - uses: taiki-e/install-action@nextest
 
       - name: Run Tests with Nextest
         env:
