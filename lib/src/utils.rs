@@ -1,6 +1,11 @@
 use std::env;
 use std::fs;
 use std::path::PathBuf;
+use std::str::FromStr;
+
+use alloy_primitives::map::HashMap;
+
+use crate::chain::ChainId;
 
 pub fn find_workspace_root() -> Option<PathBuf> {
     let mut dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
@@ -20,8 +25,23 @@ pub fn find_workspace_root() -> Option<PathBuf> {
     }
 }
 
-pub fn get_rpc_url() -> url::Url {
+pub fn get_rpc_urls() -> HashMap<ChainId, url::Url> {
     dotenv::dotenv().ok();
-    let url_str = env::var("RPC_URL").expect("RPC_URL must be set");
-    url::Url::parse(&url_str).unwrap()
+    let mut rpc_urls = HashMap::new();
+
+    for (key, value) in env::vars() {
+        if let Some(chain_id_str) = key.strip_prefix("RPC_URL_") {
+            if let Ok(chain_id) = ChainId::from_str(chain_id_str) {
+                if let Ok(parsed_url) = url::Url::parse(&value) {
+                    rpc_urls.insert(chain_id, parsed_url);
+                } else {
+                    eprintln!("Invalid URL for {}: {}", key, value);
+                }
+            } else {
+                eprintln!("Invalid chain ID in key: {}", key);
+            }
+        }
+    }
+
+    rpc_urls
 }

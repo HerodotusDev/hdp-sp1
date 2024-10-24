@@ -4,7 +4,10 @@ use scraper::{Html, Selector};
 use serde::Deserialize;
 use ssz_rs::Vector;
 
-use crate::memorizer::{BeaconHeader, BeaconHeaderKey};
+use crate::{
+    chain::ChainId,
+    memorizer::{BeaconHeader, BeaconHeaderKey},
+};
 
 #[derive(Deserialize, Debug)]
 struct BeaconHeaderApiResponse {
@@ -53,10 +56,9 @@ impl BeaconHeaderClient {
     ) -> Result<BeaconHeader, reqwest::Error> {
         let etherscan_url = format!(
             "https://{}etherscan.io/block/{}#consensusinfo",
-            if key.chain_id == 11155111 {
-                "sepolia."
-            } else {
-                ""
+            match key.chain_id {
+                ChainId::EthereumSepolia => "sepolia.",
+                ChainId::EthereumMainnet => "",
             },
             key.block_number
         );
@@ -148,7 +150,7 @@ mod tests {
         let beacon_header_client = BeaconHeaderClient::default();
 
         let key = BeaconHeaderKey {
-            chain_id: 11155111,
+            chain_id: ChainId::EthereumSepolia,
             block_number: 5244652,
         };
 

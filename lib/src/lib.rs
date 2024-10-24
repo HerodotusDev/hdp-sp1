@@ -1,5 +1,6 @@
 use cfg_if::cfg_if;
 
+pub mod chain;
 pub mod memorizer;
 pub mod mmr;
 pub mod mpt;

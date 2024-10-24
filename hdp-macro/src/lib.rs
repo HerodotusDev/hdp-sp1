@@ -54,6 +54,7 @@ pub fn hdp_main(_attr: TokenStream, item: TokenStream) -> TokenStream {
                 sp1_zkvm::entrypoint!(main);
             } else {
                 use hdp_lib::utils::find_workspace_root;
+                use hdp_lib::utils::get_rpc_urls;
                 use std::{env, fs, path::Path, str::FromStr};
                 use url::Url;
             }
@@ -70,8 +71,8 @@ pub fn hdp_main(_attr: TokenStream, item: TokenStream) -> TokenStream {
                     let mut memorizer = sp1_zkvm::io::read::<Memorizer>();
                 } else {
                     println!("Hello, world! from online mode");
-                    let rpc_url: String = env::var("RPC_URL").expect("RPC_URL not set");
-                    let mut memorizer = Memorizer::new(Some(Url::from_str(&rpc_url).unwrap()));
+                    let chain_map = get_rpc_urls();
+                    let mut memorizer = Memorizer::new(chain_map);
                 }
             }
 

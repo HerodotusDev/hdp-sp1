@@ -84,15 +84,19 @@ impl TransactionClient {
 
 #[cfg(test)]
 mod tests {
-    use crate::{mpt::Mpt, utils::get_rpc_url};
+    use crate::{chain::ChainId, mpt::Mpt, utils::get_rpc_urls};
 
     use super::*;
 
     #[tokio::test]
     async fn test_get_transaction() {
         let client = TransactionClient {};
-        let url = get_rpc_url();
-        let tx_res = client.get_transaction(url, 5244634, 2).await.unwrap();
+        let chain_map = get_rpc_urls();
+        let url = chain_map.get(&ChainId::EthereumSepolia).unwrap();
+        let tx_res = client
+            .get_transaction(url.clone(), 5244634, 2)
+            .await
+            .unwrap();
 
         // Verify the transaction proof
         let mpt = Mpt {
@@ -104,7 +108,8 @@ mod tests {
     #[tokio::test]
     async fn test_get_receipt() {
         let client = TransactionClient {};
-        let url = get_rpc_url();
+        let chain_map = get_rpc_urls();
+        let url = chain_map.get(&ChainId::EthereumSepolia).unwrap().to_owned();
         let tx_res = client.get_receipt(url, 5244634, 2).await.unwrap();
 
         // Verify the transaction proof

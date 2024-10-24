@@ -11,7 +11,7 @@ impl ReceiptMemorizer for Memorizer {
         &mut self,
         key: crate::memorizer::keys::ReceiptKey,
     ) -> Result<ReceiptEnvelope, MemorizerError> {
-        let rpc_url = self.rpc_url.clone().unwrap();
+        let rpc_url = self.chain_map.get(&key.chain_id).unwrap().to_owned();
         let rt = Runtime::new().unwrap();
         let transaction: ReceiptResponse = rt.block_on(async {
             let client = TransactionClient::default();

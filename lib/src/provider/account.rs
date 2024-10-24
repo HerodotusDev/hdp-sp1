@@ -72,7 +72,7 @@ impl AccountProvider {
 
 #[cfg(test)]
 mod tests {
-    use crate::{header::IndexerClient, mpt::Mpt, utils::get_rpc_url};
+    use crate::{chain::ChainId, header::IndexerClient, mpt::Mpt, utils::get_rpc_urls};
     use alloy_consensus::Header;
     use alloy_primitives::U256;
     use std::str::FromStr;
@@ -81,7 +81,8 @@ mod tests {
 
     #[tokio::test]
     async fn test_get_account() {
-        let url = get_rpc_url();
+        let chain_map = get_rpc_urls();
+        let url = chain_map.get(&ChainId::EthereumSepolia).unwrap().to_owned();
         let client = IndexerClient::default();
         let indexer_rpc = client.get_header(5641516).await.unwrap();
         let header: Header = indexer_rpc
@@ -106,7 +107,8 @@ mod tests {
 
     #[tokio::test]
     async fn test_get_storage() {
-        let url = get_rpc_url();
+        let chain_map = get_rpc_urls();
+        let url = chain_map.get(&ChainId::EthereumSepolia).unwrap().to_owned();
         let provider = AccountProvider::new(url);
         let storage_key: B256 = U256::from(1).into();
         let (storage_root, storage_proof, storage_value) = provider

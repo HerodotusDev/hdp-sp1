@@ -1,5 +1,6 @@
 use super::BeaconHeader;
 use super::ClHeaderMemorizer;
+use crate::chain::ChainId;
 use crate::cl_header::BeaconHeaderClient;
 use crate::memorizer::values::BeaconHeaderMemorizerValue;
 use crate::memorizer::values::MemorizerValue;
@@ -14,22 +15,19 @@ impl ClHeaderMemorizer for Memorizer {
     fn get_cl_header(&mut self, key: BeaconHeaderKey) -> Result<BeaconHeader, MemorizerError> {
         // Validate that the block number is greater than the POS transition block number
         match key.chain_id {
-            1 => {
+            ChainId::EthereumMainnet => {
                 if key.block_number < MAINNET_POS_TRANSITION_BLOCK_NUMBER {
                     return Err(MemorizerError::InvalidPoSBlockNumber);
                 }
             }
-            11155111 => {
+            ChainId::EthereumSepolia => {
                 if key.block_number < SEPOLIA_POS_TRANSITION_BLOCK_NUMBER {
                     return Err(MemorizerError::InvalidPoSBlockNumber);
                 }
             }
-            _ => {
-                return Err(MemorizerError::UnknownBaseChainId);
-            }
         }
 
-        let rpc_url = self.rpc_url.clone().unwrap();
+        let rpc_url = self.chain_map.get(&key.chain_id).unwrap();
 
         let rt = Runtime::new().unwrap();
         let header: BeaconHeader = rt.block_on(async {
