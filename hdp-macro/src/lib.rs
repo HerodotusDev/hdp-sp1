@@ -71,7 +71,7 @@ pub fn hdp_main(_attr: TokenStream, item: TokenStream) -> TokenStream {
                 } else {
                     println!("Hello, world! from online mode");
                     let rpc_url: String = env::var("RPC_URL").expect("RPC_URL not set");
-                    Memorizer::new(Some(Url::from_str(&rpc_url).unwrap()));
+                    let mut memorizer = Memorizer::new(Some(Url::from_str(&rpc_url).unwrap()));
                 }
             }
 

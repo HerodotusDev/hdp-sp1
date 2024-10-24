@@ -1,5 +1,7 @@
 #![cfg_attr(target_os = "zkvm", no_main)]
 
+use alloy_consensus::Transaction;
+use alloy_consensus::TxEnvelope;
 use alloy_primitives::keccak256;
 use ethbloom::{Bloom, Input};
 use hdp_lib::memorizer::*;
@@ -57,7 +59,7 @@ pub fn main() {
             transaction_index: i,
             ..Default::default()
         };
-        let tx = memorizer.get_transaction(tx_key).unwrap();
+        let tx: TxEnvelope = memorizer.get_transaction(tx_key).unwrap();
         let signer = tx.recover_signer().unwrap();
         println!("recover signer: {:?}", signer);
         println!("cycle-tracker-start: bloom check");
