@@ -36,6 +36,16 @@ M2 MAX / 12 core
 
 ## Run Example
 
+Before you run, you need environment variables for running online mode to fetch proofs.
+
+Refer below, make sure to fill whatever rpc provider you need as `RPC_URL_{CHAIN_ID}` format:
+
+```
+# This requires for online mode in .env
+RPC_URL_ETHEREUM_SEPOLIA=
+RPC_URL_ETHEREUM_MAINNET=
+```
+
 This command will run the [simple example](./examples/simple/README.md). It will first run the HDP program in online mode to get proofs. Then it will run the HDP program in zkVM mode to generate an ELF file. This ELF file will then be used to generate a proof and verify it.
 
 ```
@@ -60,7 +70,7 @@ pub fn main() {
     let tx_key = TransactionKey {
         block_number,
         transaction_index: 0,
-        ..Default::default()
+        chain_id: hdp_lib::chain::ChainId::EthereumSepolia,
     };
     let v = memorizer.get_transaction(tx_key).unwrap();
 
