@@ -24,6 +24,17 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Cache Rust build files
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
       - name: Install rust toolchain
         uses: actions-rs/toolchain@v1
         with:
