@@ -1,6 +1,6 @@
 #![cfg_attr(target_os = "zkvm", no_main)]
 
-use alloy_primitives::address;
+use alloy_primitives::{address, U256};
 use hdp_lib::memorizer::*;
 use hdp_macro::hdp_main;
 
@@ -34,8 +34,15 @@ pub fn main() {
         address: address!("7f2c6f930306d3aa736b3a6c6a98f512f74036d4"),
         chain_id: 11155111_u64,
     };
-    let v = memorizer.get_account(account_key).unwrap();
+    let _ = memorizer.get_account(account_key).unwrap();
 
+    let storage_key = StorageKey {
+        block_number: 5244634,
+        address: address!("7f2c6f930306d3aa736b3a6c6a98f512f74036d4"),
+        chain_id: 11155111_u64,
+        storage_slot: U256::from(1).into(),
+    };
+    let v = memorizer.get_storage(storage_key).unwrap();
     // TODO: to use CL header, provide RPC that support beacon header
     // let cl_header_key = BeaconHeaderKey {
     //     block_number,
@@ -43,7 +50,7 @@ pub fn main() {
     // };
     // let _ = memorizer.get_cl_header(cl_header_key).unwrap();
 
-    hdp_commit(&v.balance);
+    hdp_commit(&v);
 
     // ===============================================
     // Example program end

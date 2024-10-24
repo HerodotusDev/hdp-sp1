@@ -9,7 +9,7 @@ alloy-consensus = { workspace = true, features = [
     "serde-bincode-compat",
 ] }
 alloy-primitives = { workspace = true }
-alloy-rlp = { workspace = true }
+alloy-rlp = { workspace = true, features = ["arrayvec"] }
 alloy-sol-types = { workspace = true }
 alloy-trie = { workspace = true }
 bincode = { workspace = true }
@@ -33,7 +33,7 @@ alloy-consensus = { workspace = true, features = [
 ] }
 alloy-eips = { workspace = true }
 alloy-primitives = { workspace = true }
-alloy-rlp = { workspace = true }
+alloy-rlp = { workspace = true, features = ["arrayvec"] }
 alloy-rpc-client = { workspace = true }
 alloy-rpc-types = { workspace = true }
 alloy-trie = { workspace = true }

@@ -16,7 +16,7 @@ pub struct AccountKey {
     pub address: Address,
 }
 
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct StorageKey {
     pub chain_id: u64,
     pub block_number: u64,

@@ -21,13 +21,13 @@ impl AccountMemorizer for Memorizer {
 
             if let Some(MemorizerValue::Account(account_value)) = self.map.get(&account_key) {
                 let mpt = Mpt { root: state_root };
-                println!("cycle-tracker-start: mpt");
+                println!("cycle-tracker-start: mpt(account)");
                 mpt.verify_account(
                     account_value.proof.clone(),
                     account_value.account.clone(),
                     key.address,
                 )?;
-                println!("cycle-tracker-end: mpt");
+                println!("cycle-tracker-end: mpt(account)");
                 Ok(account_value.account)
             } else {
                 Err(MemorizerError::MissingAccount)
