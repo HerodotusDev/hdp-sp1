@@ -21,8 +21,8 @@ impl TransactionMemorizer for Memorizer {
             client
                 .get_transaction(rpc_url, key.block_number, key.transaction_index)
                 .await
-                .unwrap()
-        });
+                .map_err(MemorizerError::EthTrieError)
+        })?;
 
         let tx = transaction.tx.0;
         let mut out = Vec::new();

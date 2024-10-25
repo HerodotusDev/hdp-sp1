@@ -20,8 +20,8 @@ impl AccountMemorizer for Memorizer {
             client
                 .get_account(key.address, key.block_number)
                 .await
-                .unwrap()
-        });
+                .map_err(MemorizerError::TransportError)
+        })?;
 
         self.map.insert(
             key.into(),

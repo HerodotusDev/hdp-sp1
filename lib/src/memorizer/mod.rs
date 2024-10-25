@@ -82,6 +82,18 @@ pub enum MemorizerError {
     #[error("Failed to decode RLP (Recursive Length Prefix) data: {0}")]
     RlpDecodeFailed(#[from] alloy_rlp::Error),
 
+    #[cfg(not(target_os = "zkvm"))]
+    #[error("Transport error: {0}")]
+    TransportError(#[from] alloy_transport::TransportError),
+
+    #[cfg(not(target_os = "zkvm"))]
+    #[error("Request error: {0}")]
+    ReqwestError(#[from] reqwest::Error),
+
+    #[cfg(not(target_os = "zkvm"))]
+    #[error("Eth Trie error: {0}")]
+    EthTrieError(#[from] eth_trie_proofs::EthTrieError),
+
     #[error("The given execution layer block number was produced before the PoS transition")]
     InvalidPoSBlockNumber,
 

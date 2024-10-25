@@ -19,8 +19,8 @@ impl StorageMemorizer for Memorizer {
             client
                 .get_storage(key.address, key.block_number, key.storage_slot)
                 .await
-                .unwrap()
-        });
+                .map_err(MemorizerError::TransportError)
+        })?;
 
         self.map.insert(
             key.into(),

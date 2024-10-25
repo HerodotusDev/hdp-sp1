@@ -22,8 +22,8 @@ impl ReceiptMemorizer for Memorizer {
             client
                 .get_receipt(rpc_url, key.block_number, key.transaction_index)
                 .await
-                .unwrap()
-        });
+                .map_err(MemorizerError::EthTrieError)
+        })?;
 
         let tx = transaction.receipt.0;
         let mut out = Vec::new();

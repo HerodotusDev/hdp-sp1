@@ -13,8 +13,11 @@ impl HeaderMemorizer for Memorizer {
         let rt = Runtime::new()?;
         let block: IndexerRpc = rt.block_on(async {
             let client = IndexerClient::default();
-            client.get_header(key.block_number).await.unwrap()
-        });
+            client
+                .get_header(key.block_number)
+                .await
+                .map_err(MemorizerError::ReqwestError)
+        })?;
         let mmr: MmrMeta = block.meta.into();
         let header: Header = block.proofs[0].rlp_block_header.clone().into();
 
