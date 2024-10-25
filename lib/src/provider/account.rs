@@ -1,5 +1,3 @@
-use std::error::Error;
-
 use alloy_consensus::Account;
 use alloy_eips::BlockNumberOrTag;
 use alloy_primitives::{Address, Bytes, B256, U256};
@@ -22,7 +20,7 @@ impl AccountProvider {
         &self,
         address: Address,
         block_number: u64,
-    ) -> Result<(Account, Vec<Bytes>), Box<dyn Error>> {
+    ) -> Result<(Account, Vec<Bytes>), alloy_transport::TransportError> {
         let mut batch = self.client.new_batch();
         let block_header_fut: alloy_rpc_client::Waiter<EIP1186AccountProofResponse> = batch
             .add_call(
@@ -32,10 +30,9 @@ impl AccountProvider {
                     Vec::<B256>::new(),
                     BlockNumberOrTag::from(block_number),
                 ),
-            )
-            .unwrap();
-        batch.send().await.unwrap();
-        let response: EIP1186AccountProofResponse = block_header_fut.await.unwrap();
+            )?;
+        batch.send().await?;
+        let response: EIP1186AccountProofResponse = block_header_fut.await?;
         let convert: Account = Account {
             nonce: response.nonce,
             balance: response.balance,
@@ -50,7 +47,7 @@ impl AccountProvider {
         address: Address,
         block_number: u64,
         storage_slot: B256,
-    ) -> Result<(B256, Vec<Bytes>, U256), Box<dyn Error>> {
+    ) -> Result<(B256, Vec<Bytes>, U256), alloy_transport::TransportError> {
         let mut batch = self.client.new_batch();
         let block_header_fut: alloy_rpc_client::Waiter<EIP1186AccountProofResponse> = batch
             .add_call(
@@ -60,10 +57,9 @@ impl AccountProvider {
                     vec![storage_slot],
                     BlockNumberOrTag::from(block_number),
                 ),
-            )
-            .unwrap();
-        batch.send().await.unwrap();
-        let response: EIP1186AccountProofResponse = block_header_fut.await.unwrap();
+            )?;
+        batch.send().await?;
+        let response: EIP1186AccountProofResponse = block_header_fut.await?;
         let storage_proof = response.storage_proof[0].proof.clone();
         let storage_value = response.storage_proof[0].value;
         Ok((response.storage_hash, storage_proof, storage_value))

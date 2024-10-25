@@ -9,8 +9,12 @@ use tokio::runtime::Runtime;
 
 impl AccountMemorizer for Memorizer {
     fn get_account(&mut self, key: AccountKey) -> Result<Account, MemorizerError> {
-        let rt = Runtime::new().unwrap();
-        let rpc_url = self.chain_map.get(&key.chain_id).unwrap().to_owned();
+        let rt = Runtime::new()?;
+        let rpc_url = self
+            .chain_map
+            .get(&key.chain_id)
+            .ok_or(MemorizerError::MissingRpcUrl(key.chain_id))?
+            .to_owned();
         let (account, proof): (Account, Vec<Bytes>) = rt.block_on(async {
             let client: AccountProvider = AccountProvider::new(rpc_url);
             client

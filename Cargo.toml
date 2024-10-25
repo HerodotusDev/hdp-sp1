@@ -28,6 +28,7 @@ alloy-rpc-client = "0.4.2"
 alloy-eips = "0.4.2"
 alloy-rpc-types = "0.4.2"
 alloy-rlp = { version = "0.3.5", features = ["derive"] }
+alloy-transport = "0.4.2"
 alloy-trie = { version = "0.6.0" }
 dotenv = "0.15.0"
 eth-trie-proofs = { version = "0.1.2" }

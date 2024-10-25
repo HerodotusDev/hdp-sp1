@@ -10,8 +10,12 @@ impl TransactionMemorizer for Memorizer {
         &mut self,
         key: crate::memorizer::keys::TransactionKey,
     ) -> Result<TxEnvelope, MemorizerError> {
-        let rpc_url = self.chain_map.get(&key.chain_id).unwrap().to_owned();
-        let rt = Runtime::new().unwrap();
+        let rpc_url = self
+            .chain_map
+            .get(&key.chain_id)
+            .ok_or(MemorizerError::MissingRpcUrl(key.chain_id))?
+            .to_owned();
+        let rt = Runtime::new()?;
         let transaction: TransactionResponse = rt.block_on(async {
             let client = TransactionClient::default();
             client

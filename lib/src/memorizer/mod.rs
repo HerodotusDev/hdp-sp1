@@ -19,8 +19,8 @@ pub use values::*;
 use crate::{
     chain::ChainId,
     mmr::{MmrError, MmrMeta},
+    mpt::MptError,
 };
-use alloy_trie::proof::ProofVerificationError;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use thiserror_no_std::Error;
@@ -67,13 +67,19 @@ pub enum MemorizerError {
     #[error("Beacon header is invalid")]
     InvalidBeaconRoot,
 
-    #[error("Failed to verify Merkle Patricia Tree (MPT) proof")]
-    MptProofFailed(#[from] ProofVerificationError),
+    #[error("Failed to fetch RPC URL for chainId: {0}")]
+    MissingRpcUrl(ChainId),
 
-    #[error("Failed to verify Merkle Mountain Range (MMR) proof")]
+    #[error("Failed for io error: {0}")]
+    IoError(#[from] std::io::Error),
+
+    #[error("Failed to verify Merkle Patricia Tree (MPT) proof: {0}")]
+    MptProofFailed(#[from] MptError),
+
+    #[error("Failed to verify Merkle Mountain Range (MMR) proof: {0}")]
     MmrProofFailed(#[from] MmrError),
 
-    #[error("Failed to decode RLP (Recursive Length Prefix) data")]
+    #[error("Failed to decode RLP (Recursive Length Prefix) data: {0}")]
     RlpDecodeFailed(#[from] alloy_rlp::Error),
 
     #[error("The given execution layer block number was produced before the PoS transition")]

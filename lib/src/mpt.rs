@@ -5,32 +5,38 @@ use alloy_trie::{
     proof::{verify_proof, ProofVerificationError},
     Nibbles,
 };
+use thiserror_no_std::Error;
 
+#[derive(Debug)]
 pub struct Mpt {
     pub root: B256,
 }
 
 impl Mpt {
-    pub fn verify_transaction(
-        &self,
-        tx_index: u64,
-        proof: Vec<Bytes>,
-    ) -> Result<(), ProofVerificationError> {
-        let nibbles = Nibbles::unpack(Bytes::from(alloy_rlp::encode(U256::from(tx_index))));
-        // TODO: last element of proof is the value of the key, not sure if it's ok to hardcode split prefix
-        let expected = &proof.last().unwrap()[5..];
-        verify_proof(self.root, nibbles, Some(expected.to_vec()), &proof)
+    pub fn new(root: B256) -> Self {
+        Self { root }
     }
 
-    pub fn verify_receipt(
-        &self,
-        tx_index: u64,
-        proof: Vec<Bytes>,
-    ) -> Result<(), ProofVerificationError> {
+    pub fn verify_transaction(&self, tx_index: u64, proof: Vec<Bytes>) -> Result<(), MptError> {
         let nibbles = Nibbles::unpack(Bytes::from(alloy_rlp::encode(U256::from(tx_index))));
         // TODO: last element of proof is the value of the key, not sure if it's ok to hardcode split prefix
-        let expected = &proof.last().unwrap()[7..];
-        verify_proof(self.root, nibbles, Some(expected.to_vec()), &proof)
+        let expected_value = proof
+            .last()
+            .and_then(|bytes| bytes.get(5..))
+            .ok_or(MptError::InvalidProof)?;
+        verify_proof(self.root, nibbles, Some(expected_value.to_vec()), &proof)
+            .map_err(MptError::ProofVerification)
+    }
+
+    pub fn verify_receipt(&self, tx_index: u64, proof: Vec<Bytes>) -> Result<(), MptError> {
+        let nibbles = Nibbles::unpack(Bytes::from(alloy_rlp::encode(U256::from(tx_index))));
+        // TODO: last element of proof is the value of the key, not sure if it's ok to hardcode split prefix
+        let expected_value = proof
+            .last()
+            .and_then(|bytes| bytes.get(7..))
+            .ok_or(MptError::InvalidProof)?;
+        verify_proof(self.root, nibbles, Some(expected_value.to_vec()), &proof)
+            .map_err(MptError::ProofVerification)
     }
 
     pub fn verify_account(
@@ -58,4 +64,13 @@ impl Mpt {
         };
         verify_proof(self.root, nibbles, expected, &proof)
     }
+}
+
+#[derive(Debug, Error)]
+pub enum MptError {
+    #[error("{0}")]
+    ProofVerification(#[from] ProofVerificationError),
+
+    #[error("Invalid proof")]
+    InvalidProof,
 }
