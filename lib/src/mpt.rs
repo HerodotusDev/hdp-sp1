@@ -44,10 +44,11 @@ impl Mpt {
         proof: Vec<Bytes>,
         account: Account,
         address: Address,
-    ) -> Result<(), ProofVerificationError> {
+    ) -> Result<(), MptError> {
         let nibbles = Nibbles::unpack(keccak256(address));
         let expected = alloy_rlp::encode(account);
         verify_proof(self.root, nibbles, Some(expected), &proof)
+            .map_err(MptError::ProofVerification)
     }
 
     pub fn verify_storage(
@@ -55,14 +56,14 @@ impl Mpt {
         proof: Vec<Bytes>,
         key: B256,
         value: U256,
-    ) -> Result<(), ProofVerificationError> {
+    ) -> Result<(), MptError> {
         let nibbles = Nibbles::unpack(keccak256(key));
         let expected = if value.is_zero() {
             None
         } else {
             Some(encode_fixed_size(&value).to_vec())
         };
-        verify_proof(self.root, nibbles, expected, &proof)
+        verify_proof(self.root, nibbles, expected, &proof).map_err(MptError::ProofVerification)
     }
 }
 
