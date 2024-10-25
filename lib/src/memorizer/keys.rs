@@ -48,7 +48,9 @@ pub struct BeaconHeaderKey {
 
 impl From<HeaderKey> for MemorizerKey {
     fn from(value: HeaderKey) -> Self {
-        Self(*keccak256(bincode::serialize(&value).unwrap()))
+        Self(*keccak256(
+            bincode::serialize(&value).expect("bincode serde error"),
+        ))
     }
 }
 
@@ -60,25 +62,31 @@ impl From<AccountKey> for MemorizerKey {
 
 impl From<StorageKey> for MemorizerKey {
     fn from(value: StorageKey) -> Self {
-        Self(*keccak256(bincode::serialize(&value).unwrap()))
+        Self(*keccak256(
+            bincode::serialize(&value).expect("bincode serde error"),
+        ))
     }
 }
 
 impl From<TransactionKey> for MemorizerKey {
     fn from(value: TransactionKey) -> Self {
-        Self(*keccak256(bincode::serialize(&value).unwrap()))
+        Self(*keccak256(
+            bincode::serialize(&value).expect("bincode serde error"),
+        ))
     }
 }
 
 impl From<ReceiptKey> for MemorizerKey {
     fn from(value: ReceiptKey) -> Self {
-        Self(*keccak256(bincode::serialize(&value).unwrap()))
+        Self(*keccak256(
+            bincode::serialize(&value).expect("bincode serde error"),
+        ))
     }
 }
 
 impl From<BeaconHeaderKey> for MemorizerKey {
     fn from(value: BeaconHeaderKey) -> Self {
-        let mut data = bincode::serialize(&value).unwrap();
+        let mut data = bincode::serialize(&value).expect("bincode serde error");
         data.extend("BeaconHeaderKey".as_bytes());
         Self(*keccak256(data))
     }

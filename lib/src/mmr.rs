@@ -78,8 +78,8 @@ impl MmrMeta {
             return Ok(peak_hashes[0]);
         }
 
-        let last_peak = peak_hashes.pop().unwrap();
-        let second_last_peak = peak_hashes.pop().unwrap();
+        let last_peak = peak_hashes.pop().ok_or(MmrError::InvalidPeakCount)?;
+        let second_last_peak = peak_hashes.pop().ok_or(MmrError::InvalidPeakCount)?;
         let initial_root = keccak256([second_last_peak, last_peak].concat());
 
         Ok(peak_hashes

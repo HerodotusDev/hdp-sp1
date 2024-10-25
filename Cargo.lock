@@ -3935,6 +3935,7 @@ dependencies = [
  "alloy-rpc-client",
  "alloy-rpc-types",
  "alloy-sol-types 0.8.8",
+ "alloy-transport",
  "alloy-trie",
  "bincode",
  "cfg-if",

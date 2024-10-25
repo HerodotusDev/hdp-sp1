@@ -8,7 +8,8 @@ use alloy_primitives::map::HashMap;
 use crate::chain::ChainId;
 
 pub fn find_workspace_root() -> Option<PathBuf> {
-    let mut dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
+    let mut dir =
+        PathBuf::from(env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR not set"));
     loop {
         let cargo_toml = dir.join("Cargo.toml");
         if cargo_toml.exists() {

@@ -11,15 +11,19 @@ impl ReceiptMemorizer for Memorizer {
         &mut self,
         key: crate::memorizer::keys::ReceiptKey,
     ) -> Result<ReceiptEnvelope, MemorizerError> {
-        let rpc_url = self.chain_map.get(&key.chain_id).unwrap().to_owned();
-        let rt = Runtime::new().unwrap();
+        let rpc_url = self
+            .chain_map
+            .get(&key.chain_id)
+            .ok_or(MemorizerError::MissingRpcUrl(key.chain_id))?
+            .to_owned();
+        let rt = Runtime::new()?;
         let transaction: ReceiptResponse = rt.block_on(async {
             let client = TransactionClient::default();
             client
                 .get_receipt(rpc_url, key.block_number, key.transaction_index)
                 .await
-                .unwrap()
-        });
+                .map_err(MemorizerError::EthTrieError)
+        })?;
 
         let tx = transaction.receipt.0;
         let mut out = Vec::new();

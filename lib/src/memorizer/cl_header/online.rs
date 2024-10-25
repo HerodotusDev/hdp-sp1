@@ -27,9 +27,12 @@ impl ClHeaderMemorizer for Memorizer {
             }
         }
 
-        let rpc_url = self.chain_map.get(&key.chain_id).unwrap();
+        let rpc_url = self
+            .chain_map
+            .get(&key.chain_id)
+            .ok_or(MemorizerError::MissingRpcUrl(key.chain_id))?;
 
-        let rt = Runtime::new().unwrap();
+        let rt = Runtime::new()?;
         let header: BeaconHeader = rt.block_on(async {
             let client = BeaconHeaderClient::default();
             client

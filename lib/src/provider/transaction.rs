@@ -1,7 +1,7 @@
 use alloy_primitives::{Bytes, B256};
 use eth_trie_proofs::{
     tx::ConsensusTx, tx_receipt::ConsensusTxReceipt, tx_receipt_trie::TxReceiptsMptHandler,
-    tx_trie::TxsMptHandler,
+    tx_trie::TxsMptHandler, EthTrieError,
 };
 use url::Url;
 
@@ -39,19 +39,17 @@ impl TransactionClient {
         url: Url,
         block_number: u64,
         tx_index: u64,
-    ) -> Result<TransactionResponse, reqwest::Error> {
-        let mut txs_mpt_handler = TxsMptHandler::new(url).unwrap();
+    ) -> Result<TransactionResponse, EthTrieError> {
+        let mut txs_mpt_handler = TxsMptHandler::new(url)?;
         txs_mpt_handler
             .build_tx_tree_from_block(block_number)
-            .await
-            .unwrap();
-
-        let proof = txs_mpt_handler.get_proof(tx_index).unwrap();
+            .await?;
+        let proof = txs_mpt_handler.get_proof(tx_index)?;
         let proof: Vec<Bytes> = proof.into_iter().map(Bytes::from).collect();
-        let tx = txs_mpt_handler.get_tx(tx_index).unwrap();
+        let tx = txs_mpt_handler.get_tx(tx_index)?;
         let tx_res = TransactionResponse {
             tx_index,
-            mpt_root: txs_mpt_handler.get_root().unwrap(),
+            mpt_root: txs_mpt_handler.get_root()?,
             tx,
             proof,
         };
@@ -63,18 +61,17 @@ impl TransactionClient {
         url: Url,
         block_number: u64,
         tx_index: u64,
-    ) -> Result<ReceiptResponse, reqwest::Error> {
-        let mut receipt_mpt_handler = TxReceiptsMptHandler::new(url).unwrap();
+    ) -> Result<ReceiptResponse, EthTrieError> {
+        let mut receipt_mpt_handler = TxReceiptsMptHandler::new(url)?;
         receipt_mpt_handler
             .build_tx_receipts_tree_from_block(block_number)
-            .await
-            .unwrap();
-        let proof = receipt_mpt_handler.get_proof(tx_index).unwrap();
+            .await?;
+        let proof = receipt_mpt_handler.get_proof(tx_index)?;
         let proof: Vec<Bytes> = proof.into_iter().map(Bytes::from).collect();
-        let receipt = receipt_mpt_handler.get_tx_receipt(tx_index).unwrap();
+        let receipt = receipt_mpt_handler.get_tx_receipt(tx_index)?;
         let tx_res = ReceiptResponse {
             tx_index,
-            mpt_root: receipt_mpt_handler.get_root().unwrap(),
+            mpt_root: receipt_mpt_handler.get_root()?,
             receipt,
             proof,
         };

@@ -44,62 +44,14 @@ impl DataProcessorClient {
         &mut self,
         program_path: PathBuf,
     ) -> Result<(SP1PublicValues, ExecutionReport), Box<dyn Error>> {
-        // Setup the logger.
-        env::set_var("RUST_LOG", "info");
-        sp1_sdk::utils::setup_logger();
-
-        // Step 1: Run online mode (execute `cargo run -r` in the program directory)
-        let mut child = Command::new("cargo")
-            .args(["run", "-r"])
-            .current_dir(&program_path)
-            .stdin(Stdio::piped())
-            .stdout(Stdio::inherit())
-            .stderr(Stdio::inherit())
-            .spawn()?;
-
-        if let Some(mut stdin) = child.stdin.take() {
-            for input in &self.inputs {
-                let serialized_data = bincode::serialize(&input)?;
-                stdin.write_all(&serialized_data)?;
-            }
-        }
-
-        if !child.wait()?.success() {
-            return Err(
-                format!("Failed to run 'cargo run -r' in {}", program_path.display()).into(),
-            );
-        };
-
-        // 2. run zkvm mode -> ELF
-        let status = Command::new("cargo")
-            .args(["prove", "build"])
-            .current_dir(&program_path)
-            .stdout(Stdio::inherit())
-            .stderr(Stdio::inherit())
-            .status()?;
-
-        if !status.success() {
-            return Err(format!("Failed to build ELF binary in {}", program_path.display()).into());
-        }
-
-        // Setup the inputs.
-        let workspace_root = find_workspace_root().expect("Workspace root not found");
-        let path = workspace_root.join("memorizer.bin");
-        println!("Memorizer loaded from {path:?}");
-        let mut stdin = SP1Stdin::new();
-        stdin.write(&bincode::deserialize::<Memorizer>(&fs::read(path).unwrap()).unwrap());
-        // write self.inputs
-        for input in &self.inputs {
-            stdin.write(&input);
-        }
-
-        // ELF
-        let path = workspace_root.join("elf/riscv32im-succinct-zkvm-elf");
-        println!("ELF loaded from {path:?}");
-        let elf_bytes = fs::read(path)?;
+        let (elf_bytes, stdin) = self.setup(program_path)?;
 
         // Execute the program
-        let (output, report) = self.sp1_client.execute(&elf_bytes, stdin).run().unwrap();
+        let (output, report) = self
+            .sp1_client
+            .execute(&elf_bytes, stdin)
+            .run()
+            .expect("failed to execute program");
         println!("Program executed successfully.");
         println!("Number of cycles: {}", report.total_instruction_count());
         Ok((output, report))
@@ -109,6 +61,22 @@ impl DataProcessorClient {
         &self,
         program_path: PathBuf,
     ) -> Result<(SP1ProofWithPublicValues, SP1VerifyingKey), Box<dyn Error>> {
+        let (elf_bytes, stdin) = self.setup(program_path)?;
+
+        // Setup the program for proving.
+        let (pk, vk) = self.sp1_client.setup(&elf_bytes);
+
+        // Generate the proof
+        let proof = self
+            .sp1_client
+            .prove(&pk, stdin)
+            .run()
+            .expect("failed to generate proof");
+
+        Ok((proof, vk))
+    }
+
+    fn setup(&self, program_path: PathBuf) -> Result<(Vec<u8>, SP1Stdin), Box<dyn Error>> {
         // Setup the logger.
         env::set_var("RUST_LOG", "info");
         sp1_sdk::utils::setup_logger();
@@ -153,7 +121,12 @@ impl DataProcessorClient {
         let workspace_root = find_workspace_root().expect("Workspace root not found");
         let path = workspace_root.join("memorizer.bin");
         println!("Memorizer loaded from {path:?}");
-        stdin.write(&bincode::deserialize::<Memorizer>(&fs::read(path).unwrap()).unwrap());
+        stdin.write(
+            &bincode::deserialize::<Memorizer>(
+                &fs::read(path).expect("Failed to read memorizer.bin"),
+            )
+            .expect("Failed to deserialize memorizer.bin"),
+        );
         for input in &self.inputs {
             stdin.write(&input);
         }
@@ -163,17 +136,7 @@ impl DataProcessorClient {
         println!("ELF loaded from {path:?}");
         let elf_bytes = fs::read(path)?;
 
-        // Setup the program for proving.
-        let (pk, vk) = self.sp1_client.setup(&elf_bytes);
-
-        // Generate the proof
-        let proof = self
-            .sp1_client
-            .prove(&pk, stdin)
-            .run()
-            .expect("failed to generate proof");
-
-        Ok((proof, vk))
+        Ok((elf_bytes, stdin))
     }
 
     pub fn verify(
@@ -200,8 +163,8 @@ mod tests {
     #[test]
     fn test_execute() {
         let mut client = DataProcessorClient::new();
-        client.write(5244652_u64);
-        client.write(11155111_u64);
+        // client.write(5244652_u64);
+        // client.write(11155111_u64);
         client.execute("../program".into()).unwrap();
     }
 

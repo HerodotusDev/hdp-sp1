@@ -1,3 +1,4 @@
+use crate::mmr::MmrMeta;
 use alloy_consensus::Header;
 use alloy_primitives::{
     hex::{self, FromHex},
@@ -5,8 +6,6 @@ use alloy_primitives::{
 };
 use alloy_rlp::Decodable;
 use serde::{Deserialize, Serialize};
-
-use crate::mmr::MmrMeta;
 
 /// Indexer RPC
 /// Detail documentation: https://rs-indexer.api.herodotus.cloud/swagger/#/accumulators/get_proofs
@@ -50,8 +49,9 @@ pub struct RlpBlockHeader {
 /// convert to block header
 impl From<RlpBlockHeader> for Header {
     fn from(rlp_block_header: RlpBlockHeader) -> Self {
-        let rlp_bytes = hex::decode(rlp_block_header.string).unwrap();
-        let header: Header = Header::decode(&mut rlp_bytes.as_slice()).unwrap();
+        let rlp_bytes = hex::decode(rlp_block_header.string).expect("Failed to decode hex");
+        let header: Header =
+            Header::decode(&mut rlp_bytes.as_slice()).expect("Failed to decode rlp");
         header
     }
 }
@@ -61,10 +61,10 @@ impl From<MmrRpc> for MmrMeta {
         let mmr_peaks: Vec<B256> = mmr_rpc
             .mmr_peaks
             .into_iter()
-            .map(|peak| B256::from_hex(peak).unwrap())
+            .map(|peak| B256::from_hex(peak).expect("Failed to parse hex"))
             .collect();
         Self {
-            root_hash: B256::from_hex(mmr_rpc.mmr_root).unwrap(),
+            root_hash: B256::from_hex(mmr_rpc.mmr_root).expect("Failed to parse hex"),
             mmr_size: mmr_rpc.mmr_size,
             peaks: mmr_peaks,
         }
@@ -95,7 +95,7 @@ impl IndexerClient {
         );
         let res = self.client.get(url).send().await?;
         let indexer_rpc: IndexerResponse = res.json().await?;
-        Ok(indexer_rpc.data.first().unwrap().clone())
+        Ok(indexer_rpc.data.first().expect("Invalid response").clone())
     }
 }
 
