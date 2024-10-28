@@ -26,12 +26,12 @@ use std::collections::HashMap;
 use thiserror_no_std::Error;
 use url::Url;
 
-#[derive(Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Default, Serialize, Deserialize, PartialEq)]
 pub struct Memorizer {
     #[serde(skip)]
     pub chain_map: HashMap<ChainId, Url>,
     pub mmr_meta: Vec<MmrMeta>,
-    pub map: HashMap<MemorizerKey, MemorizerValue>,
+    pub map: HashMap<MemorizerKey, (MemorizerValue, bool)>,
 }
 
 impl Memorizer {
@@ -119,17 +119,23 @@ mod tests {
         original_mem.mmr_meta = vec![MmrMeta::default()];
         original_mem.map.insert(
             B256::ZERO,
-            MemorizerValue::Header(HeaderMemorizerValue::default()),
+            (
+                MemorizerValue::Header(HeaderMemorizerValue::default()),
+                false,
+            ),
         );
         let raw_tx = alloy_primitives::hex::decode("02f86f0102843b9aca0085029e7822d68298f094d9e1459a7a482635700cbc20bbaf52d495ab9c9680841b55ba3ac080a0c199674fcb29f353693dd779c017823b954b3c69dffa3cd6b2a6ff7888798039a028ca912de909e7e6cdef9cdcaf24c54dd8c1032946dfa1d85c206b32a9064fe8").unwrap();
         // let res = TxEnvelope::decode(&mut raw_tx.as_slice()).unwrap();
         original_mem.map.insert(
             B256::ZERO,
-            MemorizerValue::Transaction(TransactionMemorizerValue {
-                transaction_encoded: Bytes::from(raw_tx),
-                tx_index: 0,
-                proof: Default::default(),
-            }),
+            (
+                MemorizerValue::Transaction(TransactionMemorizerValue {
+                    transaction_encoded: Bytes::from(raw_tx),
+                    tx_index: 0,
+                    proof: Default::default(),
+                }),
+                false,
+            ),
         );
 
         fs::write(&path, bincode::serialize(&original_mem).unwrap()).unwrap();

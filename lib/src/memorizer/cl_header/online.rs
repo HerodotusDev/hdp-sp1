@@ -43,9 +43,12 @@ impl ClHeaderMemorizer for Memorizer {
 
         self.map.insert(
             key.into(),
-            MemorizerValue::BeaconHeader(BeaconHeaderMemorizerValue {
-                header: header.clone(),
-            }),
+            (
+                MemorizerValue::BeaconHeader(BeaconHeaderMemorizerValue {
+                    header: header.clone(),
+                }),
+                false,
+            ),
         );
 
         Ok(header)

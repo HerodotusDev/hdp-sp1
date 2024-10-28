@@ -47,7 +47,7 @@ impl AccountProvider {
         address: Address,
         block_number: u64,
         storage_slot: B256,
-    ) -> Result<(B256, Vec<Bytes>, U256), alloy_transport::TransportError> {
+    ) -> Result<(Account, Vec<Bytes>, Vec<Bytes>, U256), alloy_transport::TransportError> {
         let mut batch = self.client.new_batch();
         let block_header_fut: alloy_rpc_client::Waiter<EIP1186AccountProofResponse> = batch
             .add_call(
@@ -60,9 +60,20 @@ impl AccountProvider {
             )?;
         batch.send().await?;
         let response: EIP1186AccountProofResponse = block_header_fut.await?;
+        let converted_account: Account = Account {
+            nonce: response.nonce,
+            balance: response.balance,
+            code_hash: response.code_hash,
+            storage_root: response.storage_hash,
+        };
         let storage_proof = response.storage_proof[0].proof.clone();
         let storage_value = response.storage_proof[0].value;
-        Ok((response.storage_hash, storage_proof, storage_value))
+        Ok((
+            converted_account,
+            response.account_proof,
+            storage_proof,
+            storage_value,
+        ))
     }
 }
 
@@ -107,7 +118,7 @@ mod tests {
         let url = chain_map.get(&ChainId::EthereumSepolia).unwrap().to_owned();
         let provider = AccountProvider::new(url);
         let storage_key: B256 = U256::from(1).into();
-        let (storage_root, storage_proof, storage_value) = provider
+        let (account, _account_proof, storage_proof, storage_value) = provider
             .get_storage(
                 Address::from_str("0x75cec1db9dceb703200eaa6595f66885c962b920").unwrap(),
                 5641516,
@@ -117,7 +128,9 @@ mod tests {
             .unwrap();
 
         // Verify the transaction proof
-        let mpt = Mpt { root: storage_root };
+        let mpt = Mpt {
+            root: account.storage_root,
+        };
         mpt.verify_storage(storage_proof, storage_key, storage_value)
             .unwrap();
     }

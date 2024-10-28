@@ -1,14 +1,20 @@
 use super::AccountMemorizer;
 use crate::account::AccountProvider;
 use crate::memorizer::values::{AccountMemorizerValue, MemorizerValue};
-use crate::memorizer::MemorizerError;
 use crate::memorizer::{keys::AccountKey, Memorizer};
+use crate::memorizer::{HeaderKey, HeaderMemorizer, MemorizerError};
 use alloy_consensus::Account;
 use alloy_primitives::Bytes;
 use tokio::runtime::Runtime;
 
 impl AccountMemorizer for Memorizer {
     fn get_account(&mut self, key: AccountKey) -> Result<Account, MemorizerError> {
+        let header_key = HeaderKey {
+            block_number: key.block_number,
+            chain_id: key.chain_id,
+        };
+        let _ = self.get_header(header_key)?;
+
         let rt = Runtime::new()?;
         let rpc_url = self
             .chain_map
@@ -25,7 +31,10 @@ impl AccountMemorizer for Memorizer {
 
         self.map.insert(
             key.into(),
-            MemorizerValue::Account(AccountMemorizerValue { account, proof }),
+            (
+                MemorizerValue::Account(AccountMemorizerValue { account, proof }),
+                false,
+            ),
         );
 
         Ok(account)

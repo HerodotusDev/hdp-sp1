@@ -2,24 +2,31 @@ use super::AccountMemorizer;
 use crate::memorizer::{
     keys::{AccountKey, HeaderKey, MemorizerKey},
     values::MemorizerValue,
-    Memorizer, MemorizerError,
+    HeaderMemorizer, Memorizer, MemorizerError,
 };
 use crate::mpt::Mpt;
 use alloy_consensus::Account;
 
 impl AccountMemorizer for Memorizer {
     fn get_account(&mut self, key: AccountKey) -> Result<Account, MemorizerError> {
-        let header_key: MemorizerKey = HeaderKey {
+        // 1. Header
+        let header_key = HeaderKey {
             block_number: key.block_number,
             chain_id: key.chain_id,
-        }
-        .into();
+        };
+        let header = self.get_header(header_key)?;
 
-        if let Some(MemorizerValue::Header(header_value)) = self.map.get(&header_key) {
-            let state_root = header_value.header.state_root;
-            let account_key: MemorizerKey = key.clone().into();
+        // 2. Account
+        let state_root = header.state_root;
+        let account_key: MemorizerKey = key.clone().into();
 
-            if let Some(MemorizerValue::Account(account_value)) = self.map.get(&account_key) {
+        if let Some((MemorizerValue::Account(account_value), is_verified)) =
+            self.map.get_mut(&account_key)
+        {
+            if *is_verified {
+                println!("Account MPT already verified");
+                Ok(account_value.account)
+            } else {
                 let mpt = Mpt { root: state_root };
                 println!("cycle-tracker-start: mpt(account)");
                 mpt.verify_account(
@@ -28,13 +35,11 @@ impl AccountMemorizer for Memorizer {
                     key.address,
                 )?;
                 println!("cycle-tracker-end: mpt(account)");
+                *is_verified = true;
                 Ok(account_value.account)
-            } else {
-                Err(MemorizerError::MissingAccount)
             }
         } else {
-            println!("Missing header, {:?}", key.block_number);
-            Err(MemorizerError::MissingHeader)
+            Err(MemorizerError::MissingAccount)
         }
     }
 }
