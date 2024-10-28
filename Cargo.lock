@@ -3960,6 +3960,7 @@ dependencies = [
 name = "hdp-macro"
 version = "0.1.0"
 dependencies = [
+ "darling",
  "erased-serde",
  "proc-macro2",
  "quote",

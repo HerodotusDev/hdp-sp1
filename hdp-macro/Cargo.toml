@@ -7,8 +7,9 @@ edition = "2021"
 proc-macro = true
 
 [dependencies]
-proc-macro2 = "1.0"
 syn = { version = "2.0", features = ["full"] }
 quote = "1.0"
 serde = { workspace = true }
 erased-serde = "0.4"
+proc-macro2 = "1.0"
+darling = "0.20.10"

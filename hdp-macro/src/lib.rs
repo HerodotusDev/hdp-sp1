@@ -1,9 +1,30 @@
+use darling::ast::NestedMeta;
+use darling::{Error, FromMeta};
 use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, ItemFn};
 
+#[derive(Debug, FromMeta)]
+struct MacroArgs {
+    to_chain_id: String,
+}
+
 #[proc_macro_attribute]
-pub fn hdp_main(_attr: TokenStream, item: TokenStream) -> TokenStream {
+pub fn hdp_main(args: TokenStream, item: TokenStream) -> TokenStream {
+    let attr_args = match NestedMeta::parse_meta_list(args.into()) {
+        Ok(v) => v,
+        Err(e) => {
+            return TokenStream::from(Error::from(e).write_errors());
+        }
+    };
+
+    let args = match MacroArgs::from_list(&attr_args) {
+        Ok(v) => v,
+        Err(e) => {
+            return TokenStream::from(e.write_errors());
+        }
+    };
+
     let input_fn = parse_macro_input!(item as ItemFn);
 
     let fn_vis = &input_fn.vis;
@@ -44,6 +65,8 @@ pub fn hdp_main(_attr: TokenStream, item: TokenStream) -> TokenStream {
         }
     };
 
+    let to_chain_id = args.to_chain_id;
+
     let expanded = quote! {
         use cfg_if::cfg_if;
         use hdp_lib::memorizer::Memorizer;
@@ -72,7 +95,7 @@ pub fn hdp_main(_attr: TokenStream, item: TokenStream) -> TokenStream {
                 } else {
                     println!("Hello, world! from online mode");
                     let chain_map = get_rpc_urls();
-                    let mut memorizer = Memorizer::new(chain_map);
+                    let mut memorizer = Memorizer::new(chain_map, #to_chain_id);
                 }
             }
 

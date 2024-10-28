@@ -21,7 +21,7 @@ impl HeaderMemorizer for Memorizer {
             // If not, fetch from indexer
             let rt = Runtime::new()?;
             let block: IndexerRpc = rt.block_on(async {
-                let client = IndexerClient::new(target_chain_id, target_chain_id);
+                let client = IndexerClient::new(target_chain_id, self.to_chain_id);
                 client
                     .get_header(target_block_number)
                     .await

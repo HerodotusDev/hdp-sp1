@@ -21,6 +21,7 @@ use crate::{
     mmr::{MmrError, MmrMeta},
     mpt::MptError,
 };
+use core::str::FromStr;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use thiserror_no_std::Error;
@@ -30,14 +31,16 @@ use url::Url;
 pub struct Memorizer {
     #[serde(skip)]
     pub chain_map: HashMap<ChainId, Url>,
+    pub to_chain_id: ChainId,
     pub mmr_meta: HashMap<ChainId, MmrMeta>,
     pub map: HashMap<MemorizerKey, (MemorizerValue, bool)>,
 }
 
 impl Memorizer {
-    pub fn new(chain_map: HashMap<ChainId, Url>) -> Self {
+    pub fn new<S: AsRef<str>>(chain_map: HashMap<ChainId, Url>, to_chain_id: S) -> Self {
         Self {
             chain_map,
+            to_chain_id: ChainId::from_str(to_chain_id.as_ref()).unwrap(),
             mmr_meta: Default::default(),
             map: Default::default(),
         }
@@ -115,7 +118,7 @@ mod tests {
         let binding = TempDir::new("test").unwrap();
         let path = binding.path().join("memorizer.bin");
 
-        let mut original_mem = Memorizer::new(HashMap::default());
+        let mut original_mem = Memorizer::new(HashMap::default(), "ETHEREUM_SEPOLIA");
         original_mem.mmr_meta = HashMap::default();
         original_mem.map.insert(
             B256::ZERO,
