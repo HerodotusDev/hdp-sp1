@@ -70,28 +70,28 @@ pub enum MemorizerError {
     #[error("Failed to fetch RPC URL for chainId: {0}")]
     MissingRpcUrl(ChainId),
 
-    #[error("Failed for io error: {0}")]
+    #[error(transparent)]
     IoError(#[from] std::io::Error),
 
-    #[error("Failed to verify Merkle Patricia Tree (MPT) proof: {0}")]
+    #[error(transparent)]
     MptProofFailed(#[from] MptError),
 
-    #[error("Failed to verify Merkle Mountain Range (MMR) proof: {0}")]
+    #[error(transparent)]
     MmrProofFailed(#[from] MmrError),
 
-    #[error("Failed to decode RLP (Recursive Length Prefix) data: {0}")]
+    #[error(transparent)]
     RlpDecodeFailed(#[from] alloy_rlp::Error),
 
     #[cfg(not(target_os = "zkvm"))]
-    #[error("Transport error: {0}")]
+    #[error(transparent)]
     TransportError(#[from] alloy_transport::TransportError),
 
     #[cfg(not(target_os = "zkvm"))]
-    #[error("Request error: {0}")]
+    #[error(transparent)]
     ReqwestError(#[from] reqwest::Error),
 
     #[cfg(not(target_os = "zkvm"))]
-    #[error("Eth Trie error: {0}")]
+    #[error(transparent)]
     EthTrieError(#[from] eth_trie_proofs::EthTrieError),
 
     #[error("The given execution layer block number was produced before the PoS transition")]

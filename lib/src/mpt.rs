@@ -69,7 +69,7 @@ impl Mpt {
 
 #[derive(Debug, Error)]
 pub enum MptError {
-    #[error("{0}")]
+    #[error(transparent)]
     ProofVerification(#[from] ProofVerificationError),
 
     #[error("Invalid proof")]
