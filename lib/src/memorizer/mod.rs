@@ -30,7 +30,7 @@ use url::Url;
 pub struct Memorizer {
     #[serde(skip)]
     pub chain_map: HashMap<ChainId, Url>,
-    pub mmr_meta: Vec<MmrMeta>,
+    pub mmr_meta: HashMap<ChainId, MmrMeta>,
     pub map: HashMap<MemorizerKey, (MemorizerValue, bool)>,
 }
 
@@ -38,7 +38,7 @@ impl Memorizer {
     pub fn new(chain_map: HashMap<ChainId, Url>) -> Self {
         Self {
             chain_map,
-            mmr_meta: Vec::new(),
+            mmr_meta: Default::default(),
             map: Default::default(),
         }
     }
@@ -116,7 +116,7 @@ mod tests {
         let path = binding.path().join("memorizer.bin");
 
         let mut original_mem = Memorizer::new(HashMap::default());
-        original_mem.mmr_meta = vec![MmrMeta::default()];
+        original_mem.mmr_meta = HashMap::default();
         original_mem.map.insert(
             B256::ZERO,
             (

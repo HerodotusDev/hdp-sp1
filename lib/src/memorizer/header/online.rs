@@ -11,6 +11,7 @@ use tokio::runtime::Runtime;
 impl HeaderMemorizer for Memorizer {
     fn get_header(&mut self, key: HeaderKey) -> Result<Header, MemorizerError> {
         let target_block_number = key.block_number;
+        let target_chain_id = key.chain_id;
         let header_key: MemorizerKey = key.into();
 
         // First check if the target value is already cached
@@ -20,7 +21,7 @@ impl HeaderMemorizer for Memorizer {
             // If not, fetch from indexer
             let rt = Runtime::new()?;
             let block: IndexerRpc = rt.block_on(async {
-                let client = IndexerClient::default();
+                let client = IndexerClient::new(target_chain_id, target_chain_id);
                 client
                     .get_header(target_block_number)
                     .await
@@ -42,7 +43,9 @@ impl HeaderMemorizer for Memorizer {
                     false,
                 ),
             );
-            self.mmr_meta = vec![mmr];
+
+            self.mmr_meta.insert(target_chain_id, mmr);
+
             Ok(header)
         }
     }

@@ -1,4 +1,4 @@
-use crate::mmr::MmrMeta;
+use crate::{chain::ChainId, mmr::MmrMeta};
 use alloy_consensus::Header;
 use alloy_primitives::{
     hex::{self, FromHex},
@@ -88,6 +88,14 @@ impl Default for IndexerClient {
 }
 
 impl IndexerClient {
+    pub fn new(from_chain_id: ChainId, to_chain_id: ChainId) -> Self {
+        Self {
+            client: reqwest::Client::new(),
+            deployed_on_chain: to_chain_id.to_numeric_id(),
+            accumulates_chain: from_chain_id.to_numeric_id(),
+        }
+    }
+
     pub async fn get_header(&self, block_number: u64) -> Result<IndexerRpc, reqwest::Error> {
         let url = format!(
             "{INDEXER_RPC_URL}?deployed_on_chain={}&accumulates_chain={}&hashing_function=keccak&contract_type=AGGREGATOR&block_numbers={}&is_meta_included=true&is_whole_tree=true&is_rlp_included=true",

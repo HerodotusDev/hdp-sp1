@@ -88,6 +88,9 @@ pub fn hdp_main(_attr: TokenStream, item: TokenStream) -> TokenStream {
                     let workspace_root = find_workspace_root().expect("Workspace root not found");
                     let path = workspace_root.join("memorizer.bin");
                     println!("Memorizer saved to {path:?}");
+                    if cfg!(debug_assertions) {
+                        println!("Memorizer: {:#?}", memorizer);
+                    }
                     fs::write(path, bincode::serialize(&memorizer).unwrap()).unwrap();
                 }
             }

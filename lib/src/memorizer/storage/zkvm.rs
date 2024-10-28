@@ -14,7 +14,7 @@ impl StorageMemorizer for Memorizer {
             block_number: key.block_number,
             chain_id: key.chain_id,
         };
-        let header = self.get_header(header_key)?;
+        let _ = self.get_header(header_key)?;
 
         // 2. Account
         let account_key = AccountKey {

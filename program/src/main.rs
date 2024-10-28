@@ -15,12 +15,12 @@ pub fn main() {
     // println!("Received block_number: {:?}", block_number);
     // println!("Received chain_id: {:?}", chain_id);
 
-    // let header_key = HeaderKey {
-    //     block_number: 5244634,
-    //     chain_id: hdp_lib::chain::ChainId::EthereumSepolia,
-    // };
+    let header_key = HeaderKey {
+        block_number: 10,
+        chain_id: hdp_lib::chain::ChainId::EthereumMainnet,
+    };
 
-    // let _ = memorizer.get_header(header_key).unwrap();
+    let _ = memorizer.get_header(header_key).unwrap();
 
     // let header_key = HeaderKey {
     //     block_number: 5244634,
