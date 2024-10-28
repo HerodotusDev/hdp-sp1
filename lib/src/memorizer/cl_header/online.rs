@@ -4,6 +4,8 @@ use crate::chain::ChainId;
 use crate::cl_header::BeaconHeaderClient;
 use crate::memorizer::values::BeaconHeaderMemorizerValue;
 use crate::memorizer::values::MemorizerValue;
+use crate::memorizer::HeaderKey;
+use crate::memorizer::HeaderMemorizer;
 use crate::memorizer::MemorizerError;
 use crate::memorizer::{keys::BeaconHeaderKey, Memorizer};
 use tokio::runtime::Runtime;
@@ -13,6 +15,13 @@ const MAINNET_POS_TRANSITION_BLOCK_NUMBER: u64 = 15537393;
 
 impl ClHeaderMemorizer for Memorizer {
     fn get_cl_header(&mut self, key: BeaconHeaderKey) -> Result<BeaconHeader, MemorizerError> {
+        // Header
+        let header_key = HeaderKey {
+            block_number: key.block_number + 1,
+            chain_id: key.chain_id,
+        };
+        let _ = self.get_header(header_key)?;
+
         // Validate that the block number is greater than the POS transition block number
         match key.chain_id {
             ChainId::EthereumMainnet => {

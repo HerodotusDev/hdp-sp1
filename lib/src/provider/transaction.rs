@@ -5,22 +5,36 @@ use eth_trie_proofs::{
 };
 use url::Url;
 
+/// Represents a response containing transaction details, including the MPT root,
+/// the transaction data, and the proof elements.
 #[derive(Debug)]
 pub struct TransactionResponse {
+    /// The index of the transaction within the block.
     pub tx_index: u64,
+    /// The Merkle Patricia Trie root hash for the transactions.
     pub mpt_root: B256,
+    /// The transaction data.
     pub tx: ConsensusTx,
+    /// The proof elements for the transaction in the MPT.
     pub proof: Vec<Bytes>,
 }
 
+/// Represents a response containing receipt details, including the MPT root,
+/// the transaction receipt data, and the proof elements.
 #[derive(Debug)]
 pub struct ReceiptResponse {
+    /// The index of the transaction within the block.
     pub tx_index: u64,
+    /// The Merkle Patricia Trie root hash for the receipts.
     pub mpt_root: B256,
+    /// The transaction receipt data.
     pub receipt: ConsensusTxReceipt,
+    /// The proof elements for the receipt in the MPT.
     pub proof: Vec<Bytes>,
 }
 
+/// A client for fetching transactions and receipts, along with their proofs.
+#[derive(Debug)]
 pub struct TransactionClient {}
 
 impl Default for TransactionClient {
@@ -30,10 +44,30 @@ impl Default for TransactionClient {
 }
 
 impl TransactionClient {
+    /// Creates a new [`TransactionClient`].
     pub fn new() -> Self {
         Self {}
     }
 
+    /// Fetches a transaction from the specified block and transaction index,
+    /// building the transaction Merkle Patricia Trie (MPT) to retrieve the proof and transaction data.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use url::Url;
+    /// use hdp_lib::TransactionClient;
+    ///
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let client = TransactionClient::new();
+    ///     let url = Url::parse("https://YOUR_RPC_URL").unwrap();
+    ///     match client.get_transaction(url, 5244634, 2).await {
+    ///         Ok(response) => println!("{:?}", response),
+    ///         Err(e) => eprintln!("Error fetching transaction: {:?}", e),
+    ///     }
+    /// }
+    /// ```
     pub async fn get_transaction(
         &self,
         url: Url,
@@ -56,6 +90,25 @@ impl TransactionClient {
         Ok(tx_res)
     }
 
+    /// Fetches a transaction receipt from the specified block and transaction index,
+    /// building the receipt Merkle Patricia Trie (MPT) to retrieve the proof and receipt data.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use url::Url;
+    /// use hdp_lib::TransactionClient;
+    ///
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let client = TransactionClient::new();
+    ///     let url = Url::parse("https://YOUR_RPC_URL").unwrap();
+    ///     match client.get_receipt(url, 5244634, 2).await {
+    ///         Ok(response) => println!("{:?}", response),
+    ///         Err(e) => eprintln!("Error fetching receipt: {:?}", e),
+    ///     }
+    /// }
+    /// ```
     pub async fn get_receipt(
         &self,
         url: Url,

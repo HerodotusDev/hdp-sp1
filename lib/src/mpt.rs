@@ -7,16 +7,31 @@ use alloy_trie::{
 };
 use thiserror_no_std::Error;
 
+/// Represents a Merkle Patricia Tree (MPT).
+/// to verify transactions, receipts, accounts, and storage proofs.
 #[derive(Debug)]
 pub struct Mpt {
+    /// The root hash of the MPT, representing the authenticated state.
     pub root: B256,
 }
 
 impl Mpt {
+    /// Creates a new `Mpt` instance with a specified root hash.
+    ///
+    /// # Arguments
+    /// * `root` - The root hash of the MPT.
     pub fn new(root: B256) -> Self {
         Self { root }
     }
 
+    /// Verifies a transaction in the MPT using a proof.
+    ///
+    /// # Arguments
+    /// * `tx_index` - The index of the transaction.
+    /// * `proof` - The proof elements required to verify the transaction.
+    ///
+    /// # Returns
+    /// A `Result` which is `Ok(())` if the proof is valid, or an [`MptError`] otherwise.
     pub fn verify_transaction(&self, tx_index: u64, proof: Vec<Bytes>) -> Result<(), MptError> {
         let nibbles = Nibbles::unpack(Bytes::from(alloy_rlp::encode(U256::from(tx_index))));
         // TODO: last element of proof is the value of the key, not sure if it's ok to hardcode split prefix
@@ -28,6 +43,14 @@ impl Mpt {
             .map_err(MptError::ProofVerification)
     }
 
+    /// Verifies a receipt in the MPT using a proof.
+    ///
+    /// # Arguments
+    /// * `tx_index` - The index of the transaction's receipt.
+    /// * `proof` - The proof elements required to verify the receipt.
+    ///
+    /// # Returns
+    /// A `Result` which is `Ok(())` if the proof is valid, or an [`MptError`] otherwise.
     pub fn verify_receipt(&self, tx_index: u64, proof: Vec<Bytes>) -> Result<(), MptError> {
         let nibbles = Nibbles::unpack(Bytes::from(alloy_rlp::encode(U256::from(tx_index))));
         // TODO: last element of proof is the value of the key, not sure if it's ok to hardcode split prefix
@@ -39,6 +62,15 @@ impl Mpt {
             .map_err(MptError::ProofVerification)
     }
 
+    /// Verifies an account in the MPT using a proof.
+    ///
+    /// # Arguments
+    /// * `proof` - The proof elements required to verify the account.
+    /// * `account` - The account data to verify.
+    /// * `address` - The address of the account.
+    ///
+    /// # Returns
+    /// A `Result` which is `Ok(())` if the proof is valid, or an [`MptError`] otherwise.
     pub fn verify_account(
         &self,
         proof: Vec<Bytes>,
@@ -51,6 +83,15 @@ impl Mpt {
             .map_err(MptError::ProofVerification)
     }
 
+    /// Verifies a storage value in the MPT using a proof.
+    ///
+    /// # Arguments
+    /// * `proof` - The proof elements required to verify the storage.
+    /// * `key` - The storage key.
+    /// * `value` - The expected storage value.
+    ///
+    /// # Returns
+    /// A `Result` which is `Ok(())` if the proof is valid, or an [`MptError`] otherwise.
     pub fn verify_storage(
         &self,
         proof: Vec<Bytes>,
@@ -67,11 +108,14 @@ impl Mpt {
     }
 }
 
+/// Error types that may occur during MPT operations.
 #[derive(Debug, Error)]
 pub enum MptError {
+    /// Error when the proof verification fails.
     #[error(transparent)]
     ProofVerification(#[from] ProofVerificationError),
 
+    /// Error when the proof provided is invalid or incomplete.
     #[error("Invalid proof")]
     InvalidProof,
 }

@@ -5,17 +5,45 @@ use alloy_rpc_client::{ClientBuilder, ReqwestClient};
 use alloy_rpc_types::EIP1186AccountProofResponse;
 use url::Url;
 
+/// A provider for accessing account and storage proofs
+#[derive(Debug)]
 pub struct AccountProvider {
+    /// The RPC client.
     pub client: ReqwestClient,
 }
 
 impl AccountProvider {
+    /// Creates a new [`AccountProvider`] instance with the given RPC URL
     pub fn new(rpc_url: Url) -> Self {
         Self {
             client: ClientBuilder::default().http(rpc_url.clone()),
         }
     }
 
+    /// Fetches the account data and account proof for a given Ethereum address at a specified block.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use alloy_primitives::Address;
+    /// use hdp_lib::*;
+    /// use std::str::FromStr;
+    ///
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let provider = AccountProvider::new(Url::parse("https://YOUR_RPC_URL").unwrap());
+    ///     let address = Address::from_str("0x75cec1db9dceb703200eaa6595f66885c962b920").unwrap();
+    ///     let block_number = 5641516;
+    ///
+    ///     match provider.get_account(address, block_number).await {
+    ///         Ok((account, proof)) => {
+    ///             println!("Account: {:?}", account);
+    ///             println!("Proof: {:?}", proof);
+    ///         }
+    ///         Err(e) => eprintln!("Error fetching account: {:?}", e),
+    ///     }
+    /// }
+    /// ```
     pub async fn get_account(
         &self,
         address: Address,
@@ -42,6 +70,33 @@ impl AccountProvider {
         Ok((convert, response.account_proof))
     }
 
+    /// Fetches storage data for a given Ethereum address and storage slot at a specific block.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use alloy_primitives::{Address, B256, U256};
+    /// use hdp_lib::AccountProvider;
+    /// use std::str::FromStr;
+    ///
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let provider = AccountProvider::new(Url::parse("https://YOUR_RPC_URL").unwrap());
+    ///     let address = Address::from_str("0x75cec1db9dceb703200eaa6595f66885c962b920").unwrap();
+    ///     let block_number = 5641516;
+    ///     let storage_slot: B256 = U256::from(1).into();
+    ///
+    ///     match provider.get_storage(address, block_number, storage_slot).await {
+    ///         Ok((account, account_proof, storage_proof, storage_value)) => {
+    ///             println!("Account: {:?}", account);
+    ///             println!("Account Proof: {:?}", account_proof);
+    ///             println!("Storage Proof: {:?}", storage_proof);
+    ///             println!("Storage Value: {:?}", storage_value);
+    ///         }
+    ///         Err(e) => eprintln!("Error fetching storage: {:?}", e),
+    ///     }
+    /// }
+    /// ```
     pub async fn get_storage(
         &self,
         address: Address,
