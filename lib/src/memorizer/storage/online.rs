@@ -38,7 +38,7 @@ impl StorageMemorizer for Memorizer {
         }
         .into();
 
-        if self.map.get(&account_key).is_none() {
+        if !self.map.contains_key(&account_key) {
             self.map.insert(
                 account_key,
                 (

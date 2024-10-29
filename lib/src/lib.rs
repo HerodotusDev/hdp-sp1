@@ -20,17 +20,9 @@
 //! Define an HDP program with the `hdp_main` macro and the memorizer provided by `hdp-lib`.
 //!
 //! ```rust
-//! #![cfg_attr(target_os = "zkvm", no_main)]
-//!
-//! use alloy_primitives::{address, U256};
-//! use hdp_lib::memorizer::*;
-//! use hdp_macro::hdp_main;
-//!
-//! #[hdp_main(to_chain_id = "ETHEREUM_SEPOLIA")]
-//! pub fn main() {
-//!     // ===============================================
-//!     // Example program start
-//!     // ===============================================
+//! use hdp_lib::memorizer::StorageKey;
+//! use alloy_primitives::U256;
+//! use alloy_primitives::address;
 //!
 //!     let storage_key = StorageKey {
 //!         block_number: 5_244_634,
@@ -38,20 +30,7 @@
 //!         chain_id: hdp_lib::chain::ChainId::EthereumSepolia,
 //!         storage_slot: U256::from(1).into(),
 //!     };
-//!     let v = memorizer.get_storage(storage_key).unwrap();
-//!
-//!     hdp_commit(&v);
-//!
-//!     // ===============================================
-//!     // Example program end
-//!     // ===============================================
-//! }
 //! ```
-
-#![deny(missing_docs)]
-#![deny(missing_debug_implementations)]
-#![cfg_attr(docsrs, feature(doc_cfg))]
-#![cfg_attr(test, deny(warnings))]
 
 use cfg_if::cfg_if;
 

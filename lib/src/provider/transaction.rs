@@ -56,7 +56,7 @@ impl TransactionClient {
     ///
     /// ```rust
     /// use url::Url;
-    /// use hdp_lib::TransactionClient;
+    /// use hdp_lib::transaction::TransactionClient;
     ///
     /// #[tokio::main]
     /// async fn main() {
@@ -97,7 +97,7 @@ impl TransactionClient {
     ///
     /// ```rust
     /// use url::Url;
-    /// use hdp_lib::TransactionClient;
+    /// use hdp_lib::transaction::TransactionClient;
     ///
     /// #[tokio::main]
     /// async fn main() {

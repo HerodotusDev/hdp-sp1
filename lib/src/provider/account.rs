@@ -27,7 +27,9 @@ impl AccountProvider {
     /// ```rust
     /// use alloy_primitives::Address;
     /// use hdp_lib::*;
+    /// use hdp_lib::account::AccountProvider;
     /// use std::str::FromStr;
+    /// use url::Url;
     ///
     /// #[tokio::main]
     /// async fn main() {
@@ -76,8 +78,9 @@ impl AccountProvider {
     ///
     /// ```rust
     /// use alloy_primitives::{Address, B256, U256};
-    /// use hdp_lib::AccountProvider;
+    /// use hdp_lib::account::AccountProvider;
     /// use std::str::FromStr;
+    /// use url::Url;
     ///
     /// #[tokio::main]
     /// async fn main() {

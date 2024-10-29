@@ -16,6 +16,7 @@ alloy-consensus = { workspace = true, features = [
     "k256",
 ] }
 alloy-primitives = { workspace = true }
+alloy-trie = "0.7.2"
 
 [target.'cfg(not(target_os = "zkvm"))'.dependencies]
 bincode = "1.3.3"

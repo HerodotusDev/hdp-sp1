@@ -121,7 +121,7 @@ impl IndexerClient {
     /// # Examples
     ///
     /// ```rust
-    ///  use hdp_lib::*;
+    ///  use hdp_lib::header::IndexerClient;
     ///
     /// #[tokio::main]
     /// async fn main() {

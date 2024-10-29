@@ -58,7 +58,9 @@ impl BeaconHeaderClient {
     /// # Examples
     ///
     /// ```rust
-    /// use crate::{BeaconHeaderClient, BeaconHeaderKey, ChainId};
+    /// use hdp_lib::provider::cl_header::BeaconHeaderClient;
+    /// use hdp_lib::chain::ChainId;
+    /// use hdp_lib::memorizer::keys::BeaconHeaderKey;
     ///
     /// #[tokio::main]
     /// async fn main() {

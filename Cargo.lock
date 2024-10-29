@@ -851,6 +851,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "alloy-trie"
+version = "0.7.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cdd7f8b3a7c65ca09b3c7bdd7c7d72d7423d026f5247eda96af53d24e58315c1"
+dependencies = [
+ "alloy-primitives 0.8.8",
+ "alloy-rlp",
+ "arrayvec",
+ "derive_more 1.0.0",
+ "nybbles",
+ "serde",
+ "smallvec",
+ "tracing",
+]
+
+[[package]]
 name = "android-tzdata"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2064,6 +2080,7 @@ version = "0.1.0"
 dependencies = [
  "alloy-consensus",
  "alloy-primitives 0.8.8",
+ "alloy-trie 0.7.2",
  "bincode",
  "cfg-if",
  "ethbloom 0.14.1",
@@ -3936,7 +3953,7 @@ dependencies = [
  "alloy-rpc-types",
  "alloy-sol-types 0.8.8",
  "alloy-transport",
- "alloy-trie",
+ "alloy-trie 0.6.0",
  "bincode",
  "cfg-if",
  "dotenv",
@@ -7711,7 +7728,7 @@ dependencies = [
  "alloy-eips",
  "alloy-genesis",
  "alloy-primitives 0.8.8",
- "alloy-trie",
+ "alloy-trie 0.6.0",
  "auto_impl",
  "derive_more 1.0.0",
  "once_cell",
@@ -7829,7 +7846,7 @@ dependencies = [
  "alloy-eips",
  "alloy-genesis",
  "alloy-primitives 0.8.8",
- "alloy-trie",
+ "alloy-trie 0.6.0",
  "bytes",
  "modular-bitfield",
  "reth-codecs-derive",
@@ -9819,7 +9836,7 @@ dependencies = [
  "alloy-genesis",
  "alloy-primitives 0.8.8",
  "alloy-rlp",
- "alloy-trie",
+ "alloy-trie 0.6.0",
  "arbitrary",
  "bytes",
  "derive_more 1.0.0",
