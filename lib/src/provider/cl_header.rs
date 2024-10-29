@@ -33,7 +33,10 @@ struct BeaconHeaderMessage {
     body_root: String,
 }
 
+/// A client for fetching beacon headers and parsing responses.
+#[derive(Debug)]
 pub struct BeaconHeaderClient {
+    /// HTTP client to interact with APIs.
     pub client: reqwest::Client,
 }
 
@@ -44,11 +47,33 @@ impl Default for BeaconHeaderClient {
 }
 
 impl BeaconHeaderClient {
+    /// Creates a new [`BeaconHeaderClient`].
     pub fn new() -> Self {
         let client = reqwest::Client::new();
         Self { client }
     }
 
+    /// Fetches and parses the consensus layer (CL) header for a given block number and chain.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use crate::{BeaconHeaderClient, BeaconHeaderKey, ChainId};
+    ///
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let client = BeaconHeaderClient::default();
+    ///     let key = BeaconHeaderKey {
+    ///         chain_id: ChainId::EthereumSepolia,
+    ///         block_number: 5244652,
+    ///     };
+    ///
+    ///     match client.get_cl_header("https://ethereum-sepolia-beacon-api.publicnode.com".to_string(), &key).await {
+    ///         Ok(header) => println!("Fetched Beacon Header: {:?}", header),
+    ///         Err(e) => eprintln!("Error fetching header: {:?}", e),
+    ///     }
+    /// }
+    /// ```
     pub async fn get_cl_header(
         &self,
         rpc_url: String,

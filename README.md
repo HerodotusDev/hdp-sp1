@@ -67,7 +67,7 @@ We provide the `#[hdp_main]` macro to simplify writing HDP programs. This macro 
 use hdp_lib::memorizer::*;
 use hdp_macro::hdp_main;
 
-#[hdp_main]
+#[hdp_main(to_chain_id = "ETHEREUM_SEPOLIA")]
 pub fn main() {
     let block_number = 5_244_652;
 

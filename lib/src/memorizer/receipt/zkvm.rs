@@ -1,6 +1,7 @@
 use super::ReceiptMemorizer;
 use crate::memorizer::{
-    keys::HeaderKey, keys::MemorizerKey, values::MemorizerValue, Memorizer, MemorizerError,
+    keys::HeaderKey, keys::MemorizerKey, values::MemorizerValue, HeaderMemorizer, Memorizer,
+    MemorizerError,
 };
 use crate::mpt::Mpt;
 use alloy_consensus::ReceiptEnvelope;
@@ -11,29 +12,35 @@ impl ReceiptMemorizer for Memorizer {
         &mut self,
         key: crate::memorizer::keys::ReceiptKey,
     ) -> Result<ReceiptEnvelope, MemorizerError> {
-        let header_key: MemorizerKey = HeaderKey {
+        // 1. Header
+        let header_key = HeaderKey {
             block_number: key.block_number,
             chain_id: key.chain_id,
-        }
-        .into();
+        };
+        let header = self.get_header(header_key)?;
 
-        if let Some(MemorizerValue::Header(header_value)) = self.map.get(&header_key) {
-            let receipt_root = header_value.header.receipts_root;
-            let receipt_key: MemorizerKey = key.into();
+        // 2. Receipt
+        let receipt_root = header.receipts_root;
+        let receipt_key: MemorizerKey = key.into();
 
-            if let Some(MemorizerValue::Receipt(receipt_value)) = self.map.get(&receipt_key) {
+        if let Some((MemorizerValue::Receipt(receipt_value), is_verified)) =
+            self.map.get_mut(&receipt_key)
+        {
+            if *is_verified {
+                println!("Receipt MPT already verified");
+                let tx_encoded = receipt_value.receipt_encoded.clone();
+                Ok(ReceiptEnvelope::decode(&mut tx_encoded.as_ref())?)
+            } else {
                 let mpt = Mpt { root: receipt_root };
                 println!("cycle-tracker-start: mpt (receipt)");
                 mpt.verify_receipt(receipt_value.tx_index, receipt_value.proof.clone())?;
                 println!("cycle-tracker-end: mpt (receipt)");
+                *is_verified = true;
                 let tx_encoded = receipt_value.receipt_encoded.clone();
                 Ok(ReceiptEnvelope::decode(&mut tx_encoded.as_ref())?)
-            } else {
-                Err(MemorizerError::MissingReceipt)
             }
         } else {
-            println!("Missing header, {:?}", key.block_number);
-            Err(MemorizerError::MissingHeader)
+            Err(MemorizerError::MissingReceipt)
         }
     }
 }

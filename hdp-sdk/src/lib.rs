@@ -121,12 +121,13 @@ impl DataProcessorClient {
         let workspace_root = find_workspace_root().expect("Workspace root not found");
         let path = workspace_root.join("memorizer.bin");
         println!("Memorizer loaded from {path:?}");
-        stdin.write(
-            &bincode::deserialize::<Memorizer>(
-                &fs::read(path).expect("Failed to read memorizer.bin"),
-            )
-            .expect("Failed to deserialize memorizer.bin"),
-        );
+        let mem = &bincode::deserialize::<Memorizer>(
+            &fs::read(path).expect("Failed to read memorizer.bin"),
+        )
+        .expect("Failed to deserialize memorizer.bin");
+        // TODO: probably will need to use this value to config verifier contract chain environment.
+        let _to_chain_id = mem.to_chain_id;
+        stdin.write(mem);
         for input in &self.inputs {
             stdin.write(&input);
         }

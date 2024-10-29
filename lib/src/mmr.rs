@@ -3,14 +3,22 @@ use alloy_primitives::{B256, U256};
 use serde::{Deserialize, Serialize};
 use thiserror_no_std::Error;
 
+/// Represents metadata for an MMR (Merkle Mountain Range) structure,
+/// including the root hash, MMR size, and the peaks.
 #[derive(Debug, Default, Serialize, Deserialize, PartialEq)]
 pub struct MmrMeta {
-    pub root_hash: B256,
-    pub mmr_size: u128,
-    pub peaks: Vec<B256>,
+    root_hash: B256,
+    mmr_size: u128,
+    peaks: Vec<B256>,
 }
 
 impl MmrMeta {
+    /// Creates a new [`MmrMeta`] instance.
+    ///
+    /// # Arguments
+    /// * `root_hash` - The root hash of the MMR.
+    /// * `mmr_size` - The total size of the MMR.
+    /// * `peaks` - The vector of peak hashes in the MMR.
     pub fn new(root_hash: B256, mmr_size: u128, peaks: Vec<B256>) -> Self {
         Self {
             root_hash,
@@ -19,6 +27,15 @@ impl MmrMeta {
         }
     }
 
+    /// Verifies a proof for an element in the MMR.
+    ///
+    /// # Arguments
+    /// * `element_index` - The index of the element in the MMR.
+    /// * `element_hash` - The hash of the element being verified.
+    /// * `proof` - The proof elements required to verify the element.
+    ///
+    /// # Returns
+    /// A `Result` containing `true` if the proof is valid, or an [`MmrError`] otherwise.
     pub fn verify_proof(
         &self,
         element_index: u128,
@@ -90,7 +107,7 @@ impl MmrMeta {
             }))
     }
 
-    /// P = Poseidon(N | Poseidon(N | Node(p1) | Node(p2) | Node(p3))), N = size, p = peaks
+    /// P = Keccak256(N | Keccak256(N | Node(p1) | Node(p2) | Node(p3))), N = size, p = peaks
     #[cfg(test)]
     fn bag_peaks(&self) -> B256 {
         let final_top_peak = self.final_top_peak();
@@ -123,7 +140,12 @@ fn bit_length(value: usize) -> usize {
     (std::mem::size_of::<usize>() * 8) - value.leading_zeros() as usize
 }
 
-pub fn get_peak_info(mut element_count: usize, mut element_index: usize) -> (usize, usize) {
+/// Retrieves the peak index and height for a given element.
+///
+/// # Arguments
+/// * `element_count` - Total number of elements in the MMR.
+/// * `element_index` - The index of the element to find peak information for.
+fn get_peak_info(mut element_count: usize, mut element_index: usize) -> (usize, usize) {
     let mut mountain_height = bit_length(element_count);
     let mut mountain_size = (1 << mountain_height) - 1;
     let mut mountain_index = 0;
@@ -142,11 +164,11 @@ pub fn get_peak_info(mut element_count: usize, mut element_index: usize) -> (usi
     }
 }
 
-pub fn leaf_count_to_peak_count(leaf_count: usize) -> u32 {
+fn leaf_count_to_peak_count(leaf_count: usize) -> u32 {
     count_ones(leaf_count) as u32
 }
 
-pub fn count_ones(mut value: usize) -> usize {
+fn count_ones(mut value: usize) -> usize {
     let mut count = 0;
     while value > 0 {
         value &= value - 1;
@@ -155,7 +177,7 @@ pub fn count_ones(mut value: usize) -> usize {
     count
 }
 
-pub fn mmr_size_to_leaf_count(mmr_size: usize) -> usize {
+fn mmr_size_to_leaf_count(mmr_size: usize) -> usize {
     let mut remaining_size = mmr_size;
     let bits = bit_length(remaining_size + 1);
     let mut tip_size = 1 << (bits - 1);
@@ -173,14 +195,14 @@ pub fn mmr_size_to_leaf_count(mmr_size: usize) -> usize {
     leaf_count
 }
 
-pub fn element_index_to_leaf_index(element_index: usize) -> Result<usize, MmrError> {
+fn element_index_to_leaf_index(element_index: usize) -> Result<usize, MmrError> {
     if element_index == 0 {
         return Err(MmrError::InvalidElementIndex);
     }
     count_elements_to_leaf_count(element_index - 1)
 }
 
-pub fn count_elements_to_leaf_count(element_count: usize) -> Result<usize, MmrError> {
+fn count_elements_to_leaf_count(element_count: usize) -> Result<usize, MmrError> {
     let mut leaf_count = 0;
     let mut mountain_leaf_count = 1 << bit_length(element_count);
     let mut remaining_elements = element_count;
@@ -201,39 +223,53 @@ pub fn count_elements_to_leaf_count(element_count: usize) -> Result<usize, MmrEr
     }
 }
 
+/// Errors that can occur during MMR operations.
 #[derive(Debug, Error)]
 pub enum MmrError {
+    /// Invalid root hash
     #[error("Invalid root hash")]
     InvalidRootHash,
 
+    /// Invalid proof
     #[error("Invalid proof")]
     InvalidProof,
 
+    /// Invalid element index
     #[error("Invalid element index")]
     InvalidElementIndex,
 
+    /// Invalid peak count
     #[error("Invalid peak count")]
     InvalidPeakCount,
 
+    /// Invalid size
     #[error("Invalid size")]
     InvalidSize,
 
+    /// There are unprocessed elements
     #[error("There are unprocessed elements")]
     UnprocessedElements,
 
+    /// Error decoding the data
     #[error("Error decoding the data")]
     DecodingError,
 }
 
-#[derive(Serialize, Deserialize)]
+/// Represents a header along with its inclusion proof in the MMR.
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Header {
+    /// Encoded rlp header data in string representation.
     pub rlp: String,
+    /// Inclusion proof for a header in the MMR.
     pub proof: HeaderInclusionProof,
 }
 
-#[derive(Serialize, Deserialize)]
+/// Inclusion proof for a header in the MMR.
+#[derive(Debug, Serialize, Deserialize)]
 pub struct HeaderInclusionProof {
+    /// Leaf index in mmr of target header.
     pub leaf_index: u128,
+    /// MMR inclusion proof.
     pub mmr_proof: Vec<B256>,
 }
 

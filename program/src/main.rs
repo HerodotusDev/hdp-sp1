@@ -4,7 +4,7 @@ use alloy_primitives::{address, U256};
 use hdp_lib::memorizer::*;
 use hdp_macro::hdp_main;
 
-#[hdp_main]
+#[hdp_main(to_chain_id = "ETHEREUM_SEPOLIA")]
 pub fn main() {
     // ===============================================
     // Example program start
