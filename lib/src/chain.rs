@@ -5,9 +5,12 @@ use core::{
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use thiserror_no_std::Error;
 
+/// Enumeration representing supported Ethereum chain IDs.
 #[derive(PartialEq, Eq, Clone, Copy, Hash)]
 pub enum ChainId {
+    /// Ethereum Mainnet - chain ID 1
     EthereumMainnet,
+    /// Ethereum Sepolia - chain ID 11155111
     EthereumSepolia,
 }
 
@@ -17,9 +20,11 @@ impl Default for ChainId {
     }
 }
 
+/// Error type for parsing [`ChainId`] from invalid inputs.
 #[derive(Error, Debug, PartialEq)]
 #[error("Failed to parse ChainId: {input}")]
 pub struct ParseChainIdError {
+    /// The invalid input that caused the parsing error.
     input: String,
 }
 
@@ -121,10 +126,6 @@ impl ChainId {
                 input: i.to_string(),
             }),
         }
-    }
-
-    pub fn to_be_bytes(&self) -> [u8; 16] {
-        self.to_numeric_id().to_be_bytes()
     }
 }
 
