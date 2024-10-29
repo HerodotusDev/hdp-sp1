@@ -241,7 +241,7 @@ dependencies = [
  "derive_more 1.0.0",
  "once_cell",
  "serde",
- "sha2 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha2 0.10.8",
 ]
 
 [[package]]
@@ -1712,7 +1712,7 @@ version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bf88ba1141d185c399bee5288d850d63b8369520c1eafc32a0430b5b6c287bf4"
 dependencies = [
- "sha2 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha2 0.10.8",
  "tinyvec",
 ]
 
@@ -1951,7 +1951,7 @@ dependencies = [
  "hmac 0.12.1",
  "k256",
  "serde",
- "sha2 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha2 0.10.8",
  "thiserror",
 ]
 
@@ -1967,7 +1967,7 @@ dependencies = [
  "once_cell",
  "pbkdf2 0.12.2",
  "rand 0.8.5",
- "sha2 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha2 0.10.8",
  "thiserror",
 ]
 
@@ -1986,7 +1986,7 @@ dependencies = [
  "ripemd",
  "serde",
  "serde_derive",
- "sha2 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha2 0.10.8",
  "sha3",
  "thiserror",
 ]
@@ -2841,7 +2841,7 @@ dependencies = [
  "ed25519",
  "rand_core 0.6.4",
  "serde",
- "sha2 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha2 0.10.8",
  "subtle",
  "zeroize",
 ]
@@ -3034,7 +3034,7 @@ dependencies = [
  "scrypt",
  "serde",
  "serde_json",
- "sha2 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha2 0.10.8",
  "sha3",
  "thiserror",
  "uuid 0.8.2",
@@ -3321,7 +3321,7 @@ dependencies = [
  "eth-keystore",
  "ethers-core",
  "rand 0.8.5",
- "sha2 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha2 0.10.8",
  "thiserror",
  "tracing",
 ]
@@ -3946,8 +3946,6 @@ dependencies = [
  "scraper",
  "serde",
  "serde_with",
- "sha2 0.10.8 (git+https://github.com/sp1-patches/RustCrypto-hashes?branch=patch-sha2-v0.10.8)",
- "sha3",
  "sp1-zkvm",
  "ssz_rs",
  "tempdir",
@@ -5008,7 +5006,7 @@ dependencies = [
  "ecdsa",
  "elliptic-curve",
  "once_cell",
- "sha2 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha2 0.10.8",
  "signature",
 ]
 
@@ -5138,7 +5136,7 @@ dependencies = [
  "libsecp256k1",
  "multihash",
  "quick-protobuf",
- "sha2 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha2 0.10.8",
  "thiserror",
  "tracing",
  "zeroize",
@@ -8130,7 +8128,7 @@ dependencies = [
  "rand 0.8.5",
  "reth-network-peers",
  "secp256k1 0.29.1",
- "sha2 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha2 0.10.8",
  "sha3",
  "thiserror",
  "tokio",
@@ -8369,7 +8367,7 @@ dependencies = [
  "reth-primitives",
  "reth-rpc-types-compat",
  "serde",
- "sha2 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha2 0.10.8",
 ]
 
 [[package]]
@@ -9942,7 +9940,7 @@ dependencies = [
  "revm-primitives",
  "ripemd",
  "secp256k1 0.29.1",
- "sha2 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha2 0.10.8",
  "substrate-bn",
 ]
 
@@ -10431,7 +10429,7 @@ dependencies = [
  "hmac 0.12.1",
  "pbkdf2 0.11.0",
  "salsa20",
- "sha2 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha2 0.10.8",
 ]
 
 [[package]]
@@ -10737,16 +10735,6 @@ name = "sha2"
 version = "0.10.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "793db75ad2bcafc3ffa7c68b215fee268f537982cd901d132f89c6343f3a3dc8"
-dependencies = [
- "cfg-if",
- "cpufeatures",
- "digest 0.10.7",
-]
-
-[[package]]
-name = "sha2"
-version = "0.10.8"
-source = "git+https://github.com/sp1-patches/RustCrypto-hashes?branch=patch-sha2-v0.10.8#1f224388fdede7cef649bce0d63876d1a9e3f515"
 dependencies = [
  "cfg-if",
  "cpufeatures",
@@ -11365,7 +11353,7 @@ dependencies = [
  "rand 0.8.5",
  "serde",
  "serde_json",
- "sha2 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha2 0.10.8",
  "sp1-core-machine",
  "sp1-recursion-compiler",
  "sp1-stark",
@@ -11435,7 +11423,7 @@ dependencies = [
  "reqwest-middleware",
  "serde",
  "serde_json",
- "sha2 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha2 0.10.8",
  "sp1-core-executor",
  "sp1-core-machine",
  "sp1-prover",
@@ -11499,7 +11487,7 @@ dependencies = [
  "p3-field",
  "rand 0.8.5",
  "serde",
- "sha2 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha2 0.10.8",
  "sp1-lib",
  "sp1-primitives",
 ]
@@ -13395,7 +13383,7 @@ dependencies = [
  "pasta_curves 0.5.1",
  "rand 0.8.5",
  "serde",
- "sha2 0.10.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha2 0.10.8",
  "sha3",
  "subtle",
 ]
