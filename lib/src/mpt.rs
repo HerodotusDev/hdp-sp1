@@ -7,7 +7,7 @@ use alloy_trie::{
 };
 use thiserror_no_std::Error;
 
-/// Represents a Merkle Patricia Tree (MPT).
+/// Represents a Merkle Patricia Tree (MPT)
 /// to verify transactions, receipts, accounts, and storage proofs.
 #[derive(Debug)]
 pub struct Mpt {
@@ -16,7 +16,7 @@ pub struct Mpt {
 }
 
 impl Mpt {
-    /// Creates a new `Mpt` instance with a specified root hash.
+    /// Creates a new [`Mpt`] instance with a specified root hash.
     ///
     /// # Arguments
     /// * `root` - The root hash of the MPT.
