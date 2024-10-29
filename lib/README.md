@@ -1,8 +1,6 @@
 # hdp-lib
 
 ![CI](https://img.shields.io/github/actions/workflow/status/HerodotusDev/hdp-sp1/prove.yml?style=flat-square&logo=githubactions&logoColor=white&label=CI)
-[![Crates.io](https://img.shields.io/crates/v/hdp-lib?style=flat-square&logo=lootcrate)](https://crates.io/crates/hdp-lib)
-[![Documentation](https://img.shields.io/docsrs/hdp-lib)](https://docs.rs/hdp-lib)
 
 `hdp-lib` is a Rust library that enhances off-chain compute capabilities using zkVMs (Zero-Knowledge Virtual Machines) for verifiable on-chain data integration. It supports headers, accounts, storage, transactions, and receipts using MMR and MPT Merkle proofs.
 
@@ -14,7 +12,7 @@ Add the `hdp-lib` dependency to your project:
 
 ```toml
 [dependencies]
-hdp-lib = "0.1.0"
+hdp-lib = { git = "https://github.com/HerodotusDev/hdp-sp1.git"}
 ```
 
 ## Usage
