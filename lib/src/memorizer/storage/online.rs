@@ -38,18 +38,13 @@ impl StorageMemorizer for Memorizer {
         }
         .into();
 
-        if self.map.get(&account_key).is_none() {
-            self.map.insert(
-                account_key,
-                (
-                    MemorizerValue::Account(AccountMemorizerValue {
-                        account,
-                        proof: account_proof,
-                    }),
-                    false,
-                ),
-            );
-        }
+        self.map.entry(account_key).or_insert((
+            MemorizerValue::Account(AccountMemorizerValue {
+                account,
+                proof: account_proof,
+            }),
+            false,
+        ));
 
         self.map.insert(
             key.into(),
