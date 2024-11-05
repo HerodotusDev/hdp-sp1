@@ -3975,6 +3975,7 @@ dependencies = [
  "hdp-lib",
  "serde",
  "sp1-sdk",
+ "tokio",
 ]
 
 [[package]]

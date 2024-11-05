@@ -8,6 +8,7 @@ sp1-sdk = { workspace = true }
 bincode = { workspace = true }
 hdp-lib = { workspace = true }
 serde = { workspace = true }
+tokio = { workspace = true }
 erased-serde = "0.4"
 
 [lints]

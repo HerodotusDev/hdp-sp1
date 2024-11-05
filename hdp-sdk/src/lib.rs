@@ -1,8 +1,8 @@
 use hdp_lib::memorizer::Memorizer;
 use hdp_lib::utils::find_workspace_root;
 use sp1_sdk::{
-    ExecutionReport, ProverClient, SP1ProofWithPublicValues, SP1PublicValues, SP1Stdin,
-    SP1VerifyingKey,
+    ExecutionReport, NetworkProver, ProverClient, SP1ProofWithPublicValues, SP1PublicValues,
+    SP1Stdin, SP1VerifyingKey,
 };
 use std::fmt::Debug;
 use std::io::Write;
@@ -55,6 +55,25 @@ impl DataProcessorClient {
         println!("Program executed successfully.");
         println!("Number of cycles: {}", report.total_instruction_count());
         Ok((output, report))
+    }
+
+    pub async fn network_prove(
+        &self,
+        program_path: PathBuf,
+        private_key: String,
+    ) -> Result<(String, NetworkProver), Box<dyn Error>> {
+        let (elf_bytes, stdin) = self.setup(program_path)?;
+
+        let network_client = sp1_sdk::NetworkProver::new_from_key(&private_key);
+        let proof = network_client
+            .request_proof(
+                &elf_bytes,
+                stdin,
+                sp1_sdk::proto::network::ProofMode::Groth16,
+            )
+            .await
+            .unwrap();
+        Ok((proof, network_client))
     }
 
     pub fn prove(
@@ -176,6 +195,27 @@ mod tests {
         client.write(11155111_u64);
         let (proof, vk) = client.prove("../program".into()).unwrap();
         client.verify(&proof, &vk).expect("failed to verify proof");
+        println!("Successfully verified proof!");
+    }
+
+    #[tokio::test]
+    async fn test_verify_network() {
+        // let key = env::var("SP1_PRIVATE_KEY").unwrap();
+        let mut client = DataProcessorClient::new();
+        client.write(5244652_u64);
+        client.write(11155111_u64);
+        let (proof_key, network_client) = client
+            .network_prove(
+                "../program".into(),
+                "0x8f6f1610b5b22088fed7eb1d8c0ab3abfd5433bfcfb8b0a464b67bdaa3cabc10".into(),
+            )
+            .await
+            .unwrap();
+        let res: SP1ProofWithPublicValues =
+            network_client.wait_proof(&proof_key, None).await.unwrap();
+        // Save the proof.
+        res.save("hdp-sp1-groth16.bin")
+            .expect("saving proof failed");
         println!("Successfully verified proof!");
     }
 }
