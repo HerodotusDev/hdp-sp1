@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import {Test, console} from "forge-std/Test.sol";
+import {Script, console} from "forge-std/Script.sol";
 import {stdJson} from "forge-std/StdJson.sol";
 import {DataProcessor} from "../src/DataProcessor.sol";
 import {SP1VerifierGateway} from "sp1-contracts/src/SP1VerifierGateway.sol";
@@ -12,7 +12,7 @@ struct SP1ProofFixtureJson {
     bytes32 vkey;
 }
 
-contract DataProcessorTest is Test {
+contract DataProcessorScript is Script {
     using stdJson for string;
 
     address verifier;
@@ -26,29 +26,14 @@ contract DataProcessorTest is Test {
         return abi.decode(jsonBytes, (SP1ProofFixtureJson));
     }
 
-    function setUp() public {
+    function run() public {
         SP1ProofFixtureJson memory fixture = loadFixture();
 
         verifier = address(new SP1VerifierGateway(address(1)));
+        vm.startBroadcast();
+
         dataProcessor = new DataProcessor(verifier, fixture.vkey);
-    }
 
-    function test_ValidDataProcessorProof() public {
-        SP1ProofFixtureJson memory fixture = loadFixture();
-
-        vm.mockCall(verifier, abi.encodeWithSelector(SP1VerifierGateway.verifyProof.selector), abi.encode(true));
-
-        uint256 b = dataProcessor.verifydataProcessorProof(fixture.publicValues, fixture.proof);
-
-        console.log("b = ", b);
-    }
-
-    function testFail_InvalidDataProcessorProof() public view {
-        SP1ProofFixtureJson memory fixture = loadFixture();
-
-        // Create a fake proof.
-        bytes memory fakeProof = new bytes(fixture.proof.length);
-
-        dataProcessor.verifydataProcessorProof(fixture.publicValues, fakeProof);
+        vm.stopBroadcast();
     }
 }

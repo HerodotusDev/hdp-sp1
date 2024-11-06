@@ -27,19 +27,19 @@ jobs:
 
       - name: Show Forge version
         run: |
-          forge --version
+          cd hdp-verifier && forge --version && cd ..
 
       - name: Run Forge fmt
         run: |
-          forge fmt --check
+          cd hdp-verifier && forge fmt --check && cd ..
         id: fmt
 
       - name: Run Forge build
         run: |
-          forge build --sizes
+          cd hdp-verifier && forge build --sizes && cd ..
         id: build
 
       - name: Run Forge tests
         run: |
-          forge test -vvv
+          cd hdp-verifier && forge test -vvv && cd ..
         id: test

@@ -4,9 +4,8 @@ pragma solidity ^0.8.20;
 import {ISP1Verifier} from "sp1-contracts/src/ISP1Verifier.sol";
 
 /// @title DataProcessor.
-/// @author Succinct Labs
-/// @notice This contract implements a simple example of verifying the proof of a computing a
-///         fibonacci number.
+/// @author Herodotus Dev Ltd.
+/// @notice Verifies proof of data processor program that verifies MMR, MPT proof.
 contract DataProcessor {
     /// @notice The address of the SP1 verifier contract.
     /// @dev This can either be a specific SP1Verifier for a specific version, or the
@@ -15,26 +14,23 @@ contract DataProcessor {
     ///      https://docs.succinct.xyz/onchain-verification/contract-addresses
     address public verifier;
 
-    /// @notice The verification key for the fibonacci program.
-    bytes32 public fibonacciProgramVKey;
+    /// @notice The verification key for the dataProcessor program.
+    bytes32 public dataProcessorProgramVKey;
 
-    constructor(address _verifier, bytes32 _fibonacciProgramVKey) {
+    constructor(address _verifier, bytes32 _dataProcessorProgramVKey) {
         verifier = _verifier;
-        fibonacciProgramVKey = _fibonacciProgramVKey;
+        dataProcessorProgramVKey = _dataProcessorProgramVKey;
     }
 
-    /// @notice The entrypoint for verifying the proof of a fibonacci number.
+    /// @notice The entrypoint for verifying the proof of a dataProcessor number.
     /// @param _proofBytes The encoded proof.
     /// @param _publicValues The encoded public values.
-    function verifyFibonacciProof(
-        bytes calldata _publicValues,
-        bytes calldata _proofBytes
-    ) public view returns (uint256) {
-        ISP1Verifier(verifier).verifyProof(
-            fibonacciProgramVKey,
-            _publicValues,
-            _proofBytes
-        );
+    function verifydataProcessorProof(bytes calldata _publicValues, bytes calldata _proofBytes)
+        public
+        view
+        returns (uint256)
+    {
+        ISP1Verifier(verifier).verifyProof(dataProcessorProgramVKey, _publicValues, _proofBytes);
         uint256 v = abi.decode(_publicValues, (uint256));
         return (v);
     }
