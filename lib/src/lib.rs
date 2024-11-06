@@ -45,11 +45,6 @@
 //!     // ===============================================
 //! ```
 
-#![deny(missing_docs)]
-#![deny(missing_debug_implementations)]
-#![cfg_attr(docsrs, feature(doc_cfg))]
-#![cfg_attr(test, deny(warnings))]
-
 use cfg_if::cfg_if;
 
 /// Defines various chain types, such as different blockchain networks

@@ -10,6 +10,7 @@ The Herodotus Data Processor (HDP) enables you to access verified on-chain data 
 - [`hdp-macro`](./hdp-macro/): A macro to simplify HDP programs for SP1's online and zkVM modes.
 - [`hdp-lib`](./lib/): The core library for HDP programs, including providers, memorizer, verifier, etc.
 - [`hdp-sdk`](./hdp-sdk/): The `DataProcessorClient`, which wraps the SP1 client and handles HDP's full flow.
+- [`hdp-verifier`](./hdp-verifier/): The verifier contract for HDP programs's SP1 proof.
 
 ## Conditional Compilation
 
@@ -21,7 +22,7 @@ SP1 programs can be compiled in two modes: online and zkVM. The `#[hdp_main]` ma
 
 The user defines an HDP program using the `#[hdp_main]` macro and on-chain state access methods from the memorizer. The program will be passed into the `DataProcessorClient`, and by using the `prove` method, it will generate a proof. This proof will be verified in the on-chain verifier contract, which includes checking the integrity of the zkVM verification against the MMR root.
 
-<img src=".github/e2e.png" width="600">
+<img src=".github/e2e.png" width="400">
 
 ## Supported Memorizers
 

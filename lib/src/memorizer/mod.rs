@@ -16,6 +16,7 @@ pub mod transaction;
 pub mod values;
 
 pub use account::*;
+use alloy_sol_types::sol;
 pub use cl_header::*;
 pub use header::*;
 pub use keys::*;
@@ -34,6 +35,18 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use thiserror_no_std::Error;
 use url::Url;
+
+sol! {
+    #[derive(Debug, Serialize, Deserialize)]
+    struct PublicValuesStruct {
+        /// @dev The id of the MMR.
+        uint256 mmrId;
+        /// @dev The size of the MMR.
+        uint256 mmrSize;
+        /// @dev The root of the MMR.
+        bytes32 mmrRoot;
+    }
+}
 
 /// Represents a main structure for managing and memorizing various components such as headers, accounts, and receipts.
 #[derive(Debug, Default, Serialize, Deserialize, PartialEq)]

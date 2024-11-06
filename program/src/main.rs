@@ -35,7 +35,7 @@ pub fn main() {
         chain_id: hdp_lib::chain::ChainId::EthereumSepolia,
         storage_slot: U256::from(1).into(),
     };
-    let v = memorizer.get_storage(storage_key).unwrap();
+    let _ = memorizer.get_storage(storage_key).unwrap();
 
     // let tx_key = TransactionKey {
     //     block_number: 5244634,
@@ -56,8 +56,6 @@ pub fn main() {
     //     chain_id: hdp_lib::chain::ChainId::EthereumSepolia,
     // };
     // let _ = memorizer.get_cl_header(cl_header_key).unwrap();
-
-    hdp_commit(&v);
 
     // ===============================================
     // Example program end

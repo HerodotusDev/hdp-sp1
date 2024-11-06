@@ -262,9 +262,9 @@ mod tests {
         // Retrieve the private key from the environment variable
         let key = env::var("SP1_PRIVATE_KEY").expect("SP1_PRIVATE_KEY not set");
 
-        let mut client = DataProcessorClient::new();
-        client.write(5244652_u64);
-        client.write(11155111_u64);
+        let client = DataProcessorClient::new();
+        // client.write(5244652_u64);
+        // client.write(11155111_u64);
         let (pv, vk) = client
             .network_prove(
                 "../program".into(),

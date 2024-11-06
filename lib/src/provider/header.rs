@@ -80,6 +80,7 @@ impl From<MmrRpc> for MmrMeta {
             .map(|peak| B256::from_hex(peak).expect("Failed to parse hex"))
             .collect();
         Self::new(
+            mmr_rpc.mmr_id,
             B256::from_hex(mmr_rpc.mmr_root).expect("Failed to parse hex"),
             mmr_rpc.mmr_size,
             mmr_peaks,

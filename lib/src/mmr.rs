@@ -7,8 +7,9 @@ use thiserror_no_std::Error;
 /// including the root hash, MMR size, and the peaks.
 #[derive(Debug, Default, Serialize, Deserialize, PartialEq)]
 pub struct MmrMeta {
-    root_hash: B256,
-    mmr_size: u128,
+    pub mmr_id: String,
+    pub root_hash: B256,
+    pub mmr_size: u128,
     peaks: Vec<B256>,
 }
 
@@ -16,11 +17,13 @@ impl MmrMeta {
     /// Creates a new [`MmrMeta`] instance.
     ///
     /// # Arguments
+    /// * `mmr_id` - The ID of the MMR.
     /// * `root_hash` - The root hash of the MMR.
     /// * `mmr_size` - The total size of the MMR.
     /// * `peaks` - The vector of peak hashes in the MMR.
-    pub fn new(root_hash: B256, mmr_size: u128, peaks: Vec<B256>) -> Self {
+    pub fn new(mmr_id: String, root_hash: B256, mmr_size: u128, peaks: Vec<B256>) -> Self {
         Self {
+            mmr_id,
             root_hash,
             mmr_size,
             peaks,
@@ -326,6 +329,7 @@ mod tests {
     #[test]
     fn test_bag_peaks() {
         let test_mmr_meta: MmrMeta = MmrMeta {
+            mmr_id: "test_mmr_meta".to_string(),
             root_hash: B256::from_hex(
                 "0x00367542437d21fb3d94c5449b6f6e650c4b4f8f307c2d4aa3a782f17a4ddd03",
             )
@@ -350,6 +354,7 @@ mod tests {
     #[test]
     fn verify_proof() {
         let test_mmr_meta: MmrMeta = MmrMeta {
+            mmr_id: "test_mmr_meta".to_string(),
             root_hash: B256::from_hex(
                 "0xa7122a01868e54648facd92a3a821fae03301a71d1bd02fabe4e82bffcbd0aeb",
             )
@@ -380,6 +385,7 @@ mod tests {
     #[test]
     fn test_verify_headers_with_mmr_peaks() {
         let test_mmr_meta: MmrMeta = MmrMeta {
+            mmr_id: "test_mmr_meta".to_string(),
             root_hash: b256!("62d451ed3f131fa253957db4501b0f4b6eb3f29c706663be3f75a35b7b372a38"),
             mmr_size: 13024091,
             peaks: vec![
