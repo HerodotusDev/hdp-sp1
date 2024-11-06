@@ -2,8 +2,8 @@ use hdp_lib::memorizer::Memorizer;
 use hdp_lib::utils::find_workspace_root;
 use serde::{Deserialize, Serialize};
 use sp1_sdk::{
-    ExecutionReport, NetworkProver, Prover, ProverClient, SP1ProofWithPublicValues,
-    SP1PublicValues, SP1Stdin, SP1VerifyingKey,
+    ExecutionReport, Prover, ProverClient, SP1ProofWithPublicValues, SP1PublicValues, SP1Stdin,
+    SP1VerifyingKey,
 };
 use std::fmt::Debug;
 use std::io::Write;
@@ -203,7 +203,7 @@ mod tests {
     ) {
         // Deserialize the public values.
         let bytes = proof.public_values.as_slice();
-        let p = Uint::<256>::abi_decode(bytes, false).unwrap();
+        let _ = Uint::<256>::abi_decode(bytes, false).unwrap();
 
         // Create the testing fixture so we can test things end-to-end.
         let fixture = SP1FibonacciProofFixture {
@@ -259,22 +259,21 @@ mod tests {
 
     #[tokio::test]
     async fn test_verify_network() {
-        // let key = env::var("SP1_PRIVATE_KEY").unwrap();
+        // Retrieve the private key from the environment variable
+        let key = env::var("SP1_PRIVATE_KEY").expect("SP1_PRIVATE_KEY not set");
+
         let mut client = DataProcessorClient::new();
         client.write(5244652_u64);
         client.write(11155111_u64);
         let (pv, vk) = client
             .network_prove(
                 "../program".into(),
-                "0x8f6f1610b5b22088fed7eb1d8c0ab3abfd5433bfcfb8b0a464b67bdaa3cabc10".into(),
+                key, // Use the key retrieved from the environment
             )
             .await
             .unwrap();
 
         create_proof_fixture(&pv, &vk, SP1ProofKind::Groth16);
-        // // Save the proof.
-        // res.save("hdp-sp1-groth16.bin")
-        //     .expect("saving proof failed");
         println!("Successfully verified proof!");
     }
 }
