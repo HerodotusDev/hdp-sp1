@@ -2,18 +2,18 @@
 pragma solidity ^0.8.13;
 
 import {Script, console} from "forge-std/Script.sol";
-import {Counter} from "../src/Counter.sol";
+import {DataProcessor} from "../src/DataProcessor.sol";
 
-contract CounterScript is Script {
-    Counter public counter;
+contract DataProcessorScript is Script {
+    DataProcessor public dp;
 
     function setUp() public {}
 
-    function run() public {
-        vm.startBroadcast();
+    // function run() public {
+    //     vm.startBroadcast();
 
-        counter = new Counter();
+    //     dp = new DataProcessor();
 
-        vm.stopBroadcast();
-    }
+    //     vm.stopBroadcast();
+    // }
 }

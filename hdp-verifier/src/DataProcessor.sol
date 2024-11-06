@@ -29,16 +29,13 @@ contract DataProcessor {
     function verifyFibonacciProof(
         bytes calldata _publicValues,
         bytes calldata _proofBytes
-    ) public view returns (uint32, uint32, uint32) {
+    ) public view returns (uint256) {
         ISP1Verifier(verifier).verifyProof(
             fibonacciProgramVKey,
             _publicValues,
             _proofBytes
         );
-        (uint32 n, uint32 a, uint32 b) = abi.decode(
-            _publicValues,
-            (uint32, uint32, uint32)
-        );
-        return (n, a, b);
+        uint256 v = abi.decode(_publicValues, (uint256));
+        return (v);
     }
 }

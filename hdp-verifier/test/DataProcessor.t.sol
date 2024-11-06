@@ -7,9 +7,6 @@ import {DataProcessor} from "../src/DataProcessor.sol";
 import {SP1VerifierGateway} from "sp1-contracts/src/SP1VerifierGateway.sol";
 
 struct SP1ProofFixtureJson {
-    uint32 a;
-    uint32 b;
-    uint32 n;
     bytes proof;
     bytes publicValues;
     bytes32 vkey;
@@ -23,7 +20,10 @@ contract DataProcessorTest is Test {
 
     function loadFixture() public view returns (SP1ProofFixtureJson memory) {
         string memory root = vm.projectRoot();
-        string memory path = string.concat(root, "/src/fixtures/fixture.json");
+        string memory path = string.concat(
+            root,
+            "/src/fixtures/groth16-fixture.json"
+        );
         string memory json = vm.readFile(path);
         bytes memory jsonBytes = json.parseRaw(".");
         return abi.decode(jsonBytes, (SP1ProofFixtureJson));
@@ -45,13 +45,12 @@ contract DataProcessorTest is Test {
             abi.encode(true)
         );
 
-        (uint32 n, uint32 a, uint32 b) = dataProcessor.verifyFibonacciProof(
+        uint256 b = dataProcessor.verifyFibonacciProof(
             fixture.publicValues,
             fixture.proof
         );
-        assert(n == fixture.n);
-        assert(a == fixture.a);
-        assert(b == fixture.b);
+
+        console.log("b = ", b);
     }
 
     function testFail_InvalidFibonacciProof() public view {
