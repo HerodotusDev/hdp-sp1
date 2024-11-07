@@ -1,3 +1,5 @@
+![](.github/banner.png)
+
 # Herodotus Data Processor (HDP) with SP1 Backend
 
 > [!WARNING]
