@@ -13,3 +13,4 @@ serde = { workspace = true }
 erased-serde = "0.4"
 proc-macro2 = "1.0"
 darling = "0.20.10"
+alloy-primitives = { workspace = true }

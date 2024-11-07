@@ -7,8 +7,9 @@ use thiserror_no_std::Error;
 /// including the root hash, MMR size, and the peaks.
 #[derive(Debug, Default, Serialize, Deserialize, PartialEq)]
 pub struct MmrMeta {
-    root_hash: B256,
-    mmr_size: u128,
+    pub mmr_id: U256,
+    pub root_hash: B256,
+    pub mmr_size: U256,
     peaks: Vec<B256>,
 }
 
@@ -16,13 +17,15 @@ impl MmrMeta {
     /// Creates a new [`MmrMeta`] instance.
     ///
     /// # Arguments
+    /// * `mmr_id` - The ID of the MMR.
     /// * `root_hash` - The root hash of the MMR.
     /// * `mmr_size` - The total size of the MMR.
     /// * `peaks` - The vector of peak hashes in the MMR.
-    pub fn new(root_hash: B256, mmr_size: u128, peaks: Vec<B256>) -> Self {
+    pub fn new(mmr_id: String, root_hash: B256, mmr_size: u128, peaks: Vec<B256>) -> Self {
         Self {
+            mmr_id: U256::from_str_radix(mmr_id.strip_prefix("0x").unwrap(), 16).unwrap(),
             root_hash,
-            mmr_size,
+            mmr_size: U256::from(mmr_size),
             peaks,
         }
     }
@@ -43,12 +46,13 @@ impl MmrMeta {
         proof: Vec<B256>,
     ) -> Result<bool, MmrError> {
         let calculated_root = self.compute_bagged_peaks()?;
+        let mmr_size = self.mmr_size.to_string().parse::<usize>().unwrap();
 
         if calculated_root != self.root_hash {
             return Err(MmrError::InvalidRootHash);
         }
 
-        let leaf_count = mmr_size_to_leaf_count(self.mmr_size as usize);
+        let leaf_count = mmr_size_to_leaf_count(mmr_size);
         let expected_peak_count = leaf_count_to_peak_count(leaf_count);
 
         if expected_peak_count != self.peaks.len() as u32 {
@@ -69,7 +73,7 @@ impl MmrMeta {
             leaf_index /= 2;
         }
 
-        let (peak_index, _) = get_peak_info(self.mmr_size as usize, element_index as usize);
+        let (peak_index, _) = get_peak_info(mmr_size, element_index as usize);
 
         if self.peaks[peak_index] == current_hash {
             Ok(true)
@@ -326,11 +330,12 @@ mod tests {
     #[test]
     fn test_bag_peaks() {
         let test_mmr_meta: MmrMeta = MmrMeta {
+            mmr_id: B256::ZERO.into(),
             root_hash: B256::from_hex(
                 "0x00367542437d21fb3d94c5449b6f6e650c4b4f8f307c2d4aa3a782f17a4ddd03",
             )
             .unwrap(),
-            mmr_size: 10,
+            mmr_size: U256::from(10),
             peaks: vec![
                 B256::from_hex(
                     "0xb4c11951957c6f8f642c4af61cd6b24640fec6dc7fc607ee8206a99e92410d30",
@@ -350,11 +355,12 @@ mod tests {
     #[test]
     fn verify_proof() {
         let test_mmr_meta: MmrMeta = MmrMeta {
+            mmr_id: B256::ZERO.into(),
             root_hash: B256::from_hex(
                 "0xa7122a01868e54648facd92a3a821fae03301a71d1bd02fabe4e82bffcbd0aeb",
             )
             .unwrap(),
-            mmr_size: 11,
+            mmr_size: U256::from(11),
             peaks: vec![
                 B256::from_hex(
                     "0xbf874bd367f32d74d7d084a8eb85ce99d6f2622fbc0d1f83dcd0c4404f8e0cea",
@@ -380,8 +386,9 @@ mod tests {
     #[test]
     fn test_verify_headers_with_mmr_peaks() {
         let test_mmr_meta: MmrMeta = MmrMeta {
+            mmr_id: B256::ZERO.into(),
             root_hash: b256!("62d451ed3f131fa253957db4501b0f4b6eb3f29c706663be3f75a35b7b372a38"),
-            mmr_size: 13024091,
+            mmr_size: U256::from(13024091),
             peaks: vec![
                 b256!("ea94b197307128f1e18f9f3186a6452bd201b86f484f80cc3b2cbfb0b646c577"),
                 b256!("ff430ddf60e969c483750fd56caee265cab4037f437d4a0a45eee230088e9092"),

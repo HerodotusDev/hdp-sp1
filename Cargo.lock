@@ -1655,6 +1655,7 @@ name = "bootloader-program"
 version = "0.1.0"
 dependencies = [
  "alloy-primitives 0.8.8",
+ "alloy-sol-types 0.8.8",
  "bincode",
  "cfg-if",
  "hdp-lib",
@@ -3958,6 +3959,7 @@ dependencies = [
 name = "hdp-macro"
 version = "0.1.0"
 dependencies = [
+ "alloy-primitives 0.8.8",
  "darling",
  "erased-serde",
  "proc-macro2",
@@ -3970,11 +3972,15 @@ dependencies = [
 name = "hdp-sdk"
 version = "0.1.0"
 dependencies = [
+ "alloy-primitives 0.8.8",
+ "alloy-sol-types 0.8.8",
  "bincode",
  "erased-serde",
  "hdp-lib",
  "serde",
+ "serde_json",
  "sp1-sdk",
+ "tokio",
 ]
 
 [[package]]
@@ -10852,6 +10858,7 @@ dependencies = [
 name = "simple-program"
 version = "0.1.0"
 dependencies = [
+ "alloy-primitives 0.8.8",
  "bincode",
  "cfg-if",
  "hdp-lib",

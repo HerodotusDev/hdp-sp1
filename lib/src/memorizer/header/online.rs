@@ -43,7 +43,7 @@ impl HeaderMemorizer for Memorizer {
                     false,
                 ),
             );
-
+            println!("mmr: {:#?}", mmr);
             self.mmr_meta.insert(target_chain_id, mmr);
 
             Ok(header)

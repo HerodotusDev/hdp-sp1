@@ -20,7 +20,7 @@ pub fn main() {
         chain_id: hdp_lib::chain::ChainId::EthereumSepolia,
     };
 
-    let _ = memorizer.get_header(header_key).unwrap();
+    let v = memorizer.get_header(header_key).unwrap();
 
     let account_key = AccountKey {
         block_number: 5244634,
@@ -35,7 +35,7 @@ pub fn main() {
         chain_id: hdp_lib::chain::ChainId::EthereumSepolia,
         storage_slot: U256::from(1).into(),
     };
-    let v = memorizer.get_storage(storage_key).unwrap();
+    let _ = memorizer.get_storage(storage_key).unwrap();
 
     // let tx_key = TransactionKey {
     //     block_number: 5244634,
@@ -44,12 +44,12 @@ pub fn main() {
     // };
     // let _ = memorizer.get_transaction(tx_key).unwrap();
 
-    let receipt_key = ReceiptKey {
-        block_number: 5244634,
-        chain_id: hdp_lib::chain::ChainId::EthereumSepolia,
-        transaction_index: 2,
-    };
-    let _ = memorizer.get_receipt(receipt_key).unwrap();
+    // let receipt_key = ReceiptKey {
+    //     block_number: 5244634,
+    //     chain_id: hdp_lib::chain::ChainId::EthereumSepolia,
+    //     transaction_index: 2,
+    // };
+    // let _ = memorizer.get_receipt(receipt_key).unwrap();
     // TODO: to use CL header, provide RPC that support beacon header
     // let cl_header_key = BeaconHeaderKey {
     //     block_number,
@@ -57,7 +57,8 @@ pub fn main() {
     // };
     // let _ = memorizer.get_cl_header(cl_header_key).unwrap();
 
-    hdp_commit(&v);
+    // commit the value would like to get onchain
+    hdp_commit(&v.hash_slow().0);
 
     // ===============================================
     // Example program end

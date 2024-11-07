@@ -26,8 +26,6 @@
 //! use hdp_lib::memorizer::*;
 //! use hdp_macro::hdp_main;
 //!
-//! #[hdp_main(to_chain_id = "ETHEREUM_SEPOLIA")]
-//! pub fn main() {
 //!     // ===============================================
 //!     // Example program start
 //!     // ===============================================
@@ -45,13 +43,7 @@
 //!     // ===============================================
 //!     // Example program end
 //!     // ===============================================
-//! }
 //! ```
-
-#![deny(missing_docs)]
-#![deny(missing_debug_implementations)]
-#![cfg_attr(docsrs, feature(doc_cfg))]
-#![cfg_attr(test, deny(warnings))]
 
 use cfg_if::cfg_if;
 

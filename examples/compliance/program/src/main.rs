@@ -83,7 +83,7 @@ pub fn main() {
     // This function allow you to commit data to the zkvm.
     // If online, this will do nothing.
     // Note that you can only commit data that is serializable.
-    hdp_commit(&bloom_commit);
+    hdp_commit(&bloom_commit.0);
 
     // ===============================================
     // Example program end

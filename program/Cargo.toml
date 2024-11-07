@@ -10,6 +10,7 @@ hdp-macro = { workspace = true }
 sp1-zkvm = { workspace = true }
 serde = { workspace = true }
 alloy-primitives = { workspace = true }
+alloy-sol-types = { workspace = true }
 
 [target.'cfg(not(target_os = "zkvm"))'.dependencies]
 bincode = { workspace = true }

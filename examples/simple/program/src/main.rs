@@ -26,12 +26,7 @@ pub fn main() {
 
     let v = memorizer.get_transaction(tx_key).unwrap();
 
-    // This function allow you to commit data to the zkvm.
-    // If online, this will do nothing.
-    // Note that you can only commit data that is serializable.
-    hdp_commit(&v.tx_hash());
-
-    println!("memorizer is {:?}", memorizer);
+    hdp_commit(&v.tx_hash().0)
 
     // ===============================================
     // Example program end
