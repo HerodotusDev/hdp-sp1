@@ -40,11 +40,7 @@ contract DataProcessor {
     /// @notice emitted when a new MMR root is cached
     event MmrRootCached(uint256 mmrId, uint256 mmrSize, bytes32 mmrRoot);
 
-    constructor(
-        IAggregatorsFactory aggregatorsFactory,
-        address _verifier,
-        bytes32 _dataProcessorProgramVKey
-    ) {
+    constructor(IAggregatorsFactory aggregatorsFactory, address _verifier, bytes32 _dataProcessorProgramVKey) {
         AGGREGATORS_FACTORY = aggregatorsFactory;
         verifier = _verifier;
         dataProcessorProgramVKey = _dataProcessorProgramVKey;
@@ -53,44 +49,30 @@ contract DataProcessor {
     /// @notice Caches the MMR root for a given MMR id
     /// @notice Get MMR size and root from the aggregator and cache it
     function cacheMmrRoot(uint256 mmrId) public {
-        ISharpFactsAggregator aggregator = AGGREGATORS_FACTORY.aggregatorsById(
-            mmrId
-        );
-        ISharpFactsAggregator.AggregatorState
-            memory aggregatorState = aggregator.aggregatorState();
-        cachedMMRsRoots[mmrId][aggregatorState.mmrSize] = aggregatorState
-            .poseidonMmrRoot;
+        ISharpFactsAggregator aggregator = AGGREGATORS_FACTORY.aggregatorsById(mmrId);
+        ISharpFactsAggregator.AggregatorState memory aggregatorState = aggregator.aggregatorState();
+        cachedMMRsRoots[mmrId][aggregatorState.mmrSize] = aggregatorState.poseidonMmrRoot;
 
-        emit MmrRootCached(
-            mmrId,
-            aggregatorState.mmrSize,
-            aggregatorState.poseidonMmrRoot
-        );
+        emit MmrRootCached(mmrId, aggregatorState.mmrSize, aggregatorState.poseidonMmrRoot);
     }
 
     /// @notice The entrypoint for verifying the proof of a dataProcessor number.
     /// @param _proofBytes The encoded proof.
     /// @param _publicValues The encoded public values.
-    function verifydataProcessorProof(
-        bytes calldata _publicValues,
-        bytes calldata _proofBytes
-    ) public view returns (bytes32) {
-        ISP1Verifier(verifier).verifyProof(
-            dataProcessorProgramVKey,
-            _publicValues,
-            _proofBytes
-        );
-        PublicValuesStruct memory publicValues = abi.decode(
-            _publicValues,
-            (PublicValuesStruct)
-        );
+    function verifydataProcessorProof(bytes calldata _publicValues, bytes calldata _proofBytes)
+        public
+        view
+        returns (bytes32)
+    {
+        ISP1Verifier(verifier).verifyProof(dataProcessorProgramVKey, _publicValues, _proofBytes);
+        PublicValuesStruct memory publicValues = abi.decode(_publicValues, (PublicValuesStruct));
 
-        // if (
-        //     publicValues.mmrRoot ==
-        //     cachedMMRsRoots[publicValues.mmrId][publicValues.mmrSize]
-        // ) {
-        //     revert InvalidMMR();
-        // }
+        ISharpFactsAggregator aggregator = AGGREGATORS_FACTORY.aggregatorsById(publicValues.mmrId);
+        ISharpFactsAggregator.AggregatorState memory aggregatorState = aggregator.aggregatorState();
+
+        if (publicValues.mmrRoot != aggregatorState.keccakMmrRoot) {
+            revert InvalidMMR();
+        }
 
         return (publicValues.mmrRoot);
     }

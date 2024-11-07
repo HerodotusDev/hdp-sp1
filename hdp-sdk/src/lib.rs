@@ -192,7 +192,8 @@ struct SP1FibonacciProofFixture {
 mod tests {
     use super::*;
     use alloy_primitives::hex;
-    use alloy_sol_types::{sol_data::Uint, SolType};
+    use alloy_sol_types::SolType;
+    use hdp_lib::memorizer::PublicValuesStruct;
     use sp1_sdk::{HashableKey, SP1ProofKind};
 
     /// Create a fixture for the given proof.
@@ -203,7 +204,9 @@ mod tests {
     ) {
         // Deserialize the public values.
         let bytes = proof.public_values.as_slice();
-        let _ = Uint::<256>::abi_decode(bytes, false).unwrap();
+        let value = PublicValuesStruct::abi_decode(bytes, false).unwrap();
+
+        println!("Public Values: {:?}", value);
 
         // Create the testing fixture so we can test things end-to-end.
         let fixture = SP1FibonacciProofFixture {

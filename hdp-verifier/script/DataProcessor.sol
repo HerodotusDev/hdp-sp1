@@ -21,10 +21,7 @@ contract DataProcessorScript is Script {
 
     function loadFixture() public view returns (SP1ProofFixtureJson memory) {
         string memory root = vm.projectRoot();
-        string memory path = string.concat(
-            root,
-            "/src/fixtures/groth16-fixture.json"
-        );
+        string memory path = string.concat(root, "/src/fixtures/groth16-fixture.json");
         string memory json = vm.readFile(path);
         bytes memory jsonBytes = json.parseRaw(".");
         return abi.decode(jsonBytes, (SP1ProofFixtureJson));
@@ -33,16 +30,10 @@ contract DataProcessorScript is Script {
     function run() public {
         SP1ProofFixtureJson memory fixture = loadFixture();
         verifier = address(new SP1VerifierGateway(address(1)));
-        IAggregatorsFactory aggregatorsFactory = IAggregatorsFactory(
-            vm.envAddress("SHARP_AGGREGATORS_FACTORY")
-        );
+        IAggregatorsFactory aggregatorsFactory = IAggregatorsFactory(vm.envAddress("SHARP_AGGREGATORS_FACTORY"));
         vm.startBroadcast();
 
-        dataProcessor = new DataProcessor(
-            aggregatorsFactory,
-            verifier,
-            fixture.vkey
-        );
+        dataProcessor = new DataProcessor(aggregatorsFactory, verifier, fixture.vkey);
 
         vm.stopBroadcast();
     }

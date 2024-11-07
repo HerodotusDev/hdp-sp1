@@ -77,15 +77,11 @@ pub fn hdp_main(args: TokenStream, item: TokenStream) -> TokenStream {
                 sp1_zkvm::entrypoint!(main);
 
                 use hdp_lib::chain::ChainId;
+                use hdp_lib::memorizer::PublicValuesStruct;
                 use core::str::FromStr;
                 use serde::Deserialize;
+                use alloy_sol_types::SolValue;
 
-                #[derive(Serialize, Deserialize, Debug, PartialEq)]
-                struct PublicValuesStruct {
-                    pub mmr_id: String,
-                    pub mmr_size: String,
-                    pub mmr_root: String,
-                }
             } else {
                 use hdp_lib::utils::find_workspace_root;
                 use hdp_lib::utils::get_rpc_urls;
@@ -120,11 +116,11 @@ pub fn hdp_main(args: TokenStream, item: TokenStream) -> TokenStream {
                 if #[cfg(target_os = "zkvm")] {
                     let mmr_meta = memorizer.mmr_meta.get(&ChainId::from_str(#to_chain_id).unwrap()).expect("MMR metadata not found");
                     let public_values = PublicValuesStruct {
-                        mmr_id: mmr_meta.mmr_id.to_string(),
-                        mmr_size: mmr_meta.mmr_size.to_string(),
-                        mmr_root: mmr_meta.root_hash.to_string(),
+                        mmrId: mmr_meta.mmr_id,
+                        mmrSize: mmr_meta.mmr_size,
+                        mmrRoot: mmr_meta.root_hash,
                     };
-                    hdp_commit(&public_values);
+                    sp1_zkvm::io::commit_slice(&public_values.abi_encode());
                 } else {
                     let workspace_root = find_workspace_root().expect("Workspace root not found");
                     let path = workspace_root.join("memorizer.bin");
