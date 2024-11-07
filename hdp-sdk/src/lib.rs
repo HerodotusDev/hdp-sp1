@@ -182,7 +182,7 @@ impl DataProcessorClient {
 /// A fixture that can be used to test the verification of SP1 zkVM proofs inside Solidity.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct SP1FibonacciProofFixture {
+struct SP1ProofFixture {
     vkey: String,
     public_values: String,
     proof: String,
@@ -209,7 +209,7 @@ mod tests {
         println!("Public Values: {:?}", value);
 
         // Create the testing fixture so we can test things end-to-end.
-        let fixture = SP1FibonacciProofFixture {
+        let fixture = SP1ProofFixture {
             vkey: vk.bytes32().to_string(),
             public_values: format!("0x{}", hex::encode(bytes)),
             proof: format!("0x{}", hex::encode(proof.bytes())),
