@@ -3959,6 +3959,7 @@ dependencies = [
 name = "hdp-macro"
 version = "0.1.0"
 dependencies = [
+ "alloy-primitives 0.8.8",
  "darling",
  "erased-serde",
  "proc-macro2",
@@ -10857,6 +10858,7 @@ dependencies = [
 name = "simple-program"
 version = "0.1.0"
 dependencies = [
+ "alloy-primitives 0.8.8",
  "bincode",
  "cfg-if",
  "hdp-lib",

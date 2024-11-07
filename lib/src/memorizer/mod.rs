@@ -45,6 +45,8 @@ sol! {
         uint256 mmrSize;
         /// @dev The root of the MMR.
         bytes32 mmrRoot;
+        /// @dev result of program
+        bytes result;
     }
 }
 

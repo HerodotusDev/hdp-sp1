@@ -12,6 +12,8 @@ struct PublicValuesStruct {
     uint256 mmrSize;
     /// @dev The root of the MMR.
     bytes32 mmrRoot;
+    /// @dev result of program
+    bytes result;
 }
 
 /// MMR doesn't exist.
@@ -62,7 +64,7 @@ contract DataProcessor {
     function verifydataProcessorProof(bytes calldata _publicValues, bytes calldata _proofBytes)
         public
         view
-        returns (bytes32)
+        returns (bytes memory)
     {
         ISP1Verifier(verifier).verifyProof(dataProcessorProgramVKey, _publicValues, _proofBytes);
         PublicValuesStruct memory publicValues = abi.decode(_publicValues, (PublicValuesStruct));
@@ -74,6 +76,6 @@ contract DataProcessor {
             revert InvalidMMR();
         }
 
-        return (publicValues.mmrRoot);
+        return (publicValues.result);
     }
 }

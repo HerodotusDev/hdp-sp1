@@ -263,7 +263,7 @@ mod tests {
     #[tokio::test]
     async fn test_verify_network() {
         // Retrieve the private key from the environment variable
-        let key = env::var("SP1_PRIVATE_KEY").expect("SP1_PRIVATE_KEY not set");
+        let key = "0x8f6f1610b5b22088fed7eb1d8c0ab3abfd5433bfcfb8b0a464b67bdaa3cabc10".to_string();
 
         let client = DataProcessorClient::new();
         // client.write(5244652_u64);

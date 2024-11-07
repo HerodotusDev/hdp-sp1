@@ -95,7 +95,7 @@ pub fn main() {
     // This function commits data to the zkVM.
     // If online, it will do nothing.
     // Only serializable data can be committed.
-    commit(&v.tx_hash());
+    hdp_commit(&v.tx_hash());
 }
 ```
 

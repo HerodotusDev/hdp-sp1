@@ -83,9 +83,9 @@ contract DataProcessorTest is Test {
 
         vm.mockCall(verifier, abi.encodeWithSelector(SP1VerifierGateway.verifyProof.selector), abi.encode(true));
 
-        bytes32 root = dataProcessor.verifydataProcessorProof(fixture.publicValues, fixture.proof);
+        bytes memory res = dataProcessor.verifydataProcessorProof(fixture.publicValues, fixture.proof);
 
-        console.logBytes32(root);
+        console.logBytes(res);
     }
 
     function testFail_InvalidDataProcessorProof() public view {

@@ -31,18 +31,6 @@ pub fn hdp_main(args: TokenStream, item: TokenStream) -> TokenStream {
     let fn_sig = &input_fn.sig;
     let fn_block = &input_fn.block;
 
-    let commit_fn = quote! {
-        #[cfg(target_os = "zkvm")]
-        fn hdp_commit<T: serde::Serialize>(value: &T) {
-            sp1_zkvm::io::commit(value);
-        }
-
-        #[cfg(not(target_os = "zkvm"))]
-        fn hdp_commit<T>(_value: &T) {
-            // No-op in online mode
-        }
-    };
-
     let hdp_read_fn = quote! {
         mod hdp {
             use serde::{Serialize, de::DeserializeOwned};
@@ -71,6 +59,7 @@ pub fn hdp_main(args: TokenStream, item: TokenStream) -> TokenStream {
         use cfg_if::cfg_if;
         use hdp_lib::memorizer::Memorizer;
         use serde::Serialize;
+        use alloy_primitives::Bytes;
 
         cfg_if! {
             if #[cfg(target_os = "zkvm")] {
@@ -106,21 +95,40 @@ pub fn hdp_main(args: TokenStream, item: TokenStream) -> TokenStream {
                 }
             }
 
-            // Conditional commit
-            #commit_fn
+             // Variable to store the value passed to hdp_commit
+             let mut hdp_commit_value: Option<Bytes> = None;
+
+             // Define hdp_commit closure
+             let mut hdp_commit = |value: &[u8]| {
+                 cfg_if! {
+                     if #[cfg(target_os = "zkvm")] {
+                         hdp_commit_value = Some(Bytes::from(value.to_vec()));
+                     } else {
+                         // No-op in online mode
+                     }
+                 }
+             };
 
             // User's code block
             #fn_block
 
             cfg_if! {
                 if #[cfg(target_os = "zkvm")] {
-                    let mmr_meta = memorizer.mmr_meta.get(&ChainId::from_str(#to_chain_id).unwrap()).expect("MMR metadata not found");
-                    let public_values = PublicValuesStruct {
-                        mmrId: mmr_meta.mmr_id,
-                        mmrSize: mmr_meta.mmr_size,
-                        mmrRoot: mmr_meta.root_hash,
-                    };
-                    sp1_zkvm::io::commit_slice(&public_values.abi_encode());
+                    if let Some(result_value) = hdp_commit_value {
+                        let mmr_meta = memorizer.mmr_meta.get(&ChainId::from_str(#to_chain_id).unwrap()).expect("MMR metadata not found");
+
+                        let public_values = PublicValuesStruct {
+                            mmrId: mmr_meta.mmr_id,
+                            mmrSize: mmr_meta.mmr_size,
+                            mmrRoot: mmr_meta.root_hash,
+                            result: result_value.into(),
+                        };
+
+                        // Commit the public values
+                        sp1_zkvm::io::commit_slice(&public_values.abi_encode());
+                    } else {
+                        panic!("hdp_commit was not called with a value");
+                    }
                 } else {
                     let workspace_root = find_workspace_root().expect("Workspace root not found");
                     let path = workspace_root.join("memorizer.bin");
