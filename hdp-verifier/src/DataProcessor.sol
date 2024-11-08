@@ -53,9 +53,9 @@ contract DataProcessor {
     function cacheMmrRoot(uint256 mmrId) public {
         ISharpFactsAggregator aggregator = AGGREGATORS_FACTORY.aggregatorsById(mmrId);
         ISharpFactsAggregator.AggregatorState memory aggregatorState = aggregator.aggregatorState();
-        cachedMMRsRoots[mmrId][aggregatorState.mmrSize] = aggregatorState.poseidonMmrRoot;
+        cachedMMRsRoots[mmrId][aggregatorState.mmrSize] = aggregatorState.keccakMmrRoot;
 
-        emit MmrRootCached(mmrId, aggregatorState.mmrSize, aggregatorState.poseidonMmrRoot);
+        emit MmrRootCached(mmrId, aggregatorState.mmrSize, aggregatorState.keccakMmrRoot);
     }
 
     /// @notice The entrypoint for verifying the proof of a dataProcessor number.
