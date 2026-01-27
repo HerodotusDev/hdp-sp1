@@ -1,6 +1,9 @@
+# Herodotus Data Processor (HDP) with SP1 Backend
+
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/HerodotusDev/hdp-sp1)
+
 ![](.github/banner.png)
 
-# Herodotus Data Processor (HDP) with SP1 Backend
 
 > [!WARNING]
 > This codebase is experimental and not production-ready 🚧
