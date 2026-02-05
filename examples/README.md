@@ -1,4 +1,4 @@
 # Examples
 
 - [Simple](./simple/README.md)
-- [Compilance](./compliance/README.md)
+- [Compliance](./compliance/README.md)
